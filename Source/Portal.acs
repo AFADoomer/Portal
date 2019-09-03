@@ -1,0 +1,308 @@
+#library "PORTAL"
+#include "zcommon.acs"
+
+int doorstate[1024];
+int multitrigger[1024];
+int activated[1024];
+
+// The first argument is passed automatically from the trigger actors - it's basically an on/off boolean
+
+Script "MoveLift" (int dir, int piston, int lift)
+{
+	int speed = 4;
+	int i;
+
+	if (doorstate[lift] == 0)
+	{
+		if (dir > 0) { doorstate[lift] = 1; }
+		else { doorstate[lift] = -1; }
+
+		if (!dir)
+		{
+			Floor_LowerByValue(piston, speed, 64);
+			Generic_Floor(lift, speed, 64, 0, 16);
+			Generic_Ceiling(lift, speed, 64, 0, 16);
+		}
+		else
+		{
+			Generic_Ceiling(lift, speed, 64, 0, 16 | 8);
+			Generic_Floor(lift, speed, 64, 0, 16 | 8);
+			Floor_RaiseByValue(piston, speed, 64);
+		}
+
+		Delay(5 * 35);
+
+		doorstate[lift] = 0;
+	}
+	else
+	{
+		While(doorstate[lift] != 0) { Delay(1); }
+		Restart;
+	}
+}
+
+Script "RaiseLiftOnce" (int dir, int piston, int lift)
+{
+	ACS_NamedExecute("MoveLift", 0, 1, piston, lift);
+	Delay(350);
+	ACS_NamedExecute("MoveLift", 0, 0, piston, lift);
+}
+
+Script "OpenDoor" (int close, int tag)
+{
+	if (!close)
+	{
+		PlaySound(0, "button/success", CHAN_6);
+		if (doorstate[tag] == close)
+		{
+			Door_Open(tag, 128);
+			Floor_LowerByValue(tag, 128, 32);
+		}
+	}
+	else
+	{
+		if (doorstate[tag] == close)
+		{
+			Floor_RaiseByValue(tag, 128, 32);
+			Door_Close(tag, 128);
+		}
+	}
+
+	doorstate[tag] = !close;
+}
+
+Script "TriggerDoor" (int close, int tag, int threshold)
+{
+	if (!close)
+	{
+		multitrigger[tag]++;
+
+		if (multitrigger[tag] >= threshold) { ACS_NamedExecuteAlways("OpenDoor", 0, close, tag); }
+		else { PlaySound(0, "button/fail", CHAN_6); }
+	}
+	else
+	{
+		multitrigger[tag]--;
+		ACS_NamedExecuteAlways("OpenDoor", 0, close, tag);
+	}
+}
+
+Script "TriggerGrille" (int OnOff, int tag)
+{
+	int i;
+
+	if (activated[tag] != 0)
+	{
+		While(activated[tag] != 0) { Delay(1); }
+		Restart;
+	}
+
+	if (OnOff > 0) { activated[tag] = 1; }
+	else { activated[tag] = -1; }
+
+	if (OnOff)
+	{
+		SoundSequenceOnActor(tag, "FizzlerUp");
+
+		SetLineTexture(tag, SIDE_BACK, TEXTURE_MIDDLE, "EMANGRIL");
+		SetLineTexture(tag, SIDE_FRONT, TEXTURE_MIDDLE, "EMANGRIL");
+
+		for (i = 0; i < 255; i += 7)
+		{
+			TranslucentLine(tag, i, 0);
+			Delay(1);
+		}
+
+		TranslucentLine(tag, 255, 0);
+	}
+	else
+	{
+		SoundSequenceOnActor(tag, "FizzlerDown");
+
+		for (i = 255; i > 0; i -= 7)
+		{
+			TranslucentLine(tag, i, 0);
+			Delay(1);
+		}
+
+		TranslucentLine(tag, 0, 0);
+
+		SetLineTexture(tag, SIDE_BACK, TEXTURE_MIDDLE, "-");
+		SetLineTexture(tag, SIDE_FRONT, TEXTURE_MIDDLE, "-");
+	}
+
+	activated[tag] = 0;
+}
+
+Script "TriggerBridge" (int OnOff, int tag)
+{
+	int i;
+
+	if (activated[tag] != 0)
+	{
+		While(activated[tag] != 0) { Delay(1); }
+		Restart;
+	}
+
+	if (OnOff > 0) { activated[tag] = 1; }
+	else { activated[tag] = -1; }
+
+	if (OnOff)
+	{
+		SoundSequenceOnActor(tag, "FizzlerUp");
+		SetActorState(tag, "Active");
+	}
+	else
+	{
+		SoundSequenceOnActor(tag, "FizzlerDown");
+		SetActorState(tag, "Inactive");
+	}
+
+	activated[tag] = 0;
+}
+
+Script "TriggerLift" (int piston, int lift, int wait)
+{
+	int speed = 4;
+	int i;
+	int dir = -1;
+
+	doorstate[piston] = TRUE;
+
+	While(doorstate[piston])
+	{
+		if (doorstate[lift] == 0)
+		{
+			if (dir > 0) { doorstate[lift] = 1; }
+			else { doorstate[lift] = -1; }
+
+			if (dir <= 0)
+			{
+				Floor_LowerByValue(piston, speed, 64);
+				Generic_Floor(lift, speed, 64, 0, 16);
+				Generic_Ceiling(lift, speed, 64, 0, 16);
+			}
+			else
+			{
+				Generic_Ceiling(lift, speed, 64, 0, 16 | 8);
+				Generic_Floor(lift, speed, 64, 0, 16 | 8);
+				Floor_RaiseByValue(piston, speed, 64);
+			}
+
+			Delay(5 * 35);
+
+			doorstate[lift] = 0;
+		}
+		else
+		{
+			While(doorstate[lift] != 0) { Delay(1); }
+			Restart;
+		}
+
+		if (wait)
+		{
+			Delay(wait);
+			dir *= -1;
+		}
+		else { Terminate; }
+	}
+}
+
+Script "TriggerCube" (int close, int spottid, int tid)
+{
+	ACS_NamedExecuteAlways("SpawnCube", 0, spottid, tid, 1);
+}
+
+Script "TriggerLaserCube" (int close, int spottid, int tid)
+{
+	ACS_NamedExecuteAlways("SpawnLaserCube", 0, spottid, tid, 1);
+}
+
+Script "SpawnCube" (int spottid, int tid, int noreplace)
+{
+	activated[spottid] = TRUE;
+
+	if (ThingCountName("Cube", tid))
+	{
+		SetActorProperty(tid, APROP_DamageFactor, 1.0);
+		Thing_Destroy(tid);
+	}
+
+	While(activated[spottid])
+	{
+		if (!ThingCountName("Cube", tid))
+		{
+				SpawnSpot("Cube", spottid, tid, Random(0, 256));
+				ThrustThing(Random(0, 255), 1, 0, tid);
+				SetActorRoll(tid, Random(-15, 15));
+		}
+		if (noreplace) { activated[spottid] = FALSE; }
+		Delay(35);
+	}
+}
+
+Script "SpawnLaserCube" (int spottid, int tid, int noreplace)
+{
+	activated[spottid] = TRUE;
+
+	if (ThingCountName("LaserCube", tid))
+	{
+		SetActorProperty(tid, APROP_DamageFactor, 1.0);
+		Thing_Destroy(tid);
+	}
+
+	While(activated[spottid])
+	{
+		if (!ThingCountName("LaserCube", tid))
+		{
+				SpawnSpot("LaserCube", spottid, tid, Random(0, 256));
+				ThrustThing(Random(0, 255), 1, 0, tid);
+				SetActorRoll(tid, Random(-15, 15));
+		}
+		if (noreplace) { activated[spottid] = FALSE; }
+		Delay(35);
+	}
+}
+
+
+Script "SpawnPellet" (int spottid, int tid, int pitch)
+{
+	int speed = 20;
+	int fpitch = pitch * 1.0 / 360;
+
+	activated[spottid] = TRUE;
+
+	While(activated[spottid])
+	{
+		if (!ThingCountName("Pellet", tid))
+		{
+				SpawnProjectile(spottid, "Pellet", 0, speed * cos(fpitch) / 1.0, speed * sin(fpitch) / 1.0, 0, tid);
+		}
+		Delay(35 * 2);
+	}
+}
+
+Script "SpawnLaser" (int tid)
+{
+	SetActorState(tid, "Active");
+}
+
+Script "SpawnStaticPortal" (int spottid, int pitch)
+{
+	Thing_Remove(9999); // All portals have TID 9999
+	SpawnSpotFacingForced("StaticPortalSpot", spottid, 9999);
+
+	SetActorPitch(9999, -pitch * 1.0 / 360);
+}
+
+Script "Cleanup" (int section)
+{
+	ACS_NamedExecuteAlways("OpenDoor", 0, 1, section); // Close the door behind you
+	Autosave();
+}
+
+Script "RotatePoly" (int dir, int id, int angle)
+{
+	if (dir) { Polyobj_OR_RotateLeft(id, 32, angle * 256 / 360); }
+	else { Polyobj_OR_RotateRight(id, 16, angle * 256 / 360); PlaySound(0, "button/success", CHAN_6); }
+}

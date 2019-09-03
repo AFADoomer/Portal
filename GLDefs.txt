@@ -1,0 +1,262 @@
+PointLight SparkLight
+{
+	color 1.0 1.0 1.0
+	size 12
+	attenuate 1
+}
+
+PointLight SmallRedLight
+{
+	color 0.4 0.1 0.1
+	size 12
+	attenuate 1
+}
+
+HardwareShader Texture "Models/PortalGun_Tube.png" { Shader "Shaders/func_brightwarp.fp" Speed 8.0 }
+HardwareShader Texture "Models/PortalGun_Tube2.png" { Shader "Shaders/func_brightwarp.fp" Speed 8.0 }
+HardwareShader Texture "EMANGRIL" { Shader "Shaders/func_brightwarp.fp" Speed 1.0 }
+
+HardwareShader Texture "PORTAL0A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL0B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL1A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL1B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL2A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL2B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL3A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL3B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL4A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL4B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL5A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL5B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL6A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL6B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL7A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL7B" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL8A" { Shader "Shaders/portal.fp" Speed 1.0 }
+HardwareShader Texture "PORTAL8B" { Shader "Shaders/portal.fp" Speed 1.0 }
+
+HardwareShader Texture "Models/Ring.png" { Shader "Shaders/portalring.fp" Speed 2.0 }
+
+Material Texture "SLIME"
+{
+	normal "Materials/NormalMaps/water.png"
+	specular "Materials/Specular/water.png"
+	specularlevel 2.0
+	shader "shaders/waves.fp"
+	Texture background "SLIMEOV"
+	speed 0.5
+}
+
+Material Texture "WATER"
+{
+	normal "Materials/NormalMaps/water.png"
+	specular "Materials/Specular/water.png"
+	specularlevel 2.0
+	shader "shaders/waves.fp"
+	Texture background "Textures/Shader/Water.png"
+	speed 1.0
+}
+
+Material Texture "Models/Bridge.png"
+{
+	shader "shaders/brightpulse.fp"
+	speed 1.0
+}
+
+Brightmap Texture "INSET" { map "Materials/Brightmaps/INSET.png" }
+Brightmap Texture "LITB1x1" { map "Materials/Brightmaps/LIT.png" }
+Brightmap Texture "LITB2x1" { map "Materials/Brightmaps/LIT.png" }
+Brightmap Texture "LITB2x2" { map "Materials/Brightmaps/LIT.png" }
+Brightmap Texture "LITW1x1" { map "Materials/Brightmaps/LIT.png" }
+Brightmap Texture "LITW2x1" { map "Materials/Brightmaps/LIT.png" }
+Brightmap Texture "LITW2x2" { map "Materials/Brightmaps/LIT.png" }
+Brightmap Texture "LITBW1x1" { map "Materials/Brightmaps/LITW.png" }
+Brightmap Texture "LITBW2x1" { map "Materials/Brightmaps/LITW.png" }
+Brightmap Texture "LITWW1x1" { map "Materials/Brightmaps/LITW.png" }
+Brightmap Texture "LITWW2x1" { map "Materials/Brightmaps/LITW.png" }
+Brightmap Sprite "SIGNX0" { map "Materials/Brightmaps/Signs.png" }
+Brightmap Sprite "SIGNX0" { map "Materials/Brightmaps/Signs.png" }
+Brightmap Sprite "DOTOA0" { map "DOTBMOA0" }
+Brightmap Sprite "DOTOB0" { map "DOTBMOB0" }
+Brightmap Sprite "DOTOC0" { map "DOTBMOC0" }
+Brightmap Sprite "DOTOD0" { map "DOTBMOD0" }
+Brightmap Sprite "DOTOE0" { map "DOTBMOE0" }
+Brightmap Sprite "DOTOF0" { map "DOTBMOF0" }
+Brightmap Sprite "DOTGA0" { map "DOTBMGA0" }
+Brightmap Sprite "DOTGB0" { map "DOTBMGB0" }
+Brightmap Sprite "DOTGC0" { map "DOTBMGC0" }
+Brightmap Sprite "DOTGD0" { map "DOTBMGD0" }
+Brightmap Sprite "DOTGE0" { map "DOTBMGE0" }
+Brightmap Sprite "DOTGF0" { map "DOTBMGF0" }
+
+Material Texture "BUTTONB"
+{
+	normal "Materials/NormalMaps/Auto/PORTFLR.png"
+	specular "Materials/Specular/Auto/PORTFLR.png"
+}
+
+Material Texture "PORTFL2"
+{
+	normal "Materials/NormalMaps/Auto/PORTFLR.png"
+	specular "Materials/Specular/Auto/PORTFLR.png"
+}
+
+Material Texture "PIPE"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	shader "shaders/texture/glass.fp"
+	define amount = 5.0
+}
+
+Material Texture "GLASSTRA"
+{
+	normal "Materials/NormalMaps/Auto/GLASS.png"
+	specular "Materials/Specular/Auto/GLASS.png"
+}
+
+Material Texture "GLASS2"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	Texture reflection "PLAYVIEW"
+	shader "shaders/texture/glass.fp"
+}
+
+Material Texture "GLASS3"
+{
+	normal "Materials/NormalMaps/Auto/GLASS3.png"
+	specular "Materials/Specular/Auto/GLASS3.png"
+	shader "shaders/texture/glass.fp"
+}
+
+Material Texture "Models/PortalGun.png"
+{
+	normal "Materials/NormalMaps/PortalGun.png"
+	specular "Materials/Specular/PortalGun.png"
+}
+
+Material Texture "Models/glass2.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS3.png"
+	specular "Materials/Specular/Auto/GLASS3.png"
+	shader "shaders/texture/glass.fp"
+}
+
+Material Texture "PILLAR"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+}
+
+Material Texture "Models/screen.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	brightmap "Materials/Brightmaps/FullBright.png"
+}
+
+Material Texture "Models/screen2.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2b.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2c.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2d.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2e.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2f.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2g.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2h.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2i.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen2j.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+
+Material Texture "Models/screen3.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen5.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+
+Material Texture "Models/buttonshell.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	brightmap "Materials/Brightmaps/ButtonShell.png"
+}
+
+Material Texture "Models/cube.png"
+{
+	normal "Materials/NormalMaps/CUBE.png"
+	specular "Materials/Specular/CUBE.png"
+	brightmap "Materials/Brightmaps/CUBE.png"
+}
+
+Material Texture "Models/lasercube.png"
+{
+	normal "Materials/NormalMaps/CUBE.png"
+	specular "Materials/Specular/CUBE.png"
+	brightmap "Materials/Brightmaps/CUBE.png"
+}
+
+Material Texture "Models/PortalSpawner.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	brightmap "Materials/Brightmaps/PortalSpawner.png"
+}
+
+Material Texture "Models/PelletShell.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	Texture reflection "Models/SphereMap.png"
+	shader "shaders/texture/glass.fp"
+	define amount = 1.0
+}
+
+Material Texture "FLOOR"
+{
+	normal "Materials/NormalMaps/Auto/WALL4x4.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+}
+
+Material Texture "COMPTAL1"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+}
+
+Material Texture "COMPTAL2"
+{
+	normal "Materials/NormalMaps/Auto/WALL1x1.png"
+	specular "Materials/Specular/Auto/WALL1x1.png"
+}
+
+Material Texture "COMPTAL3"
+{
+	normal "Materials/NormalMaps/Auto/WALL1x1.png"
+	specular "Materials/Specular/Auto/WALL1x1.png"
+}
+
+Material Texture "COMPTAL4"
+{
+	normal "Materials/NormalMaps/Auto/WALL1x1.png"
+	specular "Materials/Specular/Auto/WALL1x1.png"
+}
+
+Material Texture "COMPTAL5"
+{
+	normal "Materials/NormalMaps/Auto/WALL1x1.png"
+	specular "Materials/Specular/Auto/WALL1x1.png"
+}
+
+Material Texture "COMPTAL6"
+{
+	normal "Materials/NormalMaps/Auto/WALL1x1.png"
+	specular "Materials/Specular/Auto/WALL1x1.png"
+}
+
+Material Texture "COMPTAL7"
+{
+	normal "Materials/NormalMaps/Auto/WALL1x1.png"
+	specular "Materials/Specular/Auto/WALL1x1.png"
+}
+
+Material Texture "COMPTAL8"
+{
+	normal "Materials/NormalMaps/Auto/WALL1x1.png"
+	specular "Materials/Specular/Auto/WALL1x1.png"
+}

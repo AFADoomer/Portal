@@ -1,0 +1,75 @@
+DEFAULTLISTMENU
+{
+	Font "NewSmallFont", "Gray", "White"
+	Selector "-", -16, -2
+	Linespacing 20
+}
+
+LISTMENU "MainMenu"
+{
+//	StaticPatch 75, 10, "LOGO_T"
+	Position 100, 80
+
+	Selector "M_SKULL1", -32, -5
+
+	TextItem "New Game", "n", "PlayerclassMenu"
+	TextItem "Configuration","c", "OptionsMenu"
+	TextItem "Load Game", "l", "LoadGameMenu"
+	TextItem "Save Game", "s", "SaveGameMenu"
+	TextItem "Exit", "e", "QuitMenu"
+}
+
+
+ListMenu "PlayerclassMenu"
+{
+	NetgameMessage "$NEWGAME"
+
+	Font "NewSmallFont", "PortalGreen"
+	StaticTextCentered 160, 15, "$MNU_CHOOSECLASS"
+	Position 48, 63
+	PlayerDisplay 220, 63, "20 00 00", "80 00 40"
+	MouseWindow 0, 220
+	Font "NewSmallFont", "Gray", "White"
+}
+
+ListMenu "EpisodeMenu"
+{
+	NetgameMessage "$NEWGAME"
+
+	Position 48, 63
+	Font "NewSmallFont", "PortalGreen"
+	StaticTextCentered 160, 38, "Select an episode"
+	Font "NewSmallFont", "Gray", "White"
+	Linespacing 10
+}
+
+ListMenu "SkillMenu"
+{
+	Linespacing 10
+	Font "NewSmallFont", "PortalGreen"
+	StaticTextCentered 160, 14, "$MNU_CHOOSESKILL"
+	Font "NewSmallFont", "Gray", "White"
+	Position 48, 63
+	CenterMenu
+}
+
+ListMenu "LoadGameMenu"
+{
+	NetgameMessage "$LOADNET"
+	Font "NewSmallFont", "PortalGreen"
+	StaticTextCentered 160, -20, "Load Game"
+	Position 80,54
+	Class "LoadMenu"
+}
+
+ListMenu "SaveGameMenu"
+{
+	Font "NewSmallFont", "PortalGreen"
+	StaticTextCentered 160, -20, "Save Game"
+	Position 80,54
+	Class "SaveMenu"
+}
+
+OptionMenuSettings
+{
+}

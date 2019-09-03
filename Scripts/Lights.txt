@@ -1,0 +1,103 @@
+// Light that scales in size according to the value passed as the alpha amount
+class AlphaLight : DynamicLight
+{
+	Color clr;
+	double maxradius;
+	Vector3 spawnoffset;
+
+	Property LightColor:clr;
+	Property LightRadius:maxradius;
+
+	Default
+	{
+		DynamicLight.Type "Point";
+		AlphaLight.LightColor 0xFFFFFF;
+		AlphaLight.LightRadius 16;
+	}
+
+	override void BeginPlay ()
+	{
+		alpha = 0;
+
+		args[LIGHT_RED] = clr.r;
+		args[LIGHT_GREEN] = clr.g;
+		args[LIGHT_BLUE] = clr.b;
+		args[LIGHT_INTENSITY] = int(maxradius * scale.y * alpha);
+
+		Super.BeginPlay();
+	}
+
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			spawnoffset = pos - master.pos;
+
+			Vector2 temp = RotateVector((spawnoffset.x, spawnoffset.y), -master.angle);
+			spawnoffset = (temp.x, temp.y, spawnoffset.z);
+		}
+
+		Super.PostBeginPlay();
+	}
+
+	override void Tick()
+	{
+		args[LIGHT_RED] = int(clr.r * alpha);
+		args[LIGHT_GREEN] = int(clr.g * alpha);
+		args[LIGHT_BLUE] = int(clr.b * alpha);
+		args[LIGHT_INTENSITY] = int(maxradius * scale.y * alpha);
+
+		if (master && spawnoffset != (0, 0, 0)) { Rotate(); }
+
+		Super.Tick();
+	}
+
+	void Rotate()
+	{
+		Vector2 temp = RotateVector((spawnoffset.y, spawnoffset.z), master.roll);
+		Vector3 offset = (spawnoffset.x, temp.x, temp.y);
+
+		temp = RotateVector((offset.x, offset.z), 360 - master.pitch);
+		offset = (temp.x, offset.y, temp.y);
+
+		temp = RotateVector((offset.x, offset.y), master.angle);
+		offset = (temp.x, temp.y, offset.z);
+
+		offset.x *= master.scale.x;
+		offset.y *= master.scale.x;
+		offset.z *= master.scale.y;
+
+		SetOrigin(master.pos + offset, true);
+	}
+}
+
+class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
+{
+	double user_lightlevel;
+
+	Default
+	{
+		//$Sprite UNKNA0
+		+DYNAMICLIGHT.ATTENUATE
+	}
+
+	override void BeginPlay()
+	{
+		clr.r = args[LIGHT_RED];
+		clr.g = args[LIGHT_GREEN];
+		clr.b = args[LIGHT_BLUE];
+		maxradius = args[LIGHT_INTENSITY];
+
+		Super.BeginPlay();
+	}
+
+	override void PostBeginPlay()
+	{
+		if (!user_lightlevel) { user_lightlevel = 5.0; }
+
+		Super.PostBeginPlay();
+
+		alpha = user_lightlevel;
+		scale.y = scale.y / user_lightlevel;
+	}
+}

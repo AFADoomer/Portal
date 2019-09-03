@@ -1,0 +1,1661 @@
+class DoorSprite : Actor
+{
+	Default
+	{
+		//$Category Portal/Flat Sprites
+		//$Title Door
+		+WALLSPRITE
+		+NOGRAVITY
+		+DONTTHRUST
+		Radius 0;
+		Height 64;
+	}
+
+	States
+	{
+		Spawn:
+			DOOR A -1;
+			Stop;
+	}
+}
+
+class Chair : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		+SLIDESONWALLS
+		+PUSHABLE
+		+SOLID
+		+CANPASS
+		Height 18;
+		Radius 14;
+		Mass 50;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void BeginPlay()
+	{
+		ChangeStatNum(Thinker.STAT_USER);
+	}
+}
+
+class Monitor : Actor
+{
+	int delay;
+	AlphaLight light;
+	String user_text;
+
+	Default
+	{
+		//$Category Portal/Decorations
+		+SOLID
+		+NOGRAVITY
+		+DONTTHRUST
+		Height 8;
+		Radius 12;
+		Mass 25;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		light = AlphaLight(Spawn("AlphaLight", pos + RotateVector((32, 0), angle)));
+		if (light)
+		{
+			light.master = self;
+			light.bAttenuate = true;
+			light.maxradius = 16.0;
+			light.clr = color("32 1 0");
+			light.alpha = (bStandstill && user_text == "") ? 0.0 : 1.0;
+		}
+
+		if (!bStandStill && user_text != "") { FlatText.SpawnString(self, user_text, 0xFF4000, 6.75 * cos(pitch), 10.5, 25 * sin(pitch), 0.2); }
+
+		Super.PostBeginPlay();
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (user_text != "")
+		{
+			if (light) { light.alpha = 1.0; }
+			frame = 4;
+		}
+		else if (bStandstill)
+		{
+			frame = 3;
+			if (light) { light.alpha = 0.0; }
+		}
+		else
+		{
+			if (!delay)
+			{
+				frame = Random(0, 2);
+				delay = Random(40, 140);
+			}
+
+			if (light) { light.maxradius = 16 + 2 * frame; light.alpha = 1.0; }
+
+			delay = max(delay - 1, 0);
+		}
+	}
+
+	override void OnDestroy()
+	{
+		if (light) { light.Destroy(); }
+	}
+}
+
+class Desk : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		+SOLID
+		Height 25;
+		Radius 22;
+		Mass 150;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class PortalSpawner : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Generic Emitter
+		+NOGRAVITY
+		+NOINTERACTION
+		+DONTTHRUST
+		Height 0;
+		Radius 4;
+		Mass 50;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class PitDetails : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Pit Details
+		+NOGRAVITY
+		+DONTTHRUST
+		Height 8;
+		Radius 1;
+		RenderRadius 64.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class PitDetails2 : PitDetails
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Pit Details (Alternate)
+	}
+}
+
+class Pipe : Actor
+{
+	int user_variant;
+
+	Default
+	{
+		//$Category Portal/Decorations
+		+NOGRAVITY
+		+DONTTHRUST
+		Height 1;
+		Radius 24;
+		Mass 25;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+
+	override void PostBeginPlay()
+	{
+		bSolid = !bStandStill;
+		bNoInteraction = bStandStill;
+
+		frame = user_variant;
+
+		Super.PostBeginPlay();
+	}
+}
+
+class SignBase : Actor
+{
+	Default
+	{
+		//$Category Portal/Flat Sprites
+		+FLATSPRITE
+		+NOGRAVITY
+		+DONTTHRUST
+		Radius 0;
+		Height 0;
+		RenderRadius 128.0;
+	}
+
+	States
+	{
+		Spawn:
+			SIGN A -1;
+			Stop;
+	}
+}
+
+class SignExit : SignBase
+{
+	Default
+	{
+		//$Title Sign - Exit
+	}
+}
+
+class SignCubeDrop : SignBase
+{
+	Default
+	{
+		//$Title Sign - Cube Drop
+	}
+
+	States
+	{
+		Spawn:
+			SIGN B -1;
+			Stop;
+	}
+}
+
+class SignOverhead : SignBase
+{
+	Default
+	{
+		//$Title Sign - Hazard (Cube Overhead)
+	}
+
+	States
+	{
+		Spawn:
+			SIGN C -1;
+			Stop;
+	}
+}
+
+class SignArrowD : SignBase
+{
+	Default
+	{
+		//$Title Sign - Arrow Down
+	}
+
+	States
+	{
+		Spawn:
+			SIGN D -1;
+			Stop;
+	}
+}
+
+class SignArrowU : SignBase
+{
+	Default
+	{
+		//$Title Sign - Arrow Up
+	}
+
+	States
+	{
+		Spawn:
+			SIGN E -1;
+			Stop;
+	}
+}
+
+class SignArrowL : SignBase
+{
+	Default
+	{
+		//$Title Sign - Arrow Left
+	}
+
+	States
+	{
+		Spawn:
+			SIGN F -1;
+			Stop;
+	}
+}
+
+class SignArrowR : SignBase
+{
+	Default
+	{
+		//$Title Sign - Arrow Right
+	}
+
+	States
+	{
+		Spawn:
+			SIGN G -1;
+			Stop;
+	}
+}
+
+class SignDrown : SignBase
+{
+	Default
+	{
+		//$Title Sign - Hazard (Drown)
+	}
+
+	States
+	{
+		Spawn:
+			SIGN H -1;
+			Stop;
+	}
+}
+
+class SignFling: SignBase
+{
+	Default
+	{
+		//$Title Sign - Fling (Enter)
+	}
+
+	States
+	{
+		Spawn:
+			SIGN I -1;
+			Stop;
+	}
+}
+
+class SignFling2 : SignBase
+{
+	Default
+	{
+		//$Title Sign - Fling (Exit)
+	}
+
+	States
+	{
+		Spawn:
+			SIGN J -1;
+			Stop;
+	}
+}
+
+class SignPellet : SignBase
+{
+	Default
+	{
+		//$Title Sign - Hazard (Pellet)
+	}
+
+	States
+	{
+		Spawn:
+			SIGN K -1;
+			Stop;
+	}
+}
+
+class SignPelletTarget : SignBase
+{
+	Default
+	{
+		//$Title Sign - Pellet Target
+	}
+
+	States
+	{
+		Spawn:
+			SIGN L -1;
+			Stop;
+	}
+}
+
+class SignPoison : SignBase
+{
+	Default
+	{
+		//$Title Sign - Hazard (Poison)
+	}
+
+	States
+	{
+		Spawn:
+			SIGN M -1;
+			Stop;
+	}
+}
+
+class SignTurrets : SignBase
+{
+	Default
+	{
+		//$Title Sign - Hazard (Turrets)
+	}
+
+	States
+	{
+		Spawn:
+			SIGN N -1;
+			Stop;
+	}
+}
+
+class SignCake : SignBase
+{
+	Default
+	{
+		//$Title Sign - Cake
+	}
+
+	States
+	{
+		Spawn:
+			SIGN O -1;
+			Stop;
+	}
+}
+
+class SignStatus : SignBase
+{
+	Default
+	{
+		//$Title Sign - Door Status
+	}
+
+	States
+	{
+		Spawn:
+		Inactive:
+			SIGN X 1;
+			Loop;
+		Active:
+			SIGN V 1;
+			Loop;
+	}
+
+	override void BeginPlay()
+	{
+		ChangeStatNum(Thinker.STAT_USER + 1);
+	}
+}
+
+class Dot1 : SignBase
+{
+	Default
+	{
+		-SOLID
+		+NOINTERACTION
+	}
+
+	States
+	{
+		Spawn:
+			DOTG A 1;
+		Inactive:
+			DOTG # 1;
+			Loop;
+		Active:
+			DOTO # 1;
+			Loop;
+	}
+
+	override void BeginPlay()
+	{
+		ChangeStatNum(Thinker.STAT_USER + 1);
+	}
+}
+
+class Dot2 : Dot1 { States { Spawn: DOTG B 1; Goto Inactive; } }
+class Dot4 : Dot1 { States { Spawn: DOTG C 1; Goto Inactive; } }
+class Dot8 : Dot1 { States { Spawn: DOTG D 1; Goto Inactive; } }
+class Dot16 : Dot1 { States { Spawn: DOTG E 1; Goto Inactive; } }
+class Dot32 : Dot1 { States { Spawn: DOTG F 1; Goto Inactive; } }
+
+class UACLogo : SignBase
+{
+	Default
+	{
+		//$Title UAC Logo
+	}
+
+	States { Spawn: SIGN Y -1; Stop; }
+}
+
+class UACLogoW : SignBase
+{ 
+	Default
+	{
+		//$Title UAC Logo (White)
+	}
+
+	States { Spawn: SIGN Z -1; Stop; }
+}
+
+class UAC : SignBase
+{
+	Default
+	{
+		//$Title UAC Logo (Graphic only)
+	}
+
+	States { Spawn: SIGN [ -1; Stop; }
+}
+
+class UACW : SignBase
+{
+	Default
+	{
+		//$Title UAC Logo (White, Graphic only)
+	}
+
+	States { Spawn: SIGN ] -1; Stop; }
+}
+
+class Grid : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		+NOGRAVITY
+		+DONTTHRUST
+		Height 1;
+		Radius 64;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		bSolid = !bStandStill;
+
+		Super.PostBeginPlay();
+	}
+}
+
+class Platform : Actor
+{
+	Actor glass;
+	bool floating;
+
+	Default
+	{
+		//$Category Portal/Platforms
+		+NOGRAVITY
+		+DONTTHRUST
+		+SOLID
+		+MOVEWITHSECTOR
+		+CANPASS
+		Height 3;
+		Radius 32;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (bStandstill) { floating = true; }
+
+		while (!glass) { glass = Spawn("PlatformGlass", pos); }
+		glass.master = self;
+		glass.alpha = 0.25;
+		glass.frame = 0;
+	}
+
+	override void Tick()
+	{
+		if (!floating)
+		{
+			SetOrigin((pos.xy, floorz), true);
+			if (glass) { glass.SetOrigin(pos, true); }
+		}
+
+		Super.Tick();
+	}
+
+	override void OnDestroy()
+	{
+		if (glass) { glass.Destroy(); }
+	}
+}
+
+class PlatformMoving : Platform
+{
+	Array<Actor> touchers;
+	Vector3[64] offsets;
+	BridgeFindHitPointTracer beamtracer;
+	Actor beam;
+
+	Default
+	{
+		//$Title Platform (Moving)
+		-MOVEWITHSECTOR
+		MaxStepHeight 0;
+		Speed 2;
+	}
+
+
+	States
+	{
+		Spawn:
+			UNKN A 1;
+		Active:
+			UNKN A 1
+			{
+				bStandStill = False;
+				A_PlaySound("platform2/start", CHAN_AUTO, 0.25);
+			}
+			UNKN A 245;
+		ActiveLoop:
+			UNKN A 1 { A_PlaySound("platform2/loop", CHAN_6, 0.25, true); }
+			Loop;
+		Inactive:
+			UNKN A 1
+			{
+				A_StopSound(CHAN_6);
+				bStandStill = True;
+				A_PlaySound("platform2/stop", CHAN_AUTO, 0.25);
+			}
+		InactiveLoop:
+			UNKN A 1;
+			Loop;
+	}
+
+	override void Touch(Actor toucher)
+	{
+		if (toucher == self || toucher == glass || toucher.bNoGravity || toucher is "Platform") { return; }
+		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
+	}
+
+	override void PostBeginPlay()
+	{
+		beamtracer = new("BridgeFindHitPointTracer");
+
+		DoTrace(self, angle + 180, 2048, -pitch, TRF_THRUACTORS, 0, beamtracer);
+
+		Super.PostBeginPlay();
+	}
+
+	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, BridgeFindHitPointTracer thistracer)
+	{
+		if (!thistracer) { return; }
+
+		if (!origin) { origin = self; }
+
+		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
+		thistracer.Trace(origin.pos + (0, 0, zoffset), origin.CurSector, tracedir, dist, 0);
+	}
+
+	override void Tick()
+	{
+		if (IsFrozen() || bStandStill) { Actor.Tick(); return; }
+
+		while (!beam)
+		{
+			beam = Spawn("LaserEmitterBlue", beamtracer.Results.HitPos + RotateVector((1, 0), angle) - (0, 0, 1));
+			if (beam)
+			{
+				beam.angle = angle;
+//				beam.pitch = pitch;
+			}
+		}
+
+		CheckTouchers();
+
+		for (int i = 0; i < min(touchers.Size(), 64); i++)
+		{
+			if (touchers[i])
+			{
+				if (
+					Distance3D(touchers[i]) > (Radius + touchers[i].radius) * 2.0 ||
+					touchers[i].pos.z + touchers[i].height < pos.z
+				) { touchers.Delete(i); }
+				else { offsets[i] = touchers[i].pos - pos; }
+			}
+			else { touchers.Delete(i); touchers.ShrinkToFit(); }
+		}
+
+		Vector2 newpos = pos.xy + RotateVector((Speed, 0), angle);
+
+		FCheckPosition checkpos;
+
+		if (CheckMove(newpos, PCM_NOACTORS, checkpos))
+		{
+			SetOrigin((newpos, pos.z), true);
+			if (glass) { glass.SetOrigin(pos, true); }
+
+			for (int i = 0; i < min(touchers.Size(), 64); i++)
+			{
+				if (
+					touchers[i] && 
+					(
+						(Distance2D(touchers[i]) < (Radius + touchers[i].radius) * 1.4 && touchers[i].pos.z == pos.z + height) ||
+						deltaangle(angle, AngleTo(touchers[i])) < 45 ||
+						(touchers[i].bOnMobj && Distance3D(touchers[i]) < radius * 2)
+					)
+				)
+				{
+					if (touchers[i].CheckMove(pos.xy + offsets[i].xy)) { touchers[i].SetOrigin(pos + offsets[i], true); }
+					else
+					{
+						if (touchers[i].pos.z < pos.z) { touchers[i].DamageMobj(self, self, int(5 * Speed), "Crush"); }
+					}
+				}
+			}
+
+			Actor.Tick();
+		}
+		else
+		{
+			angle = (angle + 180) % 360;
+			Actor.Tick();
+		}
+	}
+
+	void CheckTouchers()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		Actor mo;
+
+		while (mo = Actor(it.Next(false)))
+		{
+			if (Distance2D(mo) <= Radius + mo.Radius)
+			{
+				Touch(mo);
+			}
+		}
+
+		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
+
+		while (mo = Actor(it.Next(false)))
+		{
+			if (Distance2D(mo) <= Radius + mo.Radius)
+			{
+				Touch(mo);
+			}
+		}
+
+		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
+
+		while (mo = Actor(it.Next(false)))
+		{
+			if (Distance2D(mo) <= Radius + mo.Radius)
+			{
+				Touch(mo);
+			}
+		}
+	}
+
+}
+
+class PlatformWhite : Platform
+{
+	Default
+	{
+		//$Title Platform (White)
+	}
+}
+
+class PlatformLiftStatic : Platform
+{
+	Default
+	{
+		//$Title Platform (Non-solid)
+		-SOLID
+		+NOINTERACTION
+	}
+}
+
+class PlatformLiftStaticWhite : PlatformLiftStatic
+{
+	Default
+	{
+		//$Title Platform (White, Non-solid)
+	}
+
+}
+
+class PlatformLift : Actor
+{
+	Actor glass;
+	int user_moveheight, delay, maxheight;
+	double user_speed;
+	bool liftstate;
+
+	Property LiftHeight:user_moveheight;
+	Property LiftDelay:delay;
+	Property LiftSpeed:user_speed;
+
+	Default
+	{
+		//$Category Portal/Platforms
+		//$Title Platform (Animated)
+		//$Sprite "UNKNA0"
+		+NOGRAVITY
+		+DONTTHRUST
+		+SOLID
+		+MOVEWITHSECTOR
+		+CANPASS
+		Height 4;
+		Radius 32;
+		Speed 16;
+		PlatformLift.LiftHeight 64;
+		PlatformLift.LiftDelay 35;
+		PlatformLift.Liftspeed 16;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN # 1;
+		Raise:
+			UNKN A 0 DoMove();
+			UNKN B 0 DoMove();
+			UNKN C 0 DoMove();
+			UNKN D 0 DoMove();
+			UNKN E 0 DoMove();
+			UNKN F 0 DoMove();
+			UNKN G 0 DoMove();
+			UNKN H 0 DoMove();
+			UNKN I 0 DoMove();
+			UNKN J 0 DoMove();
+			UNKN K 0 DoMove();
+			UNKN L 0 DoMove();
+			UNKN M 0 DoMove();
+			UNKN N 0 DoMove();
+			UNKN O 0 DoMove();
+			UNKN P 0 DoMove();
+			UNKN Q 0 DoMove();
+			UNKN R 0 DoMove();
+			UNKN S 0 DoMove();
+			UNKN T 0 DoMove();
+			UNKN U 0 DoMove();
+			UNKN V 0 DoMove();
+			UNKN W 0 DoMove();
+			UNKN X 0 DoMove();
+			UNKN Y 0 DoMove();
+			UNKN Z 0 DoMove();
+			Goto Delay;
+		Lower:
+			UNKN Z 0 DoMove();
+			UNKN Y 0 DoMove();
+			UNKN X 0 DoMove();
+			UNKN W 0 DoMove();
+			UNKN V 0 DoMove();
+			UNKN U 0 DoMove();
+			UNKN T 0 DoMove();
+			UNKN S 0 DoMove();
+			UNKN R 0 DoMove();
+			UNKN Q 0 DoMove();
+			UNKN P 0 DoMove();
+			UNKN O 0 DoMove();
+			UNKN N 0 DoMove();
+			UNKN M 0 DoMove();
+			UNKN L 0 DoMove();
+			UNKN K 0 DoMove();
+			UNKN J 0 DoMove();
+			UNKN I 0 DoMove();
+			UNKN H 0 DoMove();
+			UNKN G 0 DoMove();
+			UNKN F 0 DoMove();
+			UNKN E 0 DoMove();
+			UNKN D 0 DoMove();
+			UNKN C 0 DoMove();
+			UNKN B 0 DoMove();
+			UNKN A 0 DoMove();
+			Goto Delay;
+		Delay:
+			UNKN # 1 A_SetTics(delay);
+			UNKN # 0 {
+				if (liftstate) { return ResolveState("Lower") + frame; }
+				return ResolveState("Raise");
+			} 
+			Loop;
+	}
+
+	override void PostBeginPlay()
+	{
+		while (!glass) { glass = Spawn("PlatformGlass", pos); }
+		glass.master = self;
+		glass.alpha = 0.25;
+
+		frame = 0;
+
+		maxheight = user_moveheight;
+		speed = user_speed;
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (glass) { glass.frame = frame; }
+	}
+
+	void DoMove()
+	{
+		if (!speed) { SetStateLabel("Spawn"); return; }
+
+		A_SetTics(int(32 / max(Speed, 1)));
+
+		if (!liftstate && int(user_moveheight / 4) == frame)
+		{
+			liftstate = !liftstate;
+			user_moveheight = 0;
+			SetStateLabel("Delay");
+		}
+		else if (user_moveheight == 0 && frame == 0)
+		{
+			liftstate = !liftstate;
+			user_moveheight = maxheight;
+			SetStateLabel("Delay");
+		}
+		else if (liftstate && frame > 0)
+		{
+			if (frame > int(maxheight / 4))
+			{
+				A_SetTics(0);
+			}
+		}
+
+		A_SetSize(-1, frame * 4, false);
+	}
+}
+
+class PlatformGlass : Actor
+{
+	Default
+	{
+		+NOINTERACTION
+		+NOGRAVITY
+		+DONTTHRUST
+		+MOVEWITHSECTOR
+		RenderStyle "Translucent";
+		Height 1;
+		Radius 32;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN # 1;
+			Loop;
+	}
+
+	override void PostBeginPlay()
+	{
+		frame = 0;
+
+		if (master) { scale = master.scale; }
+	}
+}
+
+class Skybox : Actor
+{
+	Default
+	{
+		//$Category Portal/Skyboxes
+		//$Title Skybox Sphere (Blue)
+		+NOGRAVITY
+		Height 32;
+		Radius 32;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class SkyboxSky : Actor
+{
+	Default
+	{
+		//$Category Portal/Skyboxes
+		//$Title Skybox Sphere (Sky)
+		+NOGRAVITY
+		Height 32;
+		Radius 32;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class Launcher : Actor
+{
+	double dist;
+
+	Default
+	{
+		//$Category Portal/Objects
+		+SPECIAL
+		+FLATSPRITE
+		Height 1;
+		Radius 16;
+		Speed 12.0;
+		Scale 1.8;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A 5 CheckActivators();
+			Loop;
+	}
+
+	override void PostBeginPlay()
+	{
+		FindTarget();
+		A_Face(target);
+
+		Super.PostBeginPlay();
+	}
+
+	override void Touch(Actor toucher)
+	{
+		if (!toucher.bShootable || !toucher.bSolid || (toucher.master && toucher.master is "PlayerPawn")) { return; }
+
+		Speed = max(Default.Speed * dist / 512.0, Default.Speed);
+
+		// Calculate trajectory here
+		bool success;
+		Vector3 trajectory;
+		double g;
+
+		Vector3 offset = (target.pos - toucher.pos);
+		Vector2 midpoint = (toucher.pos.x + offset.x / 2, toucher.pos.y + offset.y / 2);
+
+		double h = GetZAt(midpoint.x, midpoint.y, 0, GZF_ABSOLUTEPOS | GZF_CEILING) - toucher.height - 16.0;
+		double h1 = GetZAt(toucher.pos.x, toucher.pos.y, 0, GZF_ABSOLUTEPOS | GZF_CEILING) - toucher.height - 16.0;
+		double h2 = GetZAt(target.pos.x, target.pos.y, 0, GZF_ABSOLUTEPOS | GZF_CEILING) - toucher.height - 16.0;
+
+		h = min(h, min(h1, h2));
+
+		if (h - pos.z < 0) { h = max(0, target.pos.z - pos.z); } // Fudge if wierdness happens (launchers on 3d floors can be weird)
+
+		[success, trajectory, g] = GetArc(toucher.pos, Speed, target.pos, h);
+
+		if (success)
+		{
+			A_PlaySound("spring/launch", CHAN_AUTO, 1.0);
+			if (!toucher.player) { toucher.master = self; }
+			toucher.vel = (trajectory.xy * (toucher.player ? 1.25 : 1.0), trajectory.z);
+			toucher.gravity = g;
+		}
+	}
+
+	void CheckActivators()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
+		Actor mo;
+
+		while (mo = Actor(it.Next(false)))
+		{
+			if (mo != self && Distance3D(mo) - mo.radius <= Radius) { Touch(mo); }
+		}
+	}
+
+	void FindTarget()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_USER + 2);
+		Actor mo;
+
+		while (mo = Actor(it.Next(false)))
+		{
+			if (mo.tid == tid)
+			{
+				target = mo;
+				dist = Distance2D(mo); 
+				return;
+			}
+		}
+	}
+
+	// Modified from https://github.com/forrestthewoods/lib_fts/blob/master/code/fts_ballistic_trajectory.cs
+	bool, Vector3, double GetArc(Vector3 proj_pos, double lateral_speed, Vector3 target_pos, double max_height)
+	{
+		Vector3 fire_velocity = (0, 0, 0);
+		double gravity = 0.0;
+
+		if (developer && (proj_pos == target_pos || lateral_speed <= 0 || max_height < proj_pos.z))
+		{
+			console.printf("\cgERROR: \clPassed invalid data to ballistic arc calculation!");
+			return false, (0, 0, 0), 0.0;
+		}
+
+		Vector3 diff = target_pos - proj_pos;
+		double lateralDist = diff.xy.length();
+
+		double time;
+		if (!lateralDist) { time = diff.z / lateral_Speed; }
+		else { time = lateralDist / lateral_speed; }
+
+		if (!time) { time = 35.0; }
+
+		fire_velocity = (diff.xy.Unit(), 0) * lateral_speed;
+
+		// System of equations. Hit max_height at t=.5*time. Hit target at t=time.
+		//
+		// peak = y0 + vertical_speed*halfTime + .5*gravity*halfTime^2
+		// end = y0 + vertical_speed*time + .5*gravity*time^s
+		// Wolfram Alpha: solve b = a + .5*v*t + .5*g*(.5*t)^2, c = a + vt + .5*g*t^2 for g, v
+		double a = proj_pos.z;       // initial
+		double b = max_height;       // peak
+		double c = target_pos.z;     // final
+
+		gravity = -4 * (a - 2 * b + c) / (time * time);
+		fire_velocity.z = -(3 * a - 4 * b + c) / time;
+
+		return true, fire_velocity, gravity;
+	}
+}
+
+class LightFixture : Actor
+{
+	AlphaLight light;
+	Actor panes;
+	double user_lightlevel;
+
+	Default
+	{
+		+NOGRAVITY
+		+NOINTERACTION
+		Height 2;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (!user_lightlevel) { user_lightlevel = 15.0; }
+
+		light = AlphaLight(Spawn("AlphaLight", pos - (0, 0, 4)));
+		if (light)
+		{
+			light.master = self;
+			light.bAttenuate = true;
+			light.maxradius = 256.0;
+			light.clr = color("168 168 192");
+			light.alpha = bStandstill ? 0.0 : user_lightlevel;
+			light.scale.y = 1 / user_lightlevel;
+		}
+
+		panes = Spawn("LightFixturePanes", pos);
+		if (panes)
+		{
+			panes.master = light;
+			panes.roll = roll;
+			panes.pitch = pitch;
+			panes.angle = angle;
+		}
+	}
+
+	override void Tick()
+	{
+		if (light)
+		{
+			light.alpha = bStandstill ? 0.0 : user_lightlevel;
+		}
+
+		Super.Tick();
+	}
+
+	override void OnDestroy()
+	{
+		if (light) { light.Destroy(); }
+		if (panes) { panes.Destroy(); }
+	}
+}
+
+class LightFixturePanes : Actor
+{
+	Default
+	{
+		+NOGRAVITY
+		+NOINTERACTION
+		+BRIGHT
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void Tick()
+	{
+		if (master)
+		{
+			bBright = master.alpha > 0;
+		}
+
+		Super.Tick();
+	}
+
+}
+
+class FlatText : Actor
+{
+	int value;
+	Vector3 offset;
+	String user_text;
+	
+
+	Default
+	{
+		//$Category Portal/Special Objects
+		//$Title Floating Text
+		//$Sprite UNKNA0
+		Radius 0;
+		Height 0;
+		Scale 0.125;
+		+MASKROTATION
+		+NOGRAVITY
+		+NOINTERACTION
+		+FLATSPRITE
+		+BRIGHT
+		Renderstyle 'AddShaded';
+		Alpha 1.0;
+		StencilColor "000000";
+		VisibleAngles -90, 90;
+		VisiblePitch 0, 180;
+		RenderRadius 64;
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A -1;
+			Stop;
+		Glyphs:
+			F033 A 0;
+			F034 A 0;
+			F035 A 0;
+			F036 A 0;
+			F037 A 0;
+			F038 A 0;
+			F039 A 0;
+			F040 A 0;
+			F041 A 0;
+			F042 A 0;
+			F043 A 0;
+			F044 A 0;
+			F045 A 0;
+			F046 A 0;
+			F047 A 0;
+			F048 A 0;
+			F049 A 0;
+			F050 A 0;
+			F051 A 0;
+			F052 A 0;
+			F053 A 0;
+			F054 A 0;
+			F055 A 0;
+			F056 A 0;
+			F057 A 0;
+			F058 A 0;
+			F059 A 0;
+			F060 A 0;
+			F061 A 0;
+			F062 A 0;
+			F063 A 0;
+			F064 A 0;
+			F065 A 0;
+			F066 A 0;
+			F067 A 0;
+			F068 A 0;
+			F069 A 0;
+			F070 A 0;
+			F071 A 0;
+			F072 A 0;
+			F073 A 0;
+			F074 A 0;
+			F075 A 0;
+			F076 A 0;
+			F077 A 0;
+			F078 A 0;
+			F079 A 0;
+			F080 A 0;
+			F081 A 0;
+			F082 A 0;
+			F083 A 0;
+			F084 A 0;
+			F085 A 0;
+			F086 A 0;
+			F087 A 0;
+			F088 A 0;
+			F089 A 0;
+			F090 A 0;
+			F091 A 0;
+			F092 A 0;
+			F093 A 0;
+			F094 A 0;
+			F095 A 0;
+			F096 A 0;
+			F097 A 0;
+			F098 A 0;
+			F099 A 0;
+			F100 A 0;
+			F101 A 0;
+			F102 A 0;
+			F103 A 0;
+			F104 A 0;
+			F105 A 0;
+			F106 A 0;
+			F107 A 0;
+			F108 A 0;
+			F109 A 0;
+			F110 A 0;
+			F111 A 0;
+			F112 A 0;
+			F113 A 0;
+			F114 A 0;
+			F115 A 0;
+			F116 A 0;
+			F117 A 0;
+			F118 A 0;
+			F119 A 0;
+			F120 A 0;
+			F121 A 0;
+			F122 A 0;
+			F123 A 0;
+			F124 A 0;
+			F125 A 0;
+			F126 A 0;
+			F127 A 0;
+			F128 A 0;
+			F129 A 0;
+			F130 A 0;
+			F131 A 0;
+			F132 A 0;
+			F133 A 0;
+			F134 A 0;
+			F135 A 0;
+			F136 A 0;
+			F137 A 0;
+			F138 A 0;
+			F139 A 0;
+			F140 A 0;
+			F141 A 0;
+			F142 A 0;
+			F143 A 0;
+			F144 A 0;
+			F145 A 0;
+			F146 A 0;
+			F147 A 0;
+			F148 A 0;
+			F149 A 0;
+			F150 A 0;
+			F151 A 0;
+			F152 A 0;
+			F153 A 0;
+			F154 A 0;
+			F155 A 0;
+			F156 A 0;
+			F157 A 0;
+			F158 A 0;
+			F159 A 0;
+			F160 A 0;
+			F161 A 0;
+			F162 A 0;
+			F163 A 0;
+			F164 A 0;
+			F165 A 0;
+			F166 A 0;
+			F167 A 0;
+			F168 A 0;
+			F169 A 0;
+			F170 A 0;
+			F171 A 0;
+			F172 A 0;
+			F173 A 0;
+			F174 A 0;
+			F175 A 0;
+			F176 A 0;
+			F177 A 0;
+			F178 A 0;
+			F179 A 0;
+			F180 A 0;
+			F181 A 0;
+			F182 A 0;
+			F183 A 0;
+			F184 A 0;
+			F185 A 0;
+			F186 A 0;
+			F187 A 0;
+			F188 A 0;
+			F189 A 0;
+			F190 A 0;
+			F191 A 0;
+			F192 A 0;
+			F193 A 0;
+			F194 A 0;
+			F195 A 0;
+			F196 A 0;
+			F197 A 0;
+			F198 A 0;
+			F199 A 0;
+			F200 A 0;
+			F201 A 0;
+			F202 A 0;
+			F203 A 0;
+			F204 A 0;
+			F205 A 0;
+			F206 A 0;
+			F207 A 0;
+			F208 A 0;
+			F209 A 0;
+			F210 A 0;
+			F211 A 0;
+			F212 A 0;
+			F213 A 0;
+			F214 A 0;
+			F215 A 0;
+			F216 A 0;
+			F217 A 0;
+			F218 A 0;
+			F219 A 0;
+			F220 A 0;
+			F221 A 0;
+			F222 A 0;
+			F223 A 0;
+			F224 A 0;
+			F225 A 0;
+			F226 A 0;
+			F227 A 0;
+			F228 A 0;
+			F229 A 0;
+			F230 A 0;
+			F231 A 0;
+			F232 A 0;
+			F233 A 0;
+			F234 A 0;
+			F235 A 0;
+			F236 A 0;
+			F237 A 0;
+			F238 A 0;
+			F239 A 0;
+			F240 A 0;
+			F241 A 0;
+			F242 A 0;
+			F243 A 0;
+			F244 A 0;
+			F245 A 0;
+			F246 A 0;
+			F247 A 0;
+			F248 A 0;
+			F249 A 0;
+			F250 A 0;
+			F251 A 0;
+			F252 A 0;
+			F253 A 0;
+			F254 A 0;
+			F255 A 0;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			SpawnPoint = pos;
+			offset = pos - master.pos;
+			offset = (RotateVector(offset.xy, -master.angle), offset.z);
+		}
+
+		if (user_text)
+		{
+			FlatText.SpawnString(self, user_text, fillcolor);
+		}
+
+		Super.PostBeginPlay();
+	}
+
+	override void Tick()
+	{
+		if (IsFrozen()) { return; }
+
+		int newsprite = GetSpriteIndex(String.Format("F%03i", value));
+		if (newsprite && sprite != newsprite) { sprite = newsprite; }
+
+//		Super.Tick();
+
+		if (!master && !user_text) { Destroy(); }
+
+		if (master) { alpha = master.alpha; }
+	}
+
+	static void SpawnString(Actor master, String input, Color clr = 0x000000, double xoffset = 2.0, double yoffset = 0, double zoffset = 0, double scale = 1.0)
+	{
+		if (!master) { return; }
+
+		int digits = input.Length();
+
+		double position = 0;
+		double width = 16 * 0.125 * master.scale.x * scale;
+		double height = 33 * 0.125 * master.scale.y * scale;
+
+		for (int i = 0; i < digits; i++)
+		{
+			int code = input.ByteAt(0);
+
+			if (code == 92)
+			{
+				int next = input.ByteAt(1);
+
+				switch(next)
+				{
+					case 67: //c
+					case 99: //C
+						digits--;
+						input.Remove(0, 1);
+						break;
+					case 80: //p
+					case 112: //P
+						String nm = CVar.GetCVar("name", players[consoleplayer]).GetString();
+						digits += nm.Length();
+						input = input.left(2) .. nm .. input.mid(2);
+						break;
+					case 110: //\n
+					case 114: //\r
+						zoffset -= height * cos(master.pitch);
+						xoffset -= 0.75 * sin(master.pitch);
+						position = 0;
+						break;
+					default:
+						break;
+				}
+
+				digits--;
+				input.Remove(0, 1);
+			}
+			else
+			{
+				bool sp;
+				Actor mo;
+	
+				[sp, mo] = master.A_SpawnItemEx("FlatText", xoffset * master.scale.x, yoffset * master.scale.x + position, zoffset, flags: SXF_NOCHECKPOSITION);
+				if (sp)
+				{
+					FlatText(mo).value = code;
+					mo.master = master;
+					mo.scale *= master.scale.x * scale;
+					mo.pitch = master.pitch - 90;
+					mo.roll = master.roll;
+					mo.SetShade(clr);
+				}
+
+				position -= width;
+			}
+
+			input.Remove(0, 1);
+		}
+	}
+
+}
+
+class Silhouette : Zombieman
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Silhouette
+		SeeSound "silence";
+		AttackSound "silence";
+		PainSound "silence";
+		DeathSound "silence";
+		ActiveSound "silence";
+		Speed 3;
+		Renderstyle "Stencil";
+		StencilColor "000000";
+		Alpha 0.3;
+	}
+
+	States
+	{
+		Spawn:
+			POSS AABBCCDD 4 A_Wander;
+			Loop;
+	}
+
+	override void Tick()
+	{
+		if (Distance2D(players[consoleplayer].mo) < 768) { alpha = 0.0; }
+		else
+		{
+			alpha = Default.alpha;
+
+			Super.Tick();
+		}
+	}
+}

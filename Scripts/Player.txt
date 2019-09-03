@@ -1,0 +1,548 @@
+class PortalPlayer : PlayerPawn
+{
+	Actor DragTarget, CurrentPortal, reflectioncamera, sparks;
+	Weapon LastWeapon;
+	bool useheld, party;
+	int waterstate, stepdelay;
+	Vector3 dragvel, oldvel;
+	Sector activesector;
+	PortalFindHitPointTracer actortracer;
+	CarryPointTracer carrytracer;
+	Line lastline;
+	TextureID AimTexture;
+
+	Default
+	{
+		Speed 0.5;
+		Health 100;
+		Radius 16;
+		Height 56;
+		Mass 100;
+		PainChance 255;
+		Gravity 0.45;
+		MaxStepHeight 20;
+		Player.JumpZ 3.5;
+		Player.ViewBob 0.3;
+
+		Player.DisplayName "Test Subject";
+		Player.CrouchSprite "PLYC";
+		Player.WeaponSlot 1, "PortalGun", "DualPortalGun";
+		
+		Player.ColorRange 112, 127;
+		Player.Colorset 0, "Green", 0x70, 0x7F,  0x72;
+		Player.Colorset 1, "Gray", 0x60, 0x6F,  0x62;
+		Player.Colorset 2, "Brown", 0x40, 0x4F,  0x42;
+		Player.Colorset 3, "Red", 0x20, 0x2F,  0x22;
+		Player.Colorset 4, "Light Gray", 0x58, 0x67,  0x5A;
+		Player.Colorset 5, "Light Brown", 0x38, 0x47,  0x3A;
+		Player.Colorset 6, "Light Red",	0xB0, 0xBF,  0xB2;
+		Player.Colorset 7, "Light Blue", 0xC0, 0xCF,  0xC2;
+	}
+	
+
+	States
+	{
+		Spawn:
+			PLAY A -1;
+			Loop;
+		See:
+			PLAY ABCD 4;
+			Loop;
+		Missile:
+			PLAY E 12;
+			Goto Spawn;
+		Melee:
+			PLAY F 6 BRIGHT;
+			Goto Missile;
+		Pain:
+			PLAY G 4;
+			PLAY G 4 A_Pain;
+			Goto Spawn;
+		Death:
+			PLAY H 10;
+			PLAY I 10 A_PlayerScream;
+			PLAY J 10 A_NoBlocking;
+			PLAY KLM 10;
+			PLAY N -1;
+			Stop;
+		XDeath:
+			PLAY O 5;
+			PLAY P 5 A_XScream;
+			PLAY Q 5 A_NoBlocking;
+			PLAY RSTUV 5;
+			PLAY W -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		actortracer = new("PortalFindHitPointTracer");
+		carrytracer = new("CarryPointTracer");
+
+		Super.PostBeginPlay();
+
+		While (!reflectioncamera) { reflectioncamera = Spawn("MirrorCamera"); }
+
+		if (reflectioncamera)
+		{
+			TexMan.SetCameraToTexture(reflectioncamera, "PLAYVIEW", 90.0);
+			reflectioncamera.master = self;
+		}
+	}
+
+	override void Tick()
+	{
+		if (player)
+		{
+			DoInteractions();
+			DoFootsteps();
+
+			Line current = CurrentLine();
+			if (current)
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					Side HitSide = current.sidedef[i];
+
+					if (HitSide)
+					{
+						TextureID tex = HitSide.GetTexture(Side.mid);
+
+						if (tex && TexMan.GetName(tex) ~== "EMANGRIL")
+						{
+							if (HitSide.flags & Side.WALLF_WRAP_MIDTEX || current.flags & Line.ML_WRAP_MIDTEX) { ClearPortals(); } // If it's floor-to-ceiling, skip checks
+							else
+							{
+								double yoffset = HitSide.GetTextureYOffset(1);
+								Vector2 size = TexMan.GetScaledSize(tex);
+
+								if (current.flags & Line.ML_DONTPEGBOTTOM) // Lower unpegged
+								{
+									if (pos.z > floorz + yoffset - 24.0 && pos.z + height < floorz + yoffset + size.y + 24.0)
+									{
+										ClearPortals();
+									}
+								}
+								else
+								{
+									if (pos.z > ceilingz + yoffset + 24.0 && pos.z + height < ceilingz + yoffset - size.y - 24.0)
+									{
+										ClearPortals();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else { lastline = null; }
+
+			// One-time water entry/exit splashes
+			if (waterlevel && !waterstate) { A_PlaySound("world/water/enter", CHAN_AUTO, 0.5, false, ATTN_NORM, false); }
+			else if (!waterlevel && waterstate) { A_PlaySound("world/water/exit", CHAN_AUTO, 0.5, false, ATTN_NORM, false); }
+
+			// Underwater effect
+			//  Note:  Should just be a local sound, but local sounds apparently can't be stopped with A_StopSound, so
+			//  world/underwater sound is set up with a 8-16 unit log attenuation in SNDINFO to get a similar effect...
+			if (waterlevel >= 3 && waterstate < 3) { A_PlaySound("world/underwater", CHAN_5 | CHAN_NOPAUSE | CHAN_NOSTOP, 0.25, true, ATTN_NORM); }
+			else if (waterlevel < 3 && waterstate >= 3) { A_StopSound(CHAN_5); }
+
+			waterstate = waterlevel;
+
+			if (!CurrentPortal || Distance3D(CurrentPortal) > 32.0)
+			{
+				CurrentPortal = null;
+				A_SetSize(Default.Radius, Default.Height * player.crouchfactor, true); // Make sure to reset the size (could have been left small by a PortalSpot in some cases)
+			}
+
+			if (!party && (player.cheats & CF_GODMODE2 || player.cheats & CF_GODMODE) && !developer) // Just for fun...
+			{
+				A_PlaySound("world/party", CHAN_AUTO);
+				
+				sparks = Spawn("ConfettiSpawner", pos + (0, 0, 64));
+				party = true;
+
+				if (sparks)
+				{
+					sparks.pitch = 90;
+					sparks.A_SetTics(140);
+				}
+			}
+
+			if (sparks)
+			{
+				sparks.SetOrigin(pos + (Random(-24, 24), Random(-24, 24), 64), false);
+				sparks.angle = angle;
+			}
+
+			if (player.health > 0 && player.health < GetMaxHealth(true)) { player.health++; player.mo.health = player.health; }
+
+			double airspeed = vel.length();
+			double volume = clamp((airspeed - 10) / 35.0, 0.0, 1.0);
+			A_PlaySound("world/whoosh", CHAN_7 | CHAN_NOSTOP, volume);
+			A_SoundVolume(CHAN_7, volume);
+		}
+
+		// Normalize pitch/roll in case we ended up inverted or overflowed
+		pitch = Normalize180(pitch);
+		roll = Normalize180(roll);
+
+		// Restore roll to neutral automatically over time
+		if (roll > 0) { roll = max(roll - 5, 0); }
+		else if (roll < 0) { roll = min(roll + 5, 0); }
+
+		if (pos.z == floorz) { gravity = Default.gravity; }
+
+		Super.Tick();
+	}
+
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		if (DragTarget && other == DragTarget) { return false; }
+
+//		if (Distance2D(other) > radius / 4 + other.radius) { console.printf("no"); return false; }
+
+		return true;
+	}
+
+	void ClearPortals()
+	{
+		PortalGun gun = PortalGun(FindInventory("PortalGun", true));
+	
+		if (gun)
+		{
+			Line current = CurrentLine();
+
+			bool fizzle = false;
+
+			if (gun.portalA) { PortalSpot(gun.portalA).DoDestroy(); gun.portalA.A_PlaySound("portal/fizzle", CHAN_AUTO); fizzle = true; }
+			if (gun.portalB) { PortalSpot(gun.portalB).DoDestroy(); gun.portalB.A_PlaySound("portal/fizzle", CHAN_AUTO); fizzle = true; }
+
+			if (fizzle)
+			{
+				A_PlaySound("portalgun/fizzle", CHAN_AUTO);
+
+				if (gun == player.ReadyWeapon)
+				{
+					let psp = player.GetPSprite(PSP_WEAPON);					
+					psp.SetState(gun.FindState("Shake"));
+				}
+			}
+
+			lastline = current;
+		}
+	}
+
+	void DropCarried()
+	{
+/*
+		if (DragTarget.CanCollideWith(self, true))
+		{
+			A_PlaySound("*usefail", CHAN_AUTO);
+			return;
+		}
+*/
+
+		A_PlaySound("object/drop", CHAN_AUTO);
+
+		DragTarget.angle = angle;
+		DragTarget.vel = vel + dragvel; // + (RotateVector((1, 0), angle), -1);
+		DragTarget.bShootable = DragTarget.Default.bShootable;
+		DragTarget.bNoGravity = DragTarget.Default.bNoGravity;
+		DragTarget.master = null;
+		DragTarget = null;
+	}
+
+	void DoInteractions()
+	{
+		Actor AimActor;
+		Actor portalsource;
+
+		DoTrace(self, angle, 1024, pitch, 0, player.viewheight, actortracer);
+
+		AimActor = actortracer.Results.HitActor;
+
+		if (AimActor && AimActor is "PlayerPawn" || AimActor is "PortalSpot") { AimActor = null; }
+
+		if (!AimActor && currentportal && PortalSpot(currentportal).pair)
+		{
+			double dist = Distance2D(currentportal);
+
+			if (dist < UseRange && abs(deltaangle(angle, AngleTo(currentportal))) < 75)
+			{
+				portalsource = PortalSpot(currentportal).pair;
+				actortracer.nogrates = true;
+				DoTrace(portalsource, angle - currentportal.angle + portalsource.angle + 180, UseRange * 1.5 - dist, pitch, 0, (player.viewheight - 32.0) * sin(portalsource.pitch), actortracer);
+			}
+		}
+
+		AimActor = actortracer.Results.HitActor;
+		AimTexture = actortracer.Results.HitTexture;
+
+		if (AimTexture)
+		{
+				if (Texman.GetName(AimTexture).Left(5) ~== "GLASS")
+				{
+					reflectioncamera.SetOrigin(actortracer.Results.HitPos - AngleToVector(AngleTo(reflectioncamera), 0.5), false);
+					MirrorCamera(reflectioncamera).linedef = actortracer.Results.HitLine;
+				}
+		}
+
+		if (player.usedown)
+		{
+			if (!useheld)
+			{
+				if (AimActor) { AimActor.Used(self); }
+
+				if (!DragTarget)
+				{
+					if (
+						AimActor && 
+						(Distance2D(AimActor) < UseRange || portalsource) && 
+						AimActor.bPushable
+					)
+					{
+						A_PlaySound("object/pickup", CHAN_AUTO);
+
+						DragTarget = AimActor;
+						DragTarget.master = self;
+						DragTarget.bNoGravity = true;
+					}
+				}
+				else
+				{
+					DropCarried();
+				}
+				useheld = true;
+			}
+		}
+		else
+		{
+			useheld = false;
+		}
+
+		if (DragTarget)
+		{
+			dragvel = (player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90), player.cmd.pitch) / (256 * 100 / DragTarget.Mass);
+
+			double range = max(UseRange, (radius + DragTarget.radius) * 1.5);
+
+			Vector3 tracedir = (cos(angle) * cos(max(pitch, -20)), sin(angle) * cos(max(pitch, -20)), -sin(max(pitch, -20)));
+			carrytracer.Trace(pos + (0, 0, player.viewheight / 2), CurSector, tracedir, range, 0 );
+
+			Vector3 dragtargetpos;
+
+			if (carrytracer.Results.HitType)
+			{
+				dragtargetpos = carrytracer.Results.HitPos - RotateVector((-DragTarget.Radius * 1.4, 0), angle + 180) + (0, 0, -12);
+			}
+			else
+			{
+				dragtargetpos = pos + RotateVector((cos(max(pitch, -20)) * range - DragTarget.Radius * 1.4, 0), angle) + (0, 0, player.viewheight - sin(pitch) * range - DragTarget.Radius * 1.4);
+			}
+
+			let cubetarget = Cube(DragTarget);
+			if (cubetarget) { dragtargetpos.z = max(dragtargetpos.z, cubetarget.floorz + cubetarget.zoffset); }
+
+			if (Distance3D(DragTarget) > range * 1.5)
+			{
+				DragTarget.ClearInterpolation();
+				DragTarget.SetOrigin(dragtargetpos, false);
+			}
+			else
+			{
+				DragTarget.SetOrigin(dragtargetpos, true);
+			}
+
+			DragTarget.angle = angle;
+		}
+	}
+
+	void DoFootSteps()
+	{
+		double speedxy = abs(vel.xy.length());
+
+		if ((!bOnMobj && !waterlevel && pos.z > floorz) || waterlevel >= 3) { stepdelay = 0; }
+		else if (stepdelay > 0)
+		{
+			int currentdelay = int(clamp(35.0 - (3 * speedxy), 15, 35));
+
+			if (stepdelay > currentdelay) { stepdelay = currentdelay / 2; }
+			stepdelay = max(stepdelay - 1, 0);
+		}
+		else
+		{
+			double lookspeed = abs((player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90)).length()) / 300;
+			double measure = int(speedxy) ? int(speedxy) : int(lookspeed);
+
+			if (measure && (bOnMobj || pos.z <= floorz || (waterlevel > 0 && waterlevel < 3)))
+			{
+				String snd = GetFlatSound(TextureName(floorpic));
+
+				double volume = clamp(speedxy / 80, 0, 4.0);
+
+				if (int(oldvel.xy.length()) == 0) { stepdelay = 15; }
+				else { stepdelay = int(clamp(35.0 - (3 * speedxy), 15, 35)); }
+
+				if (snd != "") { A_PlaySound(snd, CHAN_AUTO, volume); }
+			}
+		}
+
+		oldvel = vel;
+	}
+
+	String TextureName(TextureID input)
+	{
+		if (!input) { return ""; }
+
+		// See what texture we are checking
+		String texname = TexMan.GetName(input);
+
+		if (texname.IndexOf(".") >= 0) // If it's a long filename
+		{
+			// Strip the texture name down to only the filename (basically the old-style texture name)
+			int start = texname.RightIndexOf("/") + 1;
+			texname = texname.Mid(start, texname.RightIndexOf(".") - start);
+		}
+
+		return texname;
+	}
+
+	String GetFlatSound(Name input)
+	{
+		if (waterlevel == 1) { return "footsteps/puddle"; }
+		else if (waterlevel == 2) { return "footsteps/wade"; }
+
+		Switch(input)
+		{
+			case 'WALL1x1':
+			case 'WALL2x1':
+			case 'WALL2x2':
+			case 'WALL4x4':
+			case 'LITB1x1':
+			case 'LITB2x1':
+			case 'LITB2x2':
+			case 'LITBW1x1':
+			case 'LITBW2x1':
+				return "footsteps/blacktile";
+				break;
+			case 'PORT1x1':
+			case 'PORT2x1':
+			case 'PORT2x2':
+			case 'PORT4x1':
+			case 'PORT4x4':
+			case 'LITW1x1':
+			case 'LITW2x1':
+			case 'LITW2x2':
+			case 'LITWW1x1':
+			case 'LITWW2x1':
+				return "footsteps/whitetile";
+				break;
+			case 'GRATE':
+				return "footsteps/grate";
+			default:
+				return "footsteps/default";
+				break;
+		}
+
+		return "";
+	}
+
+	void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, PortalFindHitPointTracer thistracer)
+	{
+		if (!origin) { origin = self; }
+
+		thistracer.skipspecies = origin.species;
+		thistracer.skipactor = origin;
+		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
+		thistracer.Trace(origin.pos + (0, 0, zoffset), origin.CurSector, tracedir, dist, 0);
+	}
+
+	Line CurrentLine()
+	{
+		// Find the line that this actor's centerpoint is closest to
+		Line linedef;
+		double dist;
+
+		BlockLinesIterator it = BlockLinesIterator.Create(self);
+
+		While (it.Next())
+		{
+			Line current = it.curline;
+
+			// Discard lines that definitely don't cross the actor's center point
+			if (
+				(current.v1.p.x > pos.x + radius && current.v2.p.x > pos.x + radius) ||
+				(current.v1.p.x < pos.x - radius && current.v2.p.x < pos.x - radius) ||
+				(current.v1.p.y > pos.y + radius && current.v2.p.y > pos.y + radius) ||
+				(current.v1.p.y < pos.y - radius && current.v2.p.y < pos.y - radius) 
+			) { continue; }
+
+			// Find the line that is closest based on proximity to end vertices
+			double curdist = (current.v1.p - pos.xy + current.v2.p - pos.xy).Length();
+			if (!linedef || curdist <= dist)
+			{
+				linedef = current;
+				dist = curdist;
+			}
+		}
+
+		return linedef;
+	}
+}
+
+class UseMarker : Actor
+{
+	Default
+	{
+		Radius 1;
+		Height 1;
+		+NOINTERACTION
+	}
+
+	States
+	{
+		Spawn:
+			AMRK A 35;
+			Stop;
+	}
+}
+
+class MirrorCamera : SecurityCamera
+{
+	Line linedef;
+	double lineangle;
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (!master || !master.player) { Destroy(); }
+
+		if (linedef)
+		{
+			if (!linedef.delta.x) { lineangle = 0; }
+			else if (!linedef.delta.y) { lineangle = 90; }
+			else { lineangle = (atan(linedef.delta.y / linedef.delta.x) + 270) % 360; }
+
+			if (abs(deltaangle(lineangle, master.AngleTo(self))) > 90) { lineangle += 180; }
+		}
+
+		if (master.player && master.player.camera)
+		{
+			angle = 180 - AngleTo(master);
+			pitch = master.player.camera.pitch;
+			roll = master.player.camera.roll;
+		}
+	}
+
+	double PitchTo(Actor mo, Actor source = null)
+	{
+		if (source == null) { source = self; }
+
+		double distxy = max(source.Distance2D(mo), 1);
+		double distz = source.pos.z - mo.pos.z;
+
+		return atan(distz / distxy);
+	}
+}

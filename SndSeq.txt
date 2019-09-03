@@ -1,0 +1,37 @@
+:PortalDoor
+	attenuation	none
+	volume 		32
+	playuntildone	door/unlock
+	play		door/open
+	nostopcutoff
+end
+
+:Platform
+	playuntildone   platform/start
+	playrepeat	platform/loop
+	stopsound	platform/stop
+end
+
+:LaserPlatform
+	playuntildone   platform2/start
+	playrepeat	platform2/loop
+	stopsound	platform2/stop
+end
+
+:SpinningPanel
+	playuntildone   platform/start
+	playrepeat	platform/loop
+	stopsound	platform/stop
+	door 1
+end
+
+:FizzlerUp
+	volume 16
+	playuntildone   fizzler/start
+	playrepeat	fizzler/loop
+end
+
+:FizzlerDown
+	volume 16
+	playuntildone	fizzler/stop
+end

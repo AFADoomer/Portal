@@ -1,0 +1,760 @@
+Model Cube
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "cube.md3"
+
+	Offset 0.0 0.0 24.0;
+	FrameIndex UNKN A 0 0
+
+	Offset 0.0 0.0 24.0;
+	FrameIndex UNKN B 0 0 // For GZDB view
+}
+
+Model LaserCube
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "cube.md3"
+	Skin 0 "lasercube.png"
+
+	Offset 0.0 0.0 24.0;
+	FrameIndex UNKN A 0 0
+
+	Offset 0.0 0.0 24.0;
+	FrameIndex UNKN B 0 0 // For GZDB view
+}
+
+Model LaserCubeInterior
+{
+	USEACTORPITCH
+	USEACTORROLL
+	DONTCULLBACKFACES
+
+	Path "Models/"
+	Model 0 "cube2.md3"
+
+	Offset 0.0 0.0 24.0;
+	FrameIndex UNKN A 0 0
+
+	Offset 0.0 0.0 24.0;
+	FrameIndex UNKN B 0 0 // For GZDB view
+}
+
+Model PortalSpot
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "portal.md3"
+	Path "/"
+
+	Skin 0 "PORTAL1A" // Throws an error for unsupported format in GZDB, but works in the game...
+	FrameIndex POR1 A 0 0
+
+	Skin 0 "PORTAL1B" 
+	FrameIndex POR1 B 0 0
+
+	Skin 0 "PORTAL2A" 
+	FrameIndex POR2 A 0 0
+
+	Skin 0 "PORTAL2B" 
+	FrameIndex POR2 B 0 0
+
+	Skin 0 "PORTAL3A" 
+	FrameIndex POR3 A 0 0
+
+	Skin 0 "PORTAL3B" 
+	FrameIndex POR3 B 0 0
+
+	Skin 0 "PORTAL4A" 
+	FrameIndex POR4 A 0 0
+
+	Skin 0 "PORTAL4B" 
+	FrameIndex POR4 B 0 0
+
+	Skin 0 "PORTAL5A" 
+	FrameIndex POR5 A 0 0
+
+	Skin 0 "PORTAL5B" 
+	FrameIndex POR5 B 0 0
+
+	Skin 0 "PORTAL6A" 
+	FrameIndex POR6 A 0 0
+
+	Skin 0 "PORTAL6B" 
+	FrameIndex POR6 B 0 0
+
+	Skin 0 "PORTAL7A" 
+	FrameIndex POR7 A 0 0
+
+	Skin 0 "PORTAL7B" 
+	FrameIndex POR7 B 0 0
+
+	Skin 0 "PORTAL8A" 
+	FrameIndex POR8 A 0 0
+
+	Skin 0 "PORTAL8B" 
+	FrameIndex POR8 B 0 0
+}
+
+Model StaticPortalSpot
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "portal.md3"
+	Path "/"
+
+	Skin 0 "PORTAL0A"
+	FrameIndex POR0 A 0 0
+
+	Skin 0 "PORTAL0B" 
+	FrameIndex POR0 B 0 0
+
+	Skin 0 "PORTAL1A" // Throws an error for unsupported format in GZDB, but works in the game...
+	FrameIndex POR1 A 0 0
+
+	Skin 0 "PORTAL1B" 
+	FrameIndex POR1 B 0 0
+
+	Skin 0 "PORTAL2A" 
+	FrameIndex POR2 A 0 0
+
+	Skin 0 "PORTAL2B" 
+	FrameIndex POR2 B 0 0
+
+	Skin 0 "PORTAL3A" 
+	FrameIndex POR3 A 0 0
+
+	Skin 0 "PORTAL3B" 
+	FrameIndex POR3 B 0 0
+
+	Skin 0 "PORTAL4A" 
+	FrameIndex POR4 A 0 0
+
+	Skin 0 "PORTAL4B" 
+	FrameIndex POR4 B 0 0
+
+	Skin 0 "PORTAL5A" 
+	FrameIndex POR5 A 0 0
+
+	Skin 0 "PORTAL5B" 
+	FrameIndex POR5 B 0 0
+
+	Skin 0 "PORTAL6A" 
+	FrameIndex POR6 A 0 0
+
+	Skin 0 "PORTAL6B" 
+	FrameIndex POR6 B 0 0
+
+	Skin 0 "PORTAL7A" 
+	FrameIndex POR7 A 0 0
+
+	Skin 0 "PORTAL7B" 
+	FrameIndex POR7 B 0 0
+
+	Skin 0 "PORTAL8A" 
+	FrameIndex POR8 A 0 0
+
+	Skin 0 "PORTAL8B" 
+	FrameIndex POR8 B 0 0
+}
+
+Model StaticPortalSpotBlue
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "portal.md3"
+	Path "/"
+
+	Skin 0 "PORTAL0A" // Throws an error for unsupported format in GZDB, but works in the game...
+	FrameIndex POR0 A 0 0
+}
+
+Model PortalRing
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "ring.md3"
+
+	Skin 0 "ring.png"
+	FrameIndex PORT A 0 0
+	FrameIndex PORT B 0 0
+}
+
+Model PortalGun
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "portalgun.md3"
+	Model 1 "portalgun_glass.md3"
+
+	RollOffset 90.0
+	Scale 2.0 2.0 2.0
+	Offset -10.0 0.0 3.0
+
+	FrameIndex PGUN S 0 0
+	FrameIndex PGUN S 1 0
+}
+
+Model DualPortalGun
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "portalgun.md3"
+	Model 1 "portalgun_glass.md3"
+
+	RollOffset 90.0
+	Scale 2.0 2.0 2.0
+	Offset -10.0 0.0 3.0
+
+	SurfaceSkin 0 2 "PortalGun_Tube2.png"
+	FrameIndex PGUN S 0 0
+	FrameIndex PGUN S 1 0
+}
+
+Model PortalGun
+{
+	Path "Models/"
+	Model 0 "portalgun.md3"
+	Model 1 "portalgun_glass.md3"
+	Skin 1 "glass2.png"
+
+	Scale -1 0.75 1
+
+	AngleOffset 6.0
+	Offset 6.0 -8.0 -7.5
+
+	FrameIndex PGUN A 0 0
+	FrameIndex PGUN A 1 0
+	FrameIndex PGUN B 0 2
+	FrameIndex PGUN B 1 2
+	FrameIndex PGUN C 0 3
+	FrameIndex PGUN C 1 3
+	FrameIndex PGUN D 0 7
+	FrameIndex PGUN D 1 7
+	FrameIndex PGUN E 0 9
+	FrameIndex PGUN E 1 9
+
+	AngleOffset 8.0
+	PitchOffset 2.0
+	FrameIndex PGUN F 0 0
+	FrameIndex PGUN F 1 0
+
+	AngleOffset 4.0
+	PitchOffset -2.0
+	FrameIndex PGUN G 0 0
+	FrameIndex PGUN G 1 0
+}
+
+Model DualPortalGun
+{
+	Path "Models/"
+	Model 0 "portalgun.md3"
+	Model 1 "portalgun_glass.md3"
+	Skin 1 "glass2.png"
+
+	Scale -1 0.75 1
+
+	AngleOffset 6.0
+	Offset 6.0 -8.0 -7.5
+
+	FrameIndex PGUN A 0 0
+	FrameIndex PGUN A 1 0
+	FrameIndex PGUN B 0 2
+	FrameIndex PGUN B 1 2
+	FrameIndex PGUN C 0 3
+	FrameIndex PGUN C 1 3
+	FrameIndex PGUN D 0 7
+	FrameIndex PGUN D 1 7
+	FrameIndex PGUN E 0 9
+	FrameIndex PGUN E 1 9
+
+	AngleOffset 8.0
+	PitchOffset 2.0
+	FrameIndex PGUN F 0 0
+	FrameIndex PGUN F 1 0
+
+	AngleOffset 4.0
+	PitchOffset -2.0
+	FrameIndex PGUN G 0 0
+	FrameIndex PGUN G 1 0
+
+	SurfaceSkin 0 2 "PortalGun_Tube2.png"
+	FrameIndex PGU2 A 0 0
+	FrameIndex PGU2 A 1 0
+	FrameIndex PGU2 B 0 2
+	FrameIndex PGU2 B 1 2
+	FrameIndex PGU2 C 0 3
+	FrameIndex PGU2 C 1 3
+	FrameIndex PGU2 D 0 7
+	FrameIndex PGU2 D 1 7
+	FrameIndex PGU2 E 0 9
+	FrameIndex PGU2 E 1 9
+
+	AngleOffset 8.0
+	PitchOffset 2.0
+	FrameIndex PGU2 F 0 0
+	FrameIndex PGU2 F 1 0
+
+	AngleOffset 4.0
+	PitchOffset -2.0
+	FrameIndex PGU2 G 0 0
+	FrameIndex PGU2 G 1 0
+}
+
+Model Chair
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "chair.md3"
+	Skin 0 "chair.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Monitor
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "monitor.md3"
+
+	FrameIndex UNKN A 0 0
+
+	SurfaceSkin 0 0 "Screen2.png"
+
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "Screen3.png"
+
+	FrameIndex UNKN C 0 0
+
+	SurfaceSkin 0 0 "Screen4.png"
+
+	FrameIndex UNKN D 0 0
+
+	SurfaceSkin 0 0 "Screen5.png"
+
+	FrameIndex UNKN E 0 0
+}
+
+Model Desk
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "table.md3"
+	SurfaceSkin 0 0 "matte3.png"
+	SurfaceSkin 0 1 "matte.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model CubeTrigger
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "buttonbase.md3"
+	SurfaceSkin 0 1 "matte.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PelletTrigger
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "buttonbase.md3"
+	SurfaceSkin 0 1 "matte.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model LaserTrigger
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "lasertrigger.md3"
+
+	Offset 0.0 0.0 7.0;
+
+	FrameIndex UNKN A 0 0
+
+	SurfaceSkin 0 1 "lasercube2.png"
+
+	FrameIndex UNKN B 0 0
+}
+
+Model PortalSpawner
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "portalspawner.md3"
+
+	Offset -2.0 0.0 -24.0
+	Scale 1.5 1.2 1.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PitDetails
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "pit.md3"
+
+	Scale 1.2 1.2 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PitDetails2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "pit.md3"
+
+	Scale 1.2 1.2 1.2
+	Offset -128.0 -128.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PelletShell
+{
+	Path "Models/"
+	Model 0 "sphere.md3"
+	Skin 0 "pelletshell.png"
+
+	Scale 0.03 0.03 0.03
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Grid
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "grid.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PlatformLift
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "lift.md3"
+
+	FrameIndex UNKN A 0 0
+	FrameIndex UNKN B 0 5
+	FrameIndex UNKN C 0 10
+	FrameIndex UNKN D 0 15
+	FrameIndex UNKN E 0 20
+	FrameIndex UNKN F 0 25
+	FrameIndex UNKN G 0 30
+	FrameIndex UNKN H 0 35
+	FrameIndex UNKN I 0 40
+	FrameIndex UNKN J 0 45
+	FrameIndex UNKN K 0 50
+	FrameIndex UNKN L 0 55
+	FrameIndex UNKN M 0 60
+	FrameIndex UNKN N 0 65
+	FrameIndex UNKN O 0 70
+	FrameIndex UNKN P 0 75
+	FrameIndex UNKN Q 0 80
+	FrameIndex UNKN R 0 85
+	FrameIndex UNKN S 0 90
+	FrameIndex UNKN T 0 95
+	FrameIndex UNKN U 0 100
+	FrameIndex UNKN V 0 105
+	FrameIndex UNKN W 0 110
+	FrameIndex UNKN X 0 115
+	FrameIndex UNKN Y 0 120
+	FrameIndex UNKN Z 0 125
+}
+
+Model PlatformLiftStatic
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "lift3.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PlatformLiftStaticWhite
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "lift3.md3"
+
+	Path "Patches/"
+	SurfaceSkin 0 0 "LiftSidW.png"
+	SurfaceSkin 0 1 "LiftW.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Platform
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "lift2.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+
+Model PlatformMoving
+{
+	Path "Models/"
+	Model 0 "lift2.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PlatformWhite
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "lift2.md3"
+
+	Path "Patches/"
+	SurfaceSkin 0 0 "LiftSidW.png"
+	SurfaceSkin 0 1 "LiftW.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PlatformGlass
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "liftglass.md3"
+
+	FrameIndex UNKN A 0 0
+	FrameIndex UNKN B 0 5
+	FrameIndex UNKN C 0 10
+	FrameIndex UNKN D 0 15
+	FrameIndex UNKN E 0 20
+	FrameIndex UNKN F 0 25
+	FrameIndex UNKN G 0 30
+	FrameIndex UNKN H 0 35
+	FrameIndex UNKN I 0 40
+	FrameIndex UNKN J 0 45
+	FrameIndex UNKN K 0 50
+	FrameIndex UNKN L 0 55
+	FrameIndex UNKN M 0 60
+	FrameIndex UNKN N 0 65
+	FrameIndex UNKN O 0 70
+	FrameIndex UNKN P 0 75
+	FrameIndex UNKN Q 0 80
+	FrameIndex UNKN R 0 85
+	FrameIndex UNKN S 0 90
+	FrameIndex UNKN T 0 95
+	FrameIndex UNKN U 0 100
+	FrameIndex UNKN V 0 105
+	FrameIndex UNKN W 0 110
+	FrameIndex UNKN X 0 115
+	FrameIndex UNKN Y 0 120
+	FrameIndex UNKN Z 0 125
+}
+
+Model LaserBeam
+{
+	Path "Models/"
+	Model 0 "laser_beam.md3"
+	Skin 0 "beam.png"
+
+	USEACTORPITCH
+
+	PitchOffset 90.0
+	AngleOffset 90.0
+
+	Scale 0.3 0.3 0.15
+
+	FrameIndex UNKN A 0 0
+}
+
+Model LaserBeamBlue
+{
+	Path "Models/"
+	Model 0 "laser_beam.md3"
+	Skin 0 "beam_b.png"
+
+	USEACTORPITCH
+
+	PitchOffset 90.0
+	AngleOffset 90.0
+
+	Scale 0.5 0.5 0.15
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Skybox
+{
+	Path "Models/"
+	Model 0 "skybox.md3"
+	Skin 0 "skybox.png"
+
+	Scale 0.25 0.25 0.25
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SkyboxSky
+{
+	Path "Models/"
+	Model 0 "skybox.md3"
+	Skin 0 "skybox2.png"
+
+	Scale 0.25 0.25 0.25
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Launcher
+{
+	Path "Models/"
+	Model 0 "catapult.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Pipe
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "pipe.md3"
+
+	Scale 0.75 1.07 0.75
+
+	FrameIndex UNKN D 0 0
+
+	SurfaceSkin 0 0 "pipe2.png"
+	FrameIndex UNKN A 0 0
+
+	SurfaceSkin 0 0 "pipe3.png"
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "pipe4.png"
+	FrameIndex UNKN C 0 0
+}
+
+Model LaserEmitter
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "laseremitter.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model BridgeBeam
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "bridge.md3"
+
+	Offset 0.0 0.0 0.0
+	FrameIndex UNKN A 0 0
+}
+
+Model BridgeEmitter
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "portalspawner.md3"
+
+	Scale 1.0 1.0 1.0
+	Offset -1.0 24.25 0.0
+	RollOffset 90.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model LightFixture
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "light.md3"
+	Path "Textures/"
+	Skin 0 "Gray2.png"
+
+	Scale 1.5 2.85 0.25
+
+	FrameIndex UNKN A 0 0
+}
+
+Model LightFixturePanes
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "light_panes.md3"
+	Path "Textures/"
+	Skin 0 "White.png"
+
+	Scale 1.5 2.85 0.25
+
+	FrameIndex UNKN A 0 0
+}

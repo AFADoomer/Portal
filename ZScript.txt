@@ -1,0 +1,21 @@
+version "4.2"
+
+#include "scripts/libraries/portal_gutamatics/include.zsc"
+#include "scripts/libraries/mk_matrix.txt"
+#include "scripts/libraries/mk_coordutil.txt"
+
+#include "scripts/player.txt"
+#include "scripts/cube.txt"
+#include "scripts/triggers.txt"
+#include "scripts/portalgun.txt"
+#include "scripts/portalspots.txt"
+#include "scripts/sparks.txt"
+#include "scripts/tracer.txt"
+#include "scripts/lights.txt"
+#include "scripts/objects.txt"
+#include "scripts/projectiles.txt"
+#include "scripts/puffs.txt"
+#include "scripts/skyboxview.txt"
+
+#include "scripts/statusbar.txt"
+#include "scripts/handlers.txt"

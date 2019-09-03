@@ -1,0 +1,122 @@
+$ambient 100 ambient/sludgeloop point continuous 0.25
+$ambient 101 ambient/waterloop point continuous 0.25
+$ambient 102 ambient/indoor/open1 continuous 0.0125
+$ambient 103 ambient/indoor/open2 continuous 0.0125
+$ambient 104 ambient/indoor/closed continuous 0.0125
+
+$playersound	player	male	*death		DSEMPTY
+$playersound	player	male	*xdeath		DSEMPTY
+$playersound	player	male	*gibbed		dsslop
+$playersound	player	male	*pain100	DSEMPTY
+$playersound	player	male	*grunt		DSEMPTY
+$playersound	player	male	*land		DSEMPTY
+$playersound	player	male	*jump		dsjump
+$playersound 	player 	male 	*usefail 	use_fail
+
+ambient/sludgeloop	slime
+ambient/waterloop	water
+ambient/indoor/open1	indoor1
+ambient/indoor/open2	indoor2
+ambient/indoor/closed	indoor3
+
+portal/open		p_open
+portal/close		p_close
+portal/invalid		p_inval
+portal/enter1		p_ent1
+portal/enter2		p_ent2
+portal/exit1		p_exit1
+portal/exit2		p_exit2
+portal/fizzle		p_fizz
+
+portalgun/up		pgun_up
+portalgun/fire1		pgun_1
+portalgun/fire2		pgun_2
+portalgun/loop		pgunloop
+portalgun/fizzle	pgunfizz
+
+switch/press		but_succ
+
+button/success		but_succ
+button/fail		but_fail
+
+button/down		but_dn
+button/up		but_up
+
+door/open		d_open
+door/close		d_close
+door/lock		d_lock
+door/unlock		d_unlock
+
+platform/start		p_start
+platform/stop		p_stop
+platform/loop		p_loop
+platform/loop2		p_loop2
+
+platform2/start		pl_start
+platform2/stop		pl_stop
+platform2/loop		pl_loop
+
+fizzler/start		f_start
+fizzler/stop		f_stop
+fizzler/loop		f_loop
+
+laser/loop		l_loop
+laser/hit		l_hit
+
+bridge/loop		b_loop
+
+spring/launch		f_launch
+
+cube/fizzle		c_fizzle
+cube/bounce		c_bounce
+
+object/pickup		i_pickup
+object/drop		i_drop
+object/usefail		use_fail
+
+world/water/enter	splash
+world/water/exit	splash2
+world/underwater	uwater
+$rolloff world/underwater log 8 16
+
+world/party		horn
+world/fan		fan
+world/whoosh		whoosh
+
+$random footsteps/default { footsteps/default1 footsteps/default2 footsteps/default3 footsteps/default4 }
+footsteps/default1	default1
+footsteps/default2	default2
+footsteps/default3	default3
+footsteps/default4	default4
+
+$random footsteps/blacktile { footsteps/blacktile1 footsteps/blacktile2 footsteps/blacktile3 footsteps/blacktile4 }
+footsteps/blacktile1	tileb1
+footsteps/blacktile2	tileb2
+footsteps/blacktile3	tileb3
+footsteps/blacktile4	tileb4
+
+$random footsteps/whitetile { footsteps/whitetile1 footsteps/whitetile2 footsteps/whitetile3 footsteps/whitetile4 }
+footsteps/whitetile1	tilew1
+footsteps/whitetile2	tilew2
+footsteps/whitetile3	tilew3
+footsteps/whitetile4	tilew4
+
+$random footsteps/grate { footsteps/grate1 footsteps/grate2 footsteps/grate3 footsteps/grate4 }
+footsteps/grate1	grate1
+footsteps/grate2	grate2
+footsteps/grate3	grate3
+footsteps/grate4	grate4
+
+$random footsteps/puddle { footsteps/puddle1 footsteps/puddle2 footsteps/puddle3 footsteps/puddle4 }
+footsteps/puddle1	puddle1
+footsteps/puddle2	puddle2
+footsteps/puddle3	puddle3
+footsteps/puddle4	puddle4
+
+$random footsteps/wade { footsteps/wade1 footsteps/wade2 footsteps/wade3 footsteps/wade4 }
+footsteps/wade1		wade1
+footsteps/wade2		wade2
+footsteps/wade3		wade3
+footsteps/wade4		wade4
+
+silence			DSEMPTY

@@ -1,0 +1,1531 @@
+// Dummy frames for certain model skins placeholders
+Sprite PGUNA0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGUNB0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGUNC0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGUND0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGUNE0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGUNS0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGU2A0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGU2B0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGU2C0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGU2D0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGU2E0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite PGU2S0, 32, 32 { Patch UNKNA0, 0, 0 }
+
+Sprite POR0A0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite POR0B0, 32, 32 { Patch UNKNA0, 0, 0 }
+
+Sprite UNKNB0, 32, 32 { Patch UNKNA0, 0, 0 }
+
+Texture PORTWALL, 341, 256
+{
+	XScale 2.66
+	YScale 2.0
+	Patch "Patches/CWALL.png", -4, 0
+	Patch "Patches/CWALL.png", 337, 0
+}
+
+Texture PORTWAL2, 341, 256
+{
+	XScale 2.66
+	YScale 2.0
+	Patch "Patches/CWALL2.png", -4, 0
+	Patch "Patches/CWALL2.png", 337, 0
+}
+
+Texture PORTWAL3, 341, 256
+{
+	XScale 2.66
+	YScale 2.0
+	Patch "Patches/CWALL3.png", -4, 0
+	Patch "Patches/CWALL3.png", 337, 0
+}
+
+Texture FLOOR, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/FLOOR.png", 0, 0
+}
+
+Texture CEILING, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CEILING.png", 0, 0
+}
+
+Texture GRAYDIRT, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/GRAYDIRT.png", 0, 0
+}
+
+Texture GRAYWATR, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch GRAYDIRT, 0, 0
+	Patch "Patches/WATERLIN.png", 0, 0
+}
+
+Texture WALLBASE, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALLBASE.png", 0, 0
+}
+
+Texture BEAMGRID, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/BeamGrid.png", 0, 0
+}
+
+
+Texture WALL1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL1x1.png", 0, 0
+}
+
+Texture WALL2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL2x1.png", 0, 0
+}
+
+Texture WALL2x2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL2x2.png", 0, 0
+}
+
+Texture WALL4x4, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL4x4.png", 0, 0
+}
+
+Texture WALF1x1_, 256, 640
+{
+	Patch "Patches/WALL1x1.png", 0, 0
+	Patch "Patches/WALL1x1.png", 0, 128
+	Patch "Patches/WALL1x1.png", 0, 256
+	Patch "Patches/WALL1x1.png", 0, 384
+	Patch "Patches/WALL1x1.png", 0, 512
+	Patch "Patches/WALL1x1.png", 128, 0
+	Patch "Patches/WALL1x1.png", 128, 128
+	Patch "Patches/WALL1x1.png", 128, 256
+	Patch "Patches/WALL1x1.png", 128, 384
+	Patch "Patches/WALL1x1.png", 128, 512
+}
+
+Texture WALF2x1_, 256, 640
+{
+	Patch "Patches/WALL2x1.png", 0, 0
+	Patch "Patches/WALL2x1.png", 0, 128
+	Patch "Patches/WALL2x1.png", 0, 256
+	Patch "Patches/WALL2x1.png", 0, 384
+	Patch "Patches/WALL2x1.png", 0, 512
+	Patch "Patches/WALL2x1.png", 128, 0
+	Patch "Patches/WALL2x1.png", 128, 128
+	Patch "Patches/WALL2x1.png", 128, 256
+	Patch "Patches/WALL2x1.png", 128, 384
+	Patch "Patches/WALL2x1.png", 128, 512
+}
+
+Texture WALF2x2_, 256, 640
+{
+	Patch "Patches/WALL2x2.png", 0, 0
+	Patch "Patches/WALL2x2.png", 0, 128
+	Patch "Patches/WALL2x2.png", 0, 256
+	Patch "Patches/WALL2x2.png", 0, 384
+	Patch "Patches/WALL2x2.png", 0, 512
+	Patch "Patches/WALL2x2.png", 128, 0
+	Patch "Patches/WALL2x2.png", 128, 128
+	Patch "Patches/WALL2x2.png", 128, 256
+	Patch "Patches/WALL2x2.png", 128, 384
+	Patch "Patches/WALL2x2.png", 128, 512
+}
+
+Texture WALF4x4_, 256, 640
+{
+	Patch "Patches/WALL4x4.png", 0, 0
+	Patch "Patches/WALL4x4.png", 0, 128
+	Patch "Patches/WALL4x4.png", 0, 256
+	Patch "Patches/WALL4x4.png", 0, 384
+	Patch "Patches/WALL4x4.png", 0, 512
+	Patch "Patches/WALL4x4.png", 128, 0
+	Patch "Patches/WALL4x4.png", 128, 128
+	Patch "Patches/WALL4x4.png", 128, 256
+	Patch "Patches/WALL4x4.png", 128, 384
+	Patch "Patches/WALL4x4.png", 128, 512
+}
+
+Texture WALF1x1, 512, 640
+{
+	XScale 2.0
+	YScale 2.0
+	Patch WALF1x1_, 0, 0
+	Patch WALF1x1_, 256, 0
+	Patch "Patches/WaterLin.png", 0, 64 { Style Overlay }
+}
+
+Texture WALF2x1, 512, 640
+{
+	XScale 2.0
+	YScale 2.0
+	Patch WALF2x1_, 0, 0
+	Patch WALF2x1_, 256, 0
+	Patch "Patches/WaterLin.png", 0, 64 { Style Overlay }
+}
+
+Texture WALF2x2, 512, 640
+{
+	XScale 2.0
+	YScale 2.0
+	Patch WALF2x2_, 0, 0
+	Patch WALF2x2_, 256, 0
+	Patch "Patches/WaterLin.png", 0, 64 { Style Overlay }
+}
+
+Texture WALF4x4, 512, 640
+{
+	XScale 2.0
+	YScale 2.0
+	Patch WALF4x4_, 0, 0
+	Patch WALF4x4_, 256, 0
+	Patch "Patches/WaterLin.png", 0, 64 { Style Overlay }
+}
+
+Texture WATERLIN, 512, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WaterLin.png", 0, 64 { Style Overlay }
+}
+
+Texture PORT2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PORT2x1.png", 0, 0
+}
+
+Texture PORT2x2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PORT2x2.png", 0, 0
+}
+
+Texture PORT4x4, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PORT4x4.png", 0, 0
+}
+
+Texture PORT4x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PORT4x1.png", 0, 0
+}
+
+Texture PORTFLR, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PORTFLR.png", 0, 0
+}
+
+Texture PORTFL2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PORTFL2.png", 0, 0
+}
+
+Texture BUTTON, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/BUTTON.png", 0, 0
+}
+
+Texture BUTTONA, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/BUTTONA.png", 0, 0
+}
+
+Texture BUTTONB, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/BUTTONB.png", 0, 0
+}
+
+Texture BUTTONC, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/BUTTONC.png", 0, 0
+}
+
+
+Texture BUTTOND, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/BUTTOND.png", 0, 0
+}
+
+Texture LITB1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITB1x1.png", 0, 0
+}
+
+Texture LITB2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITB2x1.png", 0, 0
+}
+
+Texture LITB2x2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITB2x2.png", 0, 0
+}
+
+Texture LITW1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITW1x1.png", 0, 0
+}
+
+Texture LITW2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITW2x1.png", 0, 0
+}
+
+Texture LITW2x2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITW2x2.png", 0, 0
+}
+
+Texture LITBW1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITBW1x1.png", 0, 0
+}
+
+Texture LITBW2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITBW2x1.png", 0, 0
+}
+
+Texture LITWW1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITWW1x1.png", 0, 0
+}
+
+Texture LITWW2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITWW2x1.png", 0, 0
+}
+
+// Rotated Lights
+Texture LIWB1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITB1x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWB2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITB2x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWB2x2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITB2x2.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWW1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITW1x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWW2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITW2x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWW2x2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITW2x2.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWBW1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITBW1x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWBW2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITBW2x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWWW1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITWW1x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture LIWWW2x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LITWW2x1.png", 0, 0 { Rotate 90 }
+}
+
+Texture GLASS, 256, 384
+{
+	XScale 4.0
+	YScale 6.0
+	Patch "Patches/GLASS.png", 0, 0
+	Patch "Patches/GLASS.png", 0, 256
+}
+
+Texture GLASSTRA, 256, 384
+{
+	XScale 4.0
+	YScale 6.0
+	Patch "Patches/GLASSTRA.png", 0, 0
+	Patch "Patches/GLASSTRA.png", 0, 256
+}
+
+Texture GLASS2, 256, 512
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GLASS2.png", 0, 0
+	Patch "Patches/GLASS2.png", 0, 256
+}
+
+Texture GLASS3, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GLASS3.png", 0, 0
+}
+
+Sprite FLASH0, 256, 256
+{
+	Offset 128, 128
+	XScale 2.5
+	YScale 2.5
+	Patch SunFlare, 0, 0
+}
+
+Sprite CONFA0, 32, 32
+{
+	Offset 16, 16
+	Patch Confetti, 0, 0
+}
+
+Texture DOOR, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/DOOR.png", 0, 0
+}
+
+Texture DOOR2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/DOOR2.png", 0, 0
+}
+
+Texture LIFT, 160, 160
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LIFT.png", 0, 0
+}
+
+Texture LIFTSIDE, 8, 8
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/LIFTSIDE.png", 0, 0
+}
+
+Texture TRACK, 16, 16
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/TRACK.png", 0, 0
+}
+
+Texture TRACK2, 16, 16
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/TRACK.png", 0, 0 { Rotate 90 }
+}
+
+Texture INSET, 16, 16
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/INSET.png", 0, 0
+}
+
+Texture INSET2, 16, 16
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/INSET.png", 0, 0 { Rotate 90 }
+}
+
+Texture PIPE, 128, 128
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/PIPE.png", 0, 0
+}
+
+Texture PIPE2, 128, 128
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/PIPE.png", 0, 0 { Rotate 90 }
+}
+
+Texture GRATE, 64, 64
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GRATE.png", 0, 0
+}
+
+Texture PILLAR, 64, 64
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PILLAR.png", 0, 0
+}
+
+Texture GRAYWALL, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/GRAYWALL.png", 0, 0
+}
+
+Texture WALLDOOR, 64, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALL.png", -4, 0
+	Patch "Patches/Door3.png", 0, 64
+}
+
+Texture WAL2DOOR, 64, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALL2.png", -4, 0
+	Patch "Patches/Door3.png", 0, 64
+}
+
+Sprite DOORA0, 64, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Offset 32, 128
+	Patch "Patches/Door3.png", 0, 0
+}
+
+Texture EMANGRIL, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	WorldPanning
+	Patch "Patches/EMANGRIL.png", 0, 0
+}
+
+Texture PITFADE, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PitFade.png", 0, 0
+}
+
+Sprite SIGNA0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Exit.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNB0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/CubeDrop.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNC0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Overhead.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGND0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Arrow_D.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNE0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Arrow_U.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNF0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Arrow_L.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNG0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Arrow_R.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNH0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Drown.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNI0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Fling.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNJ0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Fling2.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNK0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Pellet.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNL0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/PelletTg.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNM0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Poison.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNN0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Turrets.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNO0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Cake.png", 0, 0 {Style Overlay}
+}
+
+Sprite SIGNV0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Sign_On.png", 0, 0
+}
+
+Sprite SIGNX0, 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Sign_Off.png", 0, 0
+}
+
+Sprite SIGNY0, 800, 300
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 400, 150
+	Patch "Patches/Signs/UACLogo.png", 0, 0
+}
+
+Sprite SIGNZ0, 800, 300
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 400, 150
+	Patch "Patches/Signs/UACLogoW.png", 0, 0
+}
+
+Sprite "SIGN[0", 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/UAC.png", 0, 0
+}
+
+Sprite "SIGN]0", 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/UACW.png", 0, 0
+}
+
+Sprite DOTOA0, 32, 32
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 16
+	Patch "Patches/Signs/Dot_O.png", 0, 0
+}
+
+Sprite DOTGA0, 32, 32
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 16
+	Patch "Patches/Signs/Dot_G.png", 0, 0
+}
+
+Sprite DOTOB0, 32, 64
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 32
+	Patch "Patches/Signs/Dot_O.png", 0, 0
+	Patch "Patches/Signs/Dot_O.png", 0, 32
+}
+
+Sprite DOTGB0, 32, 64
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 32
+	Patch "Patches/Signs/Dot_G.png", 0, 0
+	Patch "Patches/Signs/Dot_G.png", 0, 32
+}
+
+Sprite DOTOC0, 32, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 64
+	Patch "Patches/Signs/Dot_O.png", 0, 0
+	Patch "Patches/Signs/Dot_O.png", 0, 32
+	Patch "Patches/Signs/Dot_O.png", 0, 64
+	Patch "Patches/Signs/Dot_O.png", 0, 96
+}
+
+Sprite DOTGC0, 32, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 64
+	Patch "Patches/Signs/Dot_G.png", 0, 0
+	Patch "Patches/Signs/Dot_G.png", 0, 32
+	Patch "Patches/Signs/Dot_G.png", 0, 64
+	Patch "Patches/Signs/Dot_G.png", 0, 96
+}
+
+Sprite DOTOD0, 32, 256
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 128
+	Patch "Patches/Signs/Dot_O.png", 0, 0
+	Patch "Patches/Signs/Dot_O.png", 0, 32
+	Patch "Patches/Signs/Dot_O.png", 0, 64
+	Patch "Patches/Signs/Dot_O.png", 0, 96
+	Patch "Patches/Signs/Dot_O.png", 0, 128
+	Patch "Patches/Signs/Dot_O.png", 0, 160
+	Patch "Patches/Signs/Dot_O.png", 0, 192
+	Patch "Patches/Signs/Dot_O.png", 0, 224
+}
+
+Sprite DOTGD0, 32, 256
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 128
+	Patch "Patches/Signs/Dot_G.png", 0, 0
+	Patch "Patches/Signs/Dot_G.png", 0, 32
+	Patch "Patches/Signs/Dot_G.png", 0, 64
+	Patch "Patches/Signs/Dot_G.png", 0, 96
+	Patch "Patches/Signs/Dot_G.png", 0, 128
+	Patch "Patches/Signs/Dot_G.png", 0, 160
+	Patch "Patches/Signs/Dot_G.png", 0, 192
+	Patch "Patches/Signs/Dot_G.png", 0, 224
+}
+
+Sprite DOTOE0, 32, 512
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 256
+	Patch "Patches/Signs/Dot_O.png", 0, 0
+	Patch "Patches/Signs/Dot_O.png", 0, 32
+	Patch "Patches/Signs/Dot_O.png", 0, 64
+	Patch "Patches/Signs/Dot_O.png", 0, 96
+	Patch "Patches/Signs/Dot_O.png", 0, 128
+	Patch "Patches/Signs/Dot_O.png", 0, 160
+	Patch "Patches/Signs/Dot_O.png", 0, 192
+	Patch "Patches/Signs/Dot_O.png", 0, 224
+	Patch "Patches/Signs/Dot_O.png", 0, 256
+	Patch "Patches/Signs/Dot_O.png", 0, 288
+	Patch "Patches/Signs/Dot_O.png", 0, 320
+	Patch "Patches/Signs/Dot_O.png", 0, 352
+	Patch "Patches/Signs/Dot_O.png", 0, 384
+	Patch "Patches/Signs/Dot_O.png", 0, 416
+	Patch "Patches/Signs/Dot_O.png", 0, 448
+	Patch "Patches/Signs/Dot_O.png", 0, 480
+}
+
+Sprite DOTGE0, 32, 512
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 256
+	Patch "Patches/Signs/Dot_G.png", 0, 0
+	Patch "Patches/Signs/Dot_G.png", 0, 32
+	Patch "Patches/Signs/Dot_G.png", 0, 64
+	Patch "Patches/Signs/Dot_G.png", 0, 96
+	Patch "Patches/Signs/Dot_G.png", 0, 128
+	Patch "Patches/Signs/Dot_G.png", 0, 160
+	Patch "Patches/Signs/Dot_G.png", 0, 192
+	Patch "Patches/Signs/Dot_G.png", 0, 224
+	Patch "Patches/Signs/Dot_G.png", 0, 256
+	Patch "Patches/Signs/Dot_G.png", 0, 288
+	Patch "Patches/Signs/Dot_G.png", 0, 320
+	Patch "Patches/Signs/Dot_G.png", 0, 352
+	Patch "Patches/Signs/Dot_G.png", 0, 384
+	Patch "Patches/Signs/Dot_G.png", 0, 416
+	Patch "Patches/Signs/Dot_G.png", 0, 448
+	Patch "Patches/Signs/Dot_G.png", 0, 480
+}
+
+Sprite DOTOF0, 32, 1024
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 512
+	Patch "Patches/Signs/Dot_O.png", 0, 0
+	Patch "Patches/Signs/Dot_O.png", 0, 32
+	Patch "Patches/Signs/Dot_O.png", 0, 64
+	Patch "Patches/Signs/Dot_O.png", 0, 96
+	Patch "Patches/Signs/Dot_O.png", 0, 128
+	Patch "Patches/Signs/Dot_O.png", 0, 160
+	Patch "Patches/Signs/Dot_O.png", 0, 192
+	Patch "Patches/Signs/Dot_O.png", 0, 224
+	Patch "Patches/Signs/Dot_O.png", 0, 256
+	Patch "Patches/Signs/Dot_O.png", 0, 288
+	Patch "Patches/Signs/Dot_O.png", 0, 320
+	Patch "Patches/Signs/Dot_O.png", 0, 352
+	Patch "Patches/Signs/Dot_O.png", 0, 384
+	Patch "Patches/Signs/Dot_O.png", 0, 416
+	Patch "Patches/Signs/Dot_O.png", 0, 448
+	Patch "Patches/Signs/Dot_O.png", 0, 480
+	Patch "Patches/Signs/Dot_O.png", 0, 512
+	Patch "Patches/Signs/Dot_O.png", 0, 544
+	Patch "Patches/Signs/Dot_O.png", 0, 576
+	Patch "Patches/Signs/Dot_O.png", 0, 608
+	Patch "Patches/Signs/Dot_O.png", 0, 640
+	Patch "Patches/Signs/Dot_O.png", 0, 672
+	Patch "Patches/Signs/Dot_O.png", 0, 704
+	Patch "Patches/Signs/Dot_O.png", 0, 736
+	Patch "Patches/Signs/Dot_O.png", 0, 768
+	Patch "Patches/Signs/Dot_O.png", 0, 800
+	Patch "Patches/Signs/Dot_O.png", 0, 832
+	Patch "Patches/Signs/Dot_O.png", 0, 864
+	Patch "Patches/Signs/Dot_O.png", 0, 896
+	Patch "Patches/Signs/Dot_O.png", 0, 928
+	Patch "Patches/Signs/Dot_O.png", 0, 960
+	Patch "Patches/Signs/Dot_O.png", 0, 992
+}
+
+Sprite DOTGF0, 32, 1024
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 512
+	Patch "Patches/Signs/Dot_G.png", 0, 0
+	Patch "Patches/Signs/Dot_G.png", 0, 32
+	Patch "Patches/Signs/Dot_G.png", 0, 64
+	Patch "Patches/Signs/Dot_G.png", 0, 96
+	Patch "Patches/Signs/Dot_G.png", 0, 128
+	Patch "Patches/Signs/Dot_G.png", 0, 160
+	Patch "Patches/Signs/Dot_G.png", 0, 192
+	Patch "Patches/Signs/Dot_G.png", 0, 224
+	Patch "Patches/Signs/Dot_G.png", 0, 256
+	Patch "Patches/Signs/Dot_G.png", 0, 288
+	Patch "Patches/Signs/Dot_G.png", 0, 320
+	Patch "Patches/Signs/Dot_G.png", 0, 352
+	Patch "Patches/Signs/Dot_G.png", 0, 384
+	Patch "Patches/Signs/Dot_G.png", 0, 416
+	Patch "Patches/Signs/Dot_G.png", 0, 448
+	Patch "Patches/Signs/Dot_G.png", 0, 480
+	Patch "Patches/Signs/Dot_G.png", 0, 512
+	Patch "Patches/Signs/Dot_G.png", 0, 544
+	Patch "Patches/Signs/Dot_G.png", 0, 576
+	Patch "Patches/Signs/Dot_G.png", 0, 608
+	Patch "Patches/Signs/Dot_G.png", 0, 640
+	Patch "Patches/Signs/Dot_G.png", 0, 672
+	Patch "Patches/Signs/Dot_G.png", 0, 704
+	Patch "Patches/Signs/Dot_G.png", 0, 736
+	Patch "Patches/Signs/Dot_G.png", 0, 768
+	Patch "Patches/Signs/Dot_G.png", 0, 800
+	Patch "Patches/Signs/Dot_G.png", 0, 832
+	Patch "Patches/Signs/Dot_G.png", 0, 864
+	Patch "Patches/Signs/Dot_G.png", 0, 896
+	Patch "Patches/Signs/Dot_G.png", 0, 928
+	Patch "Patches/Signs/Dot_G.png", 0, 960
+	Patch "Patches/Signs/Dot_G.png", 0, 992
+}
+
+Texture DOTBMOA0, 32, 32
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 16
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 0
+}
+
+Texture DOTBMGA0, 32, 32
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 16
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 0
+}
+
+Texture DOTBMOB0, 32, 64
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 32
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 32
+}
+
+Texture DOTBMGB0, 32, 64
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 32
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 32
+}
+
+Texture DOTBMOC0, 32, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 64
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 96
+}
+
+Texture DOTBMGC0, 32, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 64
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 96
+}
+
+Texture DOTBMOD0, 32, 256
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 128
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 96
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 128
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 160
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 192
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 224
+}
+
+Texture DOTBMGD0, 32, 256
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 128
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 96
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 128
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 160
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 192
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 224
+}
+
+Texture DOTBMOE0, 32, 512
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 256
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 96
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 128
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 160
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 192
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 224
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 256
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 288
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 320
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 352
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 384
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 416
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 448
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 480
+}
+
+Texture DOTBMGE0, 32, 512
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 256
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 96
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 128
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 160
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 192
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 224
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 256
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 288
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 320
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 352
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 384
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 416
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 448
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 480
+}
+
+Texture DOTBMOF0, 32, 1024
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 512
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 96
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 128
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 160
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 192
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 224
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 256
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 288
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 320
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 352
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 384
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 416
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 448
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 480
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 512
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 544
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 576
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 608
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 640
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 672
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 704
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 736
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 768
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 800
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 832
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 864
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 896
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 928
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 960
+	Patch "Materials/Brightmaps/Auto/Dot_O.png", 0, 992
+}
+
+Texture DOTBMGF0, 32, 1024
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 16, 512
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 0
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 32
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 64
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 96
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 128
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 160
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 192
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 224
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 256
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 288
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 320
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 352
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 384
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 416
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 448
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 480
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 512
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 544
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 576
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 608
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 640
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 672
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 704
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 736
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 768
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 800
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 832
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 864
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 896
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 928
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 960
+	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 992
+}
+
+Texture SLIME, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Slime.png", 0, 0
+}
+
+Texture SLIMEOV, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Textures/Shader/Water.png", 0, 0
+}
+
+Texture "WATER", 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Water.png", 0, 0
+}
+
+Sprite F033A0, 19, 33 { Patch "Patches/Font/FONT033.png", 0, 0 }
+Sprite F034A0, 19, 33 { Patch "Patches/Font/FONT034.png", 0, 0 }
+Sprite F035A0, 19, 33 { Patch "Patches/Font/FONT035.png", 0, 0 }
+Sprite F036A0, 19, 33 { Patch "Patches/Font/FONT036.png", 0, 0 }
+Sprite F037A0, 19, 33 { Patch "Patches/Font/FONT037.png", 0, 0 }
+Sprite F038A0, 19, 33 { Patch "Patches/Font/FONT038.png", 0, 0 }
+Sprite F039A0, 19, 33 { Patch "Patches/Font/FONT039.png", 0, 0 }
+Sprite F040A0, 19, 33 { Patch "Patches/Font/FONT040.png", 0, 0 }
+Sprite F041A0, 19, 33 { Patch "Patches/Font/FONT041.png", 0, 0 }
+Sprite F042A0, 19, 33 { Patch "Patches/Font/FONT042.png", 0, 0 }
+Sprite F043A0, 19, 33 { Patch "Patches/Font/FONT043.png", 0, 0 }
+Sprite F044A0, 19, 33 { Patch "Patches/Font/FONT044.png", 0, 0 }
+Sprite F045A0, 19, 33 { Patch "Patches/Font/FONT045.png", 0, 0 }
+Sprite F046A0, 19, 33 { Patch "Patches/Font/FONT046.png", 0, 0 }
+Sprite F047A0, 19, 33 { Patch "Patches/Font/FONT047.png", 0, 0 }
+Sprite F048A0, 19, 33 { Patch "Patches/Font/FONT048.png", 0, 0 }
+Sprite F049A0, 19, 33 { Patch "Patches/Font/FONT049.png", 0, 0 }
+Sprite F050A0, 19, 33 { Patch "Patches/Font/FONT050.png", 0, 0 }
+Sprite F051A0, 19, 33 { Patch "Patches/Font/FONT051.png", 0, 0 }
+Sprite F052A0, 19, 33 { Patch "Patches/Font/FONT052.png", 0, 0 }
+Sprite F053A0, 19, 33 { Patch "Patches/Font/FONT053.png", 0, 0 }
+Sprite F054A0, 19, 33 { Patch "Patches/Font/FONT054.png", 0, 0 }
+Sprite F055A0, 19, 33 { Patch "Patches/Font/FONT055.png", 0, 0 }
+Sprite F056A0, 19, 33 { Patch "Patches/Font/FONT056.png", 0, 0 }
+Sprite F057A0, 19, 33 { Patch "Patches/Font/FONT057.png", 0, 0 }
+Sprite F058A0, 19, 33 { Patch "Patches/Font/FONT058.png", 0, 0 }
+Sprite F059A0, 19, 33 { Patch "Patches/Font/FONT059.png", 0, 0 }
+Sprite F060A0, 19, 33 { Patch "Patches/Font/FONT060.png", 0, 0 }
+Sprite F061A0, 19, 33 { Patch "Patches/Font/FONT061.png", 0, 0 }
+Sprite F062A0, 19, 33 { Patch "Patches/Font/FONT062.png", 0, 0 }
+Sprite F063A0, 19, 33 { Patch "Patches/Font/FONT063.png", 0, 0 }
+Sprite F064A0, 19, 33 { Patch "Patches/Font/FONT064.png", 0, 0 }
+Sprite F065A0, 19, 33 { Patch "Patches/Font/FONT065.png", 0, 0 }
+Sprite F066A0, 19, 33 { Patch "Patches/Font/FONT066.png", 0, 0 }
+Sprite F067A0, 19, 33 { Patch "Patches/Font/FONT067.png", 0, 0 }
+Sprite F068A0, 19, 33 { Patch "Patches/Font/FONT068.png", 0, 0 }
+Sprite F069A0, 19, 33 { Patch "Patches/Font/FONT069.png", 0, 0 }
+Sprite F070A0, 19, 33 { Patch "Patches/Font/FONT070.png", 0, 0 }
+Sprite F071A0, 19, 33 { Patch "Patches/Font/FONT071.png", 0, 0 }
+Sprite F072A0, 19, 33 { Patch "Patches/Font/FONT072.png", 0, 0 }
+Sprite F073A0, 19, 33 { Patch "Patches/Font/FONT073.png", 0, 0 }
+Sprite F074A0, 19, 33 { Patch "Patches/Font/FONT074.png", 0, 0 }
+Sprite F075A0, 19, 33 { Patch "Patches/Font/FONT075.png", 0, 0 }
+Sprite F076A0, 19, 33 { Patch "Patches/Font/FONT076.png", 0, 0 }
+Sprite F077A0, 19, 33 { Patch "Patches/Font/FONT077.png", 0, 0 }
+Sprite F078A0, 19, 33 { Patch "Patches/Font/FONT078.png", 0, 0 }
+Sprite F079A0, 19, 33 { Patch "Patches/Font/FONT079.png", 0, 0 }
+Sprite F080A0, 19, 33 { Patch "Patches/Font/FONT080.png", 0, 0 }
+Sprite F081A0, 19, 33 { Patch "Patches/Font/FONT081.png", 0, 0 }
+Sprite F082A0, 19, 33 { Patch "Patches/Font/FONT082.png", 0, 0 }
+Sprite F083A0, 19, 33 { Patch "Patches/Font/FONT083.png", 0, 0 }
+Sprite F084A0, 19, 33 { Patch "Patches/Font/FONT084.png", 0, 0 }
+Sprite F085A0, 19, 33 { Patch "Patches/Font/FONT085.png", 0, 0 }
+Sprite F086A0, 19, 33 { Patch "Patches/Font/FONT086.png", 0, 0 }
+Sprite F087A0, 19, 33 { Patch "Patches/Font/FONT087.png", 0, 0 }
+Sprite F088A0, 19, 33 { Patch "Patches/Font/FONT088.png", 0, 0 }
+Sprite F089A0, 19, 33 { Patch "Patches/Font/FONT089.png", 0, 0 }
+Sprite F090A0, 19, 33 { Patch "Patches/Font/FONT090.png", 0, 0 }
+Sprite F091A0, 19, 33 { Patch "Patches/Font/FONT091.png", 0, 0 }
+Sprite F092A0, 19, 33 { Patch "Patches/Font/FONT092.png", 0, 0 }
+Sprite F093A0, 19, 33 { Patch "Patches/Font/FONT093.png", 0, 0 }
+Sprite F094A0, 19, 33 { Patch "Patches/Font/FONT094.png", 0, 0 }
+Sprite F095A0, 19, 33 { Patch "Patches/Font/FONT095.png", 0, 0 }
+Sprite F096A0, 19, 33 { Patch "Patches/Font/FONT096.png", 0, 0 }
+Sprite F097A0, 19, 33 { Patch "Patches/Font/FONT097.png", 0, 0 }
+Sprite F098A0, 19, 33 { Patch "Patches/Font/FONT098.png", 0, 0 }
+Sprite F099A0, 19, 33 { Patch "Patches/Font/FONT099.png", 0, 0 }
+Sprite F100A0, 19, 33 { Patch "Patches/Font/FONT100.png", 0, 0 }
+Sprite F101A0, 19, 33 { Patch "Patches/Font/FONT101.png", 0, 0 }
+Sprite F102A0, 19, 33 { Patch "Patches/Font/FONT102.png", 0, 0 }
+Sprite F103A0, 19, 33 { Patch "Patches/Font/FONT103.png", 0, 0 }
+Sprite F104A0, 19, 33 { Patch "Patches/Font/FONT104.png", 0, 0 }
+Sprite F105A0, 19, 33 { Patch "Patches/Font/FONT105.png", 0, 0 }
+Sprite F106A0, 19, 33 { Patch "Patches/Font/FONT106.png", 0, 0 }
+Sprite F107A0, 19, 33 { Patch "Patches/Font/FONT107.png", 0, 0 }
+Sprite F108A0, 19, 33 { Patch "Patches/Font/FONT108.png", 0, 0 }
+Sprite F109A0, 19, 33 { Patch "Patches/Font/FONT109.png", 0, 0 }
+Sprite F110A0, 19, 33 { Patch "Patches/Font/FONT110.png", 0, 0 }
+Sprite F111A0, 19, 33 { Patch "Patches/Font/FONT111.png", 0, 0 }
+Sprite F112A0, 19, 33 { Patch "Patches/Font/FONT112.png", 0, 0 }
+Sprite F113A0, 19, 33 { Patch "Patches/Font/FONT113.png", 0, 0 }
+Sprite F114A0, 19, 33 { Patch "Patches/Font/FONT114.png", 0, 0 }
+Sprite F115A0, 19, 33 { Patch "Patches/Font/FONT115.png", 0, 0 }
+Sprite F116A0, 19, 33 { Patch "Patches/Font/FONT116.png", 0, 0 }
+Sprite F117A0, 19, 33 { Patch "Patches/Font/FONT117.png", 0, 0 }
+Sprite F118A0, 19, 33 { Patch "Patches/Font/FONT118.png", 0, 0 }
+Sprite F119A0, 19, 33 { Patch "Patches/Font/FONT119.png", 0, 0 }
+Sprite F120A0, 19, 33 { Patch "Patches/Font/FONT120.png", 0, 0 }
+Sprite F121A0, 19, 33 { Patch "Patches/Font/FONT121.png", 0, 0 }
+Sprite F122A0, 19, 33 { Patch "Patches/Font/FONT122.png", 0, 0 }
+Sprite F123A0, 19, 33 { Patch "Patches/Font/FONT123.png", 0, 0 }
+Sprite F124A0, 19, 33 { Patch "Patches/Font/FONT124.png", 0, 0 }
+Sprite F125A0, 19, 33 { Patch "Patches/Font/FONT125.png", 0, 0 }
+Sprite F126A0, 19, 33 { Patch "Patches/Font/FONT126.png", 0, 0 }
+//Sprite F127A0, 19, 33 { Patch "Patches/Font/FONT127.png", 0, 0 }
+Sprite F128A0, 19, 33 { Patch "Patches/Font/FONT128.png", 0, 0 }
+//Sprite F129A0, 19, 33 { Patch "Patches/Font/FONT129.png", 0, 0 }
+Sprite F130A0, 19, 33 { Patch "Patches/Font/FONT130.png", 0, 0 }
+Sprite F131A0, 19, 33 { Patch "Patches/Font/FONT131.png", 0, 0 }
+Sprite F132A0, 19, 33 { Patch "Patches/Font/FONT132.png", 0, 0 }
+Sprite F133A0, 19, 33 { Patch "Patches/Font/FONT133.png", 0, 0 }
+Sprite F134A0, 19, 33 { Patch "Patches/Font/FONT134.png", 0, 0 }
+Sprite F135A0, 19, 33 { Patch "Patches/Font/FONT135.png", 0, 0 }
+Sprite F136A0, 19, 33 { Patch "Patches/Font/FONT136.png", 0, 0 }
+Sprite F137A0, 19, 33 { Patch "Patches/Font/FONT137.png", 0, 0 }
+Sprite F138A0, 19, 33 { Patch "Patches/Font/FONT138.png", 0, 0 }
+Sprite F139A0, 19, 33 { Patch "Patches/Font/FONT139.png", 0, 0 }
+Sprite F140A0, 19, 33 { Patch "Patches/Font/FONT140.png", 0, 0 }
+//Sprite F141A0, 19, 33 { Patch "Patches/Font/FONT141.png", 0, 0 }
+//Sprite F142A0, 19, 33 { Patch "Patches/Font/FONT142.png", 0, 0 }
+//Sprite F143A0, 19, 33 { Patch "Patches/Font/FONT143.png", 0, 0 }
+//Sprite F144A0, 19, 33 { Patch "Patches/Font/FONT144.png", 0, 0 }
+Sprite F145A0, 19, 33 { Patch "Patches/Font/FONT145.png", 0, 0 }
+Sprite F146A0, 19, 33 { Patch "Patches/Font/FONT146.png", 0, 0 }
+Sprite F147A0, 19, 33 { Patch "Patches/Font/FONT147.png", 0, 0 }
+Sprite F148A0, 19, 33 { Patch "Patches/Font/FONT148.png", 0, 0 }
+Sprite F149A0, 19, 33 { Patch "Patches/Font/FONT149.png", 0, 0 }
+//Sprite F150A0, 19, 33 { Patch "Patches/Font/FONT150.png", 0, 0 }
+Sprite F151A0, 19, 33 { Patch "Patches/Font/FONT151.png", 0, 0 }
+//Sprite F152A0, 19, 33 { Patch "Patches/Font/FONT152.png", 0, 0 }
+Sprite F153A0, 19, 33 { Patch "Patches/Font/FONT153.png", 0, 0 }
+Sprite F154A0, 19, 33 { Patch "Patches/Font/FONT154.png", 0, 0 }
+Sprite F155A0, 19, 33 { Patch "Patches/Font/FONT155.png", 0, 0 }
+Sprite F156A0, 19, 33 { Patch "Patches/Font/FONT156.png", 0, 0 }
+//Sprite F157A0, 19, 33 { Patch "Patches/Font/FONT157.png", 0, 0 }
+//Sprite F158A0, 19, 33 { Patch "Patches/Font/FONT158.png", 0, 0 }
+Sprite F159A0, 19, 33 { Patch "Patches/Font/FONT159.png", 0, 0 }
+//Sprite F160A0, 19, 33 { Patch "Patches/Font/FONT160.png", 0, 0 }
+Sprite F161A0, 19, 33 { Patch "Patches/Font/FONT161.png", 0, 0 }
+Sprite F162A0, 19, 33 { Patch "Patches/Font/FONT162.png", 0, 0 }
+Sprite F163A0, 19, 33 { Patch "Patches/Font/FONT163.png", 0, 0 }
+Sprite F164A0, 19, 33 { Patch "Patches/Font/FONT164.png", 0, 0 }
+Sprite F165A0, 19, 33 { Patch "Patches/Font/FONT165.png", 0, 0 }
+Sprite F166A0, 19, 33 { Patch "Patches/Font/FONT166.png", 0, 0 }
+Sprite F167A0, 19, 33 { Patch "Patches/Font/FONT167.png", 0, 0 }
+Sprite F168A0, 19, 33 { Patch "Patches/Font/FONT168.png", 0, 0 }
+Sprite F169A0, 19, 33 { Patch "Patches/Font/FONT169.png", 0, 0 }
+//Sprite F170A0, 19, 33 { Patch "Patches/Font/FONT170.png", 0, 0 }
+Sprite F171A0, 19, 33 { Patch "Patches/Font/FONT171.png", 0, 0 }
+Sprite F172A0, 19, 33 { Patch "Patches/Font/FONT172.png", 0, 0 }
+//Sprite F173A0, 19, 33 { Patch "Patches/Font/FONT173.png", 0, 0 }
+Sprite F174A0, 19, 33 { Patch "Patches/Font/FONT174.png", 0, 0 }
+Sprite F175A0, 19, 33 { Patch "Patches/Font/FONT175.png", 0, 0 }
+Sprite F176A0, 19, 33 { Patch "Patches/Font/FONT176.png", 0, 0 }
+Sprite F177A0, 19, 33 { Patch "Patches/Font/FONT177.png", 0, 0 }
+Sprite F178A0, 19, 33 { Patch "Patches/Font/FONT178.png", 0, 0 }
+Sprite F179A0, 19, 33 { Patch "Patches/Font/FONT179.png", 0, 0 }
+Sprite F180A0, 19, 33 { Patch "Patches/Font/FONT180.png", 0, 0 }
+Sprite F181A0, 19, 33 { Patch "Patches/Font/FONT181.png", 0, 0 }
+Sprite F182A0, 19, 33 { Patch "Patches/Font/FONT182.png", 0, 0 }
+Sprite F183A0, 19, 33 { Patch "Patches/Font/FONT183.png", 0, 0 }
+Sprite F184A0, 19, 33 { Patch "Patches/Font/FONT184.png", 0, 0 }
+Sprite F185A0, 19, 33 { Patch "Patches/Font/FONT185.png", 0, 0 }
+//Sprite F186A0, 19, 33 { Patch "Patches/Font/FONT186.png", 0, 0 }
+Sprite F187A0, 19, 33 { Patch "Patches/Font/FONT187.png", 0, 0 }
+Sprite F188A0, 19, 33 { Patch "Patches/Font/FONT188.png", 0, 0 }
+Sprite F189A0, 19, 33 { Patch "Patches/Font/FONT189.png", 0, 0 }
+Sprite F190A0, 19, 33 { Patch "Patches/Font/FONT190.png", 0, 0 }
+Sprite F191A0, 19, 33 { Patch "Patches/Font/FONT191.png", 0, 0 }
+Sprite F192A0, 19, 33 { Patch "Patches/Font/FONT192.png", 0, 0 }
+Sprite F193A0, 19, 33 { Patch "Patches/Font/FONT193.png", 0, 0 }
+Sprite F194A0, 19, 33 { Patch "Patches/Font/FONT194.png", 0, 0 }
+Sprite F195A0, 19, 33 { Patch "Patches/Font/FONT195.png", 0, 0 }
+Sprite F196A0, 19, 33 { Patch "Patches/Font/FONT196.png", 0, 0 }
+Sprite F197A0, 19, 33 { Patch "Patches/Font/FONT197.png", 0, 0 }
+Sprite F198A0, 19, 33 { Patch "Patches/Font/FONT198.png", 0, 0 }
+Sprite F199A0, 19, 33 { Patch "Patches/Font/FONT199.png", 0, 0 }
+Sprite F200A0, 19, 33 { Patch "Patches/Font/FONT200.png", 0, 0 }
+Sprite F201A0, 19, 33 { Patch "Patches/Font/FONT201.png", 0, 0 }
+Sprite F202A0, 19, 33 { Patch "Patches/Font/FONT202.png", 0, 0 }
+Sprite F203A0, 19, 33 { Patch "Patches/Font/FONT203.png", 0, 0 }
+Sprite F204A0, 19, 33 { Patch "Patches/Font/FONT204.png", 0, 0 }
+Sprite F205A0, 19, 33 { Patch "Patches/Font/FONT205.png", 0, 0 }
+Sprite F206A0, 19, 33 { Patch "Patches/Font/FONT206.png", 0, 0 }
+Sprite F207A0, 19, 33 { Patch "Patches/Font/FONT207.png", 0, 0 }
+Sprite F208A0, 19, 33 { Patch "Patches/Font/FONT208.png", 0, 0 }
+Sprite F209A0, 19, 33 { Patch "Patches/Font/FONT209.png", 0, 0 }
+Sprite F210A0, 19, 33 { Patch "Patches/Font/FONT210.png", 0, 0 }
+Sprite F211A0, 19, 33 { Patch "Patches/Font/FONT211.png", 0, 0 }
+Sprite F212A0, 19, 33 { Patch "Patches/Font/FONT212.png", 0, 0 }
+Sprite F213A0, 19, 33 { Patch "Patches/Font/FONT213.png", 0, 0 }
+Sprite F214A0, 19, 33 { Patch "Patches/Font/FONT214.png", 0, 0 }
+Sprite F215A0, 19, 33 { Patch "Patches/Font/FONT215.png", 0, 0 }
+Sprite F216A0, 19, 33 { Patch "Patches/Font/FONT216.png", 0, 0 }
+Sprite F217A0, 19, 33 { Patch "Patches/Font/FONT217.png", 0, 0 }
+Sprite F218A0, 19, 33 { Patch "Patches/Font/FONT218.png", 0, 0 }
+Sprite F219A0, 19, 33 { Patch "Patches/Font/FONT219.png", 0, 0 }
+Sprite F220A0, 19, 33 { Patch "Patches/Font/FONT220.png", 0, 0 }
+Sprite F221A0, 19, 33 { Patch "Patches/Font/FONT221.png", 0, 0 }
+Sprite F222A0, 19, 33 { Patch "Patches/Font/FONT222.png", 0, 0 }
+Sprite F223A0, 19, 33 { Patch "Patches/Font/FONT223.png", 0, 0 }
+Sprite F224A0, 19, 33 { Patch "Patches/Font/FONT224.png", 0, 0 }
+Sprite F225A0, 19, 33 { Patch "Patches/Font/FONT225.png", 0, 0 }
+Sprite F226A0, 19, 33 { Patch "Patches/Font/FONT226.png", 0, 0 }
+Sprite F227A0, 19, 33 { Patch "Patches/Font/FONT227.png", 0, 0 }
+Sprite F228A0, 19, 33 { Patch "Patches/Font/FONT228.png", 0, 0 }
+Sprite F229A0, 19, 33 { Patch "Patches/Font/FONT229.png", 0, 0 }
+Sprite F230A0, 19, 33 { Patch "Patches/Font/FONT230.png", 0, 0 }
+Sprite F231A0, 19, 33 { Patch "Patches/Font/FONT231.png", 0, 0 }
+Sprite F232A0, 19, 33 { Patch "Patches/Font/FONT232.png", 0, 0 }
+Sprite F233A0, 19, 33 { Patch "Patches/Font/FONT233.png", 0, 0 }
+Sprite F234A0, 19, 33 { Patch "Patches/Font/FONT234.png", 0, 0 }
+Sprite F235A0, 19, 33 { Patch "Patches/Font/FONT235.png", 0, 0 }
+Sprite F236A0, 19, 33 { Patch "Patches/Font/FONT236.png", 0, 0 }
+Sprite F237A0, 19, 33 { Patch "Patches/Font/FONT237.png", 0, 0 }
+Sprite F238A0, 19, 33 { Patch "Patches/Font/FONT238.png", 0, 0 }
+Sprite F239A0, 19, 33 { Patch "Patches/Font/FONT239.png", 0, 0 }
+Sprite F240A0, 19, 33 { Patch "Patches/Font/FONT240.png", 0, 0 }
+Sprite F241A0, 19, 33 { Patch "Patches/Font/FONT241.png", 0, 0 }
+Sprite F242A0, 19, 33 { Patch "Patches/Font/FONT242.png", 0, 0 }
+Sprite F243A0, 19, 33 { Patch "Patches/Font/FONT243.png", 0, 0 }
+Sprite F244A0, 19, 33 { Patch "Patches/Font/FONT244.png", 0, 0 }
+Sprite F245A0, 19, 33 { Patch "Patches/Font/FONT245.png", 0, 0 }
+Sprite F246A0, 19, 33 { Patch "Patches/Font/FONT246.png", 0, 0 }
+Sprite F247A0, 19, 33 { Patch "Patches/Font/FONT247.png", 0, 0 }
+Sprite F248A0, 19, 33 { Patch "Patches/Font/FONT248.png", 0, 0 }
+Sprite F249A0, 19, 33 { Patch "Patches/Font/FONT249.png", 0, 0 }
+Sprite F250A0, 19, 33 { Patch "Patches/Font/FONT250.png", 0, 0 }
+Sprite F251A0, 19, 33 { Patch "Patches/Font/FONT251.png", 0, 0 }
+Sprite F252A0, 19, 33 { Patch "Patches/Font/FONT252.png", 0, 0 }
+Sprite F253A0, 19, 33 { Patch "Patches/Font/FONT253.png", 0, 0 }
+Sprite F254A0, 19, 33 { Patch "Patches/Font/FONT254.png", 0, 0 }
+Sprite F255A0, 19, 33 { Patch "Patches/Font/FONT255.png", 0, 0 }
+
+Texture COMPTALL, 512, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", 0, 0
+}
+
+Texture COMPTAL1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", 0, 0
+	Patch "Patches/COMPTALL.png", 64, 0
+	Patch "Patches/WALLOVLY.png", -64, -64 { Style Overlay }
+	Patch "Patches/WALLOVLY.png", -64, 0 { Style Overlay }
+	Patch "Patches/WALLOVLY.png", 64, -64 { Style Overlay }
+	Patch "Patches/WALLOVLY.png", 64, 0 { Style Overlay }
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}
+
+Texture COMPTAL2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", -64, 0
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}
+
+Texture COMPTAL3, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", -192, 0
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}
+
+Texture COMPTAL4, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", -384, 0
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}
+
+Texture COMPTAL5, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", 0, -128
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}
+
+Texture COMPTAL6, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", -128, -128
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}
+
+Texture COMPTAL7, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", -256, -128
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}
+
+Texture COMPTAL8, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMPTALL.png", -384, -128
+	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+}

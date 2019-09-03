@@ -1,0 +1,157 @@
+gameinfo
+{
+	dimcolor = "0 0 0"
+	dimamount = 0.35
+	bluramount = 0.5
+	borderflat = "WALL2x2"
+
+	menufontcolor_title = "PortalGreen"
+	menufontcolor_label = "Gray"
+	menufontcolor_value = "Gray"
+	menufontcolor_action = "Gray"
+	menufontcolor_header = "PortalGreen"
+	menufontcolor_highlight = "White"
+	menufontcolor_selection = "Orange"
+	menuslidercolor = "PortalGreen"
+
+	PlayerClasses = "PortalPlayer"
+	StatusbarClass = "PortalStatusBar"
+
+	AddEventHandlers = "OverlayHandler"
+}
+
+clearskills
+skill baby
+{
+	DamageFactor = 0.5
+	SpawnFilter = "Baby"
+	Name = "Training Mode"
+	TextColor = "Gray"
+	Key = "1"
+	EasyKey
+}
+
+skill easy
+{
+	SpawnFilter = "Easy"
+	Name = "Easy"
+	TextColor = "Gray"
+	Key = "2"
+}
+
+skill normal
+{
+	SpawnFilter = "Normal"
+	Name = "Medium"
+	TextColor = "Gray"
+	Key = "3"
+	defaultskill
+}
+
+skill hard
+{
+	SpawnFilter = "Hard"
+	Name = "Hard"
+	TextColor = "Gray"
+	Key = "4"
+}
+
+skill nightmare
+{
+	SpawnFilter = "Nightmare"
+	Name = "Expert"
+	TextColor = "Gray"
+	Key = "5"
+	AmmoFactor = 2
+	FastMonsters
+	DisableCheats
+	RespawnTime = 12
+	MustConfirm = "Really?"
+}
+
+gamedefaults
+{
+	AirControl = 0.1
+	LightMode = 0
+	CheckSwitchRange
+	EvenLighting
+	SmoothLighting
+	UsePlayerStartZ
+}
+
+defaultmap
+{
+	Fade = 95d7fa
+	FogDensity = 16
+	Music = "" //D_DOOM or D_OPENIN might be a good vanilla fit
+	Sky1 = "BLUE2", 0.0
+}
+
+map MAP01 "Dooming with Portals" {}
+map MAP02 "Portal Gun Test Map" {}
+
+DoomEdNums
+{
+	30000 = CubeTrigger
+	30001 = Cube
+	30002 = DualPortalGun
+	30003 = SwitchTrigger
+	30004 = PortalGun
+	30005 = StaticPortalSpot
+	30006 = StaticPortalSpotBlue
+	30007 = PortalMapSpot
+	30008 = Desk
+	30009 = Chair
+	30010 = Monitor
+	30011 = DoorSprite
+	30012 = PortalSpawner
+	30013 = PitDetails
+	30014 = PelletTrigger
+	30015 = PitDetails2
+	30016 = SignExit
+	30017 = SignCubeDrop
+	30018 = SignOverhead
+	30019 = SignArrowD
+	30020 = SignArrowU
+	30021 = SignArrowL
+	30022 = SignArrowR
+	30023 = SignStatus
+	30024 = Dot1
+	30025 = Dot2
+	30026 = Dot4
+	30027 = Dot8
+	30028 = Dot16
+	30029 = Dot32
+	30030 = SignDrown
+	30031 = SignFling
+	30032 = SignFling2
+	30033 = SignPellet
+	30034 = SignPelletTarget
+	30035 = SignPoison
+	30036 = SignTurrets
+	30037 = SignCake	
+	30038 = Grid
+	30039 = PlatformLift
+	30040 = PlatformLiftStatic
+	30041 = PlatformLiftStaticWhite
+	30042 = Platform
+	30043 = PlatformWhite
+	30044 = UACLogo
+	30045 = UACLogoW
+	30046 = Skybox
+	30047 = Launcher
+	30048 = UAC
+	30049 = UACW
+	30050 = Pipe
+	30051 = SkyboxSky
+	30052 = LaserEmitter
+	30053 = LaserCube
+	30054 = LaserTrigger
+	30055 = BridgeEmitter
+	30056 = PlatformMoving
+	30057 = SkyViewPointStatic
+	30058 = SkyViewpointAnchor
+	30059 = LightFixture
+	30060 = Silhouette
+	31000 = FlatText
+}

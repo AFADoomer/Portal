@@ -1,0 +1,39 @@
+cameratexture "PORTAL0A" 1024 1024
+cameratexture "PORTAL0B" 1024 1024
+cameratexture "PORTAL1A" 1024 1024
+cameratexture "PORTAL1B" 1024 1024
+cameratexture "PORTAL2A" 1024 1024
+cameratexture "PORTAL2B" 1024 1024
+cameratexture "PORTAL3A" 1024 1024
+cameratexture "PORTAL3B" 1024 1024
+cameratexture "PORTAL4A" 1024 1024
+cameratexture "PORTAL4B" 1024 1024
+cameratexture "PORTAL5A" 1024 1024
+cameratexture "PORTAL5B" 1024 1024
+cameratexture "PORTAL6A" 1024 1024
+cameratexture "PORTAL6B" 1024 1024
+cameratexture "PORTAL7A" 1024 1024
+cameratexture "PORTAL7B" 1024 1024
+cameratexture "PORTAL8A" 1024 1024
+cameratexture "PORTAL8B" 1024 1024
+
+cameratexture "PLAYVIEW" 512 512
+
+texture "models/Arrow1.png"
+pic "models/Arrow1.png" tics 4
+pic "models/Arrow2.png" tics 4
+pic "models/Arrow3.png" tics 4
+pic "models/Arrow4.png" tics 4
+
+
+texture "models/Screen2.png"
+pic "models/Screen2.png" tics 4
+pic "models/Screen2b.png" tics 4
+pic "models/Screen2c.png" tics 4
+pic "models/Screen2d.png" tics 4
+pic "models/Screen2e.png" tics 4
+pic "models/Screen2f.png" tics 4
+pic "models/Screen2g.png" tics 4
+pic "models/Screen2h.png" tics 4
+pic "models/Screen2i.png" tics 4
+pic "models/Screen2j.png" tics 4

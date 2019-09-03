@@ -1,0 +1,173 @@
+class SingleSpark : actor
+{
+	Actor colorsetter;
+	double fadeamt;
+	int rollamt;
+	bool fade;
+
+	Property Fade:fade;
+
+	Default
+	{
+		PROJECTILE;
+		+NOBLOCKMAP
+		+BRIGHT
+		+NOTELEPORT
+		-NOGRAVITY
+		+ROLLSPRITE
+		+FORCEXYBILLBOARD
+		+DONTSPLASH
+		Height 0;
+		Radius 0;
+		Speed 1;
+		Mass 1;
+		Scale 0.025;
+		Gravity 0.1;
+		RenderStyle "AddStencil";
+		StencilColor "White";
+		BounceType "Hexen";
+		SingleSpark.Fade True;
+	}
+
+	States
+	{
+		Spawn:
+			FLAS H 1;
+			Loop;
+	}
+
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+
+		if (colorsetter) { SetShade(colorsetter.fillcolor); }
+		else { SetShade(RandomPick(color(250, 234, 146), color(224, 207, 99), color(189, 175, 76), color(253, 237, 152), color(255, 200, 100))); }
+
+		fadeamt = 0.025;
+
+		Scale.X = Scale.X * (FRandom(0.7, 1.3));
+		Scale.Y = Scale.Y * (FRandom(0.7, 1.3));
+		rollamt = Random(-15, 15);
+
+		if (!SingleSpark(master) && Random() < 32)
+		{
+			let mo = A_SpawnProjectile(GetClassName(), -1, 0, Random(0, 359), CMF_AIMDIRECTION, 0);
+			mo.master = master;
+		}
+
+		A_Face(master, 360, 180);
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (IsFrozen()) { return; }
+
+		if (pos.z > floorz + 1 || vel.length() > 0.1) { roll += rollamt; }
+		else { vel *= 0; bNoInteraction = true; }
+
+		if (fade) { A_FadeOut(fadeamt); }
+	}
+}
+
+class SparkSpawner : Actor
+{
+	Class<SingleSpark> sparkactor;
+	bool silent, colorize;
+
+	Property SparkActor:sparkactor;
+	Property Colorize:colorize;
+	Property silent:silent;
+
+	Default
+	{
+		+INVISIBLE
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+NOINTERACTION
+		+CLIENTSIDEONLY
+		Height 4;
+		Radius 0;
+		SparkSpawner.SparkActor "SingleSpark";
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A 10 Light("SparkLight");
+			Stop;
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (IsFrozen()) { return; }
+
+		if (!silent) { A_PlaySound("world/spark", CHAN_AUTO, FRandom(0.1, 0.2)); }
+
+		int sparkangle;
+
+		if (pitch > 0 && pitch % 180 == 0) {
+			sparkangle = Random(0, 360);
+		} else {
+			sparkangle = Random(-45, 45);
+		}
+					
+		let mo = A_SpawnProjectile(sparkactor, -1, 0, sparkangle, CMF_AIMDIRECTION, 270 - pitch + FRandom(-45, 45));
+		if (colorize) { SingleSpark(mo).colorsetter = self; }
+	}
+}
+
+class ConfettiSpawner : SparkSpawner
+{
+	Default
+	{
+		SparkSpawner.SparkActor "Confetti";
+		SparkSpawner.Colorize True;
+		SparkSpawner.Silent True;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A 35;
+			Stop;
+	}
+
+	override void Tick()
+	{
+		SetShade(RandomPick(color(63, 72, 204), color(255, 0, 255), color(0, 0, 160), color(128, 128, 255), color(255, 0, 128)));
+
+		Super.Tick();
+	}
+}
+
+class Confetti : SingleSpark
+{
+	Default
+	{
+		-BRIGHT
+		+FLATSPRITE
+		Scale 0.125;
+		BounceFactor 0.05;
+		Renderstyle "Stencil";
+		SingleSpark.Fade False;
+		Gravity 0.05;
+	}
+
+	States
+	{
+		Spawn:
+			CONF A 1;
+			Loop;
+	}
+
+	override void PostBeginPlay()
+	{
+		Scale *= FRandom(0.7, 1.1);
+
+		Super.PostBeginPlay();
+	}
+}

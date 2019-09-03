@@ -1,0 +1,5 @@
+[enu default]
+PORTALGUNPICKUP = "Picked up the Portal Gun";
+PORTALGUNPICKUP2 = "Picked up the Dual Portal Gun";
+PORTALGUNTAG = "Portal Gun";
+PORTALGUNTAG2 = "Dual Portal Gun";
