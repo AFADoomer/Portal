@@ -99,11 +99,18 @@ class SparkSpawner : Actor
 			Stop;
 	}
 
+	override void PostBeginPlay()
+	{
+		bDormant = SpawnFlags & MTF_DORMANT;
+
+		Super.PostBeginPlay();
+	}
+
 	override void Tick()
 	{
-		Super.Tick();
+		if (IsFrozen() || bDormant) { return; }
 
-		if (IsFrozen()) { return; }
+		Super.Tick();
 
 		if (!silent) { A_PlaySound("world/spark", CHAN_AUTO, FRandom(0.1, 0.2)); }
 
@@ -118,10 +125,15 @@ class SparkSpawner : Actor
 		let mo = A_SpawnProjectile(sparkactor, -1, 0, sparkangle, CMF_AIMDIRECTION, 270 - pitch + FRandom(-45, 45));
 		if (colorize) { SingleSpark(mo).colorsetter = self; }
 	}
+
+	override void Activate(Actor activator) { bDormant = false; Super.Activate(activator); }
+	override void Deactivate(Actor activator) { bDormant = true; Super.Deactivate(activator); }
 }
 
 class ConfettiSpawner : SparkSpawner
 {
+	int user_duration;
+
 	Default
 	{
 		SparkSpawner.SparkActor "Confetti";
@@ -132,8 +144,16 @@ class ConfettiSpawner : SparkSpawner
 	States
 	{
 		Spawn:
-			UNKN A 35;
+			UNKN A 0;
+			UNKN A 35 { A_SetTics(user_duration > 0 ? user_duration : 35); }
 			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (!pitch) { pitch = 180; }
+
+		Super.PostBeginPlay();
 	}
 
 	override void Tick()

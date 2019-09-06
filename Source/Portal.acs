@@ -295,9 +295,39 @@ Script "SpawnStaticPortal" (int spottid, int pitch)
 	SetActorPitch(9999, -pitch * 1.0 / 360);
 }
 
-Script "Cleanup" (int section)
+Script "Initialize" (int door, int things)
 {
-	ACS_NamedExecuteAlways("OpenDoor", 0, 1, section); // Close the door behind you
+	if (door) { ACS_NamedExecuteAlways("OpenDoor", 0, 1, door); }
+	if (things)
+	{
+		Thing_Activate(things);
+		SetActorProperty(things, APROP_Dormant, 0);
+		ACS_NamedExecuteAlways("TriggerGrille", 0, 1, things);
+		SetActorState(things, "Active");
+	}
+
+	Autosave();
+}
+
+Script "Activate" (int thing)
+{
+	SetActorState(thing, "Active");
+}
+
+Script "Deactivate" (int thing)
+{
+	SetActorState(thing, "Inactive");
+}
+
+Script "Cleanup" (int door, int things)
+{
+	ACS_NamedExecuteAlways("OpenDoor", 0, 1, door); // Close the door behind you
+	if (things)
+	{
+		Thing_Deactivate(things);
+		SetActorProperty(things, APROP_Dormant, 1);
+	}
+
 	Autosave();
 }
 

@@ -1,0 +1,11 @@
+=== Credits Scratch Pad - This is nowhere near complete or final. ===
+
+I had honestly forgotten about CutmanMike's ZPortal mod when I started this as a proof of concept, but I'll credit inspiration to him, regardless.  MAP02 is a modified version of the original ZPortal map by CutmanMike, intended to be an Easter egg - haven't talked to him about it, so this may not make the cut for final release.
+
+All sounds are from Portal 2 by Valve Software.
+
+High-resolution COMPTALL texture used as a base for a few textures is from the Doom Neural Upscale - again, haven't asked about using it - may end up just redrawing things myself. (https://www.doomworld.com/forum/topic/99021-doom-neural-upscale-2x-v-0-95minorspritefixsmoothweapons/)
+
+Water/Slime texture derived from one used in Blade of Agony, since that's what my water shader was originally written for - No idea where they got it from right now.
+
+Everything else has been drawn or modeled from scratch; a few models originally came from my still-unfinished Star Trek mod.

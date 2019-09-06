@@ -154,4 +154,6 @@ DoomEdNums
 	30059 = LightFixture
 	30060 = Silhouette
 	31000 = FlatText
+	31001 = ConfettiSpawner
+	32002 = LightSpawner
 }

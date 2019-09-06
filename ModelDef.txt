@@ -352,6 +352,14 @@ Model Monitor
 
 	FrameIndex UNKN D 0 0
 
+	SurfaceSkin 0 0 "ScreenC.png"
+
+	FrameIndex UNKN J 0 0
+
+	SurfaceSkin 0 0 "ScreenE.png"
+
+	FrameIndex UNKN K 0 0
+
 	SurfaceSkin 0 0 "Screen5.png"
 
 	FrameIndex UNKN E 0 0

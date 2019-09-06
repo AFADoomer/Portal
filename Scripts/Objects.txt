@@ -51,6 +51,7 @@ class Monitor : Actor
 	int delay;
 	AlphaLight light;
 	String user_text;
+	int user_screen;
 
 	Default
 	{
@@ -91,10 +92,10 @@ class Monitor : Actor
 	{
 		Super.Tick();
 
-		if (user_text != "")
+		if (user_text != "" || user_screen)
 		{
 			if (light) { light.alpha = 1.0; }
-			frame = 4;
+			frame = user_screen ? user_screen : 4;
 		}
 		else if (bStandstill)
 		{
@@ -661,6 +662,7 @@ class PlatformMoving : Platform
 			UNKN A 1
 			{
 				bStandStill = False;
+				bDormant = False;
 				A_PlaySound("platform2/start", CHAN_AUTO, 0.25);
 			}
 			UNKN A 245;
@@ -687,6 +689,9 @@ class PlatformMoving : Platform
 
 	override void PostBeginPlay()
 	{
+		bDormant = SpawnFlags & MTF_DORMANT;
+		if (bDormant) { SetStateLabel("Inactive"); }
+
 		beamtracer = new("BridgeFindHitPointTracer");
 
 		DoTrace(self, angle + 180, 2048, -pitch, TRF_THRUACTORS, 0, beamtracer);
@@ -706,7 +711,13 @@ class PlatformMoving : Platform
 
 	override void Tick()
 	{
-		if (IsFrozen() || bStandStill) { Actor.Tick(); return; }
+		if (IsFrozen() || bStandStill || bDormant)
+		{
+			Actor.Tick();
+
+			if (bDormant && beam) { beam.Destroy(); }
+			return;
+		}
 
 		while (!beam)
 		{
@@ -1224,7 +1235,7 @@ class LightFixture : Actor
 	{
 		if (light)
 		{
-			light.alpha = bStandstill ? 0.0 : user_lightlevel;
+			light.alpha = (bStandstill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_lightlevel;
 		}
 
 		Super.Tick();
@@ -1630,12 +1641,14 @@ class Silhouette : Zombieman
 	{
 		//$Category Portal/Decorations
 		//$Title Silhouette
+		-SOLID
 		SeeSound "silence";
 		AttackSound "silence";
 		PainSound "silence";
 		DeathSound "silence";
 		ActiveSound "silence";
 		Speed 3;
+		XScale 0.7;
 		Renderstyle "Stencil";
 		StencilColor "000000";
 		Alpha 0.3;
@@ -1650,12 +1663,17 @@ class Silhouette : Zombieman
 
 	override void Tick()
 	{
-		if (Distance2D(players[consoleplayer].mo) < 768) { alpha = 0.0; }
+		double dist = Distance2D(players[consoleplayer].mo);
+
+		if (dist < 768)
+		{
+			alpha = clamp((dist - 128) / 768, 0, 1.0) * Default.alpha;
+		}
 		else
 		{
 			alpha = Default.alpha;
-
-			Super.Tick();
 		}
+
+		Super.Tick();
 	}
 }

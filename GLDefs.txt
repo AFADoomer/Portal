@@ -64,16 +64,6 @@ Material Texture "Models/Bridge.png"
 }
 
 Brightmap Texture "INSET" { map "Materials/Brightmaps/INSET.png" }
-Brightmap Texture "LITB1x1" { map "Materials/Brightmaps/LIT.png" }
-Brightmap Texture "LITB2x1" { map "Materials/Brightmaps/LIT.png" }
-Brightmap Texture "LITB2x2" { map "Materials/Brightmaps/LIT.png" }
-Brightmap Texture "LITW1x1" { map "Materials/Brightmaps/LIT.png" }
-Brightmap Texture "LITW2x1" { map "Materials/Brightmaps/LIT.png" }
-Brightmap Texture "LITW2x2" { map "Materials/Brightmaps/LIT.png" }
-Brightmap Texture "LITBW1x1" { map "Materials/Brightmaps/LITW.png" }
-Brightmap Texture "LITBW2x1" { map "Materials/Brightmaps/LITW.png" }
-Brightmap Texture "LITWW1x1" { map "Materials/Brightmaps/LITW.png" }
-Brightmap Texture "LITWW2x1" { map "Materials/Brightmaps/LITW.png" }
 Brightmap Sprite "SIGNX0" { map "Materials/Brightmaps/Signs.png" }
 Brightmap Sprite "SIGNX0" { map "Materials/Brightmaps/Signs.png" }
 Brightmap Sprite "DOTOA0" { map "DOTBMOA0" }
@@ -169,6 +159,8 @@ Material Texture "Models/screen2j.png" { normal "Materials/NormalMaps/Auto/GLASS
 
 Material Texture "Models/screen3.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
 Material Texture "Models/screen5.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+
+Material Texture "Models/screene.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
 
 Material Texture "Models/buttonshell.png"
 {

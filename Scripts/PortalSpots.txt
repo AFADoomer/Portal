@@ -723,6 +723,12 @@ class PortalSpot : Actor
 
 class StaticPortalSpot : PortalSpot
 {
+	Default
+	{
+		//$Category Portal/Objects
+		//$Title Orange Portal Spot
+	}
+
 	override void PostBeginPlay()
 	{
 		forcelocation = true;
@@ -737,6 +743,11 @@ class StaticPortalSpot : PortalSpot
 
 class StaticPortalSpotBlue : StaticPortalSpot
 {
+	Default
+	{
+		//$Title Blue Portal Spot
+	}
+
 	override void PostBeginPlay()
 	{
 		Super.PostBeginPlay();
