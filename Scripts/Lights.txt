@@ -106,7 +106,15 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 
 	override void Tick()
 	{
+		if (IsFrozen()) { return; }
+
 		Super.Tick();
+
+		if (!bDormant && !tid)
+		{
+			double dist = Distance3D(players[consoleplayer].mo);
+			if (!flickertime && dist < 196.0) { Activate(self); }
+		}
 
 		if (level.time < flickertime)
 		{

@@ -302,7 +302,6 @@ Script "Initialize" (int door, int things)
 	{
 		Thing_Activate(things);
 		SetActorProperty(things, APROP_Dormant, 0);
-		ACS_NamedExecuteAlways("TriggerGrille", 0, 1, things);
 		SetActorState(things, "Active");
 	}
 

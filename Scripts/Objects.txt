@@ -1281,8 +1281,8 @@ class FlatText : Actor
 	int value;
 	Vector3 offset;
 	String user_text;
+	bool drawn;
 	
-
 	Default
 	{
 		//$Category Portal/Special Objects
@@ -1544,20 +1544,24 @@ class FlatText : Actor
 			offset = (RotateVector(offset.xy, -master.angle), offset.z);
 		}
 
-		if (user_text)
-		{
-			FlatText.SpawnString(self, user_text, fillcolor);
-		}
-
 		Super.PostBeginPlay();
 	}
 
 	override void Tick()
 	{
-		if (IsFrozen()) { return; }
+		if (IsFrozen() || bDormant) { return; }
 
-		int newsprite = GetSpriteIndex(String.Format("F%03i", value));
-		if (newsprite && sprite != newsprite) { sprite = newsprite; }
+		if (user_text && !drawn && level.time > 35)
+		{
+			FlatText.SpawnString(self, user_text, fillcolor);
+			drawn = true;
+		}
+
+		if (value)
+		{
+			int newsprite = GetSpriteIndex(String.Format("F%03i", value));
+			if (newsprite && sprite != newsprite) { sprite = newsprite; }
+		}
 
 //		Super.Tick();
 
@@ -1575,6 +1579,8 @@ class FlatText : Actor
 		double position = 0;
 		double width = 16 * 0.125 * master.scale.x * scale;
 		double height = 33 * 0.125 * master.scale.y * scale;
+
+		int time = level.time;
 
 		for (int i = 0; i < digits; i++)
 		{
