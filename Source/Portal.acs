@@ -295,9 +295,19 @@ Script "SpawnStaticPortal" (int spottid, int pitch)
 	SetActorPitch(9999, -pitch * 1.0 / 360);
 }
 
-Script "Initialize" (int door, int things)
+Script "Initialize" (int door, int things, int sound)
 {
 	if (door) { ACS_NamedExecuteAlways("OpenDoor", 0, 1, door); }
+
+	if (sound)
+	{
+		Delay(30);
+
+		PlaySound(0, "lights/on", CHAN_AUTO, 0.25);
+
+		Delay(25);
+	}
+
 	if (things)
 	{
 		Thing_Activate(things);

@@ -132,6 +132,8 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 		{
 			flickertime = level.time + Random(15, 45);
 
+			if (flickertime > level.time + 35) { A_PlaySound("lights/flicker", CHAN_AUTO, FRandom(0.125, 0.25), false, ATTN_NORM, false, FRandom(0.8, 1.2)); }
+
 			Super.Activate(activator);
 		}
 	}

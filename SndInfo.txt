@@ -119,4 +119,14 @@ footsteps/wade2		wade2
 footsteps/wade3		wade3
 footsteps/wade4		wade4
 
+$random lights/flicker { lights/flicker1 lights/flicker2 lights/flicker3 lights/flicker4 }
+lights/flicker1		flicker1
+lights/flicker2		flicker2
+lights/flicker3		flicker3
+lights/flicker4		flicker4
+
+lights/on		lightson
+
+$rolloff lights/flicker linear 64 256
+
 silence			DSEMPTY
