@@ -684,6 +684,7 @@ class PlatformMoving : Platform
 	override void Touch(Actor toucher)
 	{
 		if (toucher == self || toucher == glass || toucher.bNoGravity || toucher is "Platform") { return; }
+		if (toucher.pos.z > pos.z + 32.0 || toucher.pos.z < pos.z - 16) { return; }
 		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
 	}
 
@@ -715,7 +716,7 @@ class PlatformMoving : Platform
 		{
 			Actor.Tick();
 
-			if (bDormant && beam) { beam.Destroy(); }
+			if (beam) { beam.Destroy(); }
 			return;
 		}
 
