@@ -16,6 +16,7 @@ class PortalGun : Weapon
 		Weapon.AmmoUse 0;
 		Weapon.UpSound "portalgun/up";
 		Weapon.ReadySound "";
+		Inventory.AltHUDIcon "TNT1A0";
 		Inventory.Pickupmessage "$PORTALGUNPICKUP";
 		Inventory.PickupSound "";
 		Tag "$PORTALGUNTAG";

@@ -3,7 +3,7 @@ gameinfo
 	dimcolor = "0 0 0"
 	dimamount = 0.35
 	bluramount = 0.5
-	borderflat = "WALL2x2"
+	borderflat = "WALL2x2S"
 
 	menufontcolor_title = "PortalGreen"
 	menufontcolor_label = "Gray"

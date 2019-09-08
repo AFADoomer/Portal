@@ -102,11 +102,18 @@ class PortalSpot : Actor
 		if (!ring)
 		{
 			ring = Spawn("PortalRing", pos);
-			ring.master = self;
-			ring.angle = angle;
-			ring.pitch = pitch;
-			ring.roll = roll;
-			ring.frame = frame;
+			if (ring)
+			{
+				ring.master = self;
+				ring.angle = angle;
+				ring.pitch = pitch;
+				ring.roll = roll;
+				ring.frame = frame;
+			}
+		}
+		else
+		{
+			OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, CheckSight(players[consoleplayer].mo) ? 0.0 : 0.5);
 		}
 
 		if (replacement/* && replacement.open*/ || int(lineangle) != GetLineAngle()) { DoDestroy(); }
