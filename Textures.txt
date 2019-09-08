@@ -214,16 +214,16 @@ Texture WALLTX1N, 256, 512
 	YScale 2.0
 	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 64
 	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 0
-	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 192, 0
+	Patch "Materials/NormalMaps/Auto/WALL2x2D.png", 192, 0
 	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 64
-	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 0
-	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 128
-	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/WALL1x1D.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/WALL4x4D.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/WALL4x4D.png", 0, 256
 	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 128
 	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 192
 	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 64, 128
 	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 256
-	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/WALL2x1D.png", 128, 384
 	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 384
 }
 
@@ -233,17 +233,74 @@ Texture WALLTX1S, 256, 512
 	YScale 2.0
 	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 64
 	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 0
-	Patch "Materials/Specular/Auto/WALL2x2.png", 192, 0
+	Patch "Materials/Specular/Auto/WALL2x2D.png", 192, 0
 	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 64
-	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 0
-	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 128
-	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 256
+	Patch "Materials/Specular/Auto/WALL1x1D.png", 0, 0
+	Patch "Materials/Specular/Auto/WALL4x4D.png", 0, 128
+	Patch "Materials/Specular/Auto/WALL4x4D.png", 0, 256
 	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 128
 	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 192
 	Patch "Materials/Specular/Auto/WALL2x1.png", 64, 128
 	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 256
-	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 384
+	Patch "Materials/Specular/Auto/WALL2x1D.png", 128, 384
 	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 384
+}
+
+Texture WALLTX2, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch WALL1x1D, 0, 64
+	Patch WALL2x2, 128, 0
+	Patch WALL4x4, 192, 0
+	Patch WALL2x2D, 128, 64
+	Patch WALL2x2, 0, 0
+	Patch WALL4x4, 0, 128
+	Patch WALL2x2D, 0, 256
+	Patch WALL2x2, 128, 128
+	Patch WALL4x4, 0, 192
+	Patch WALL2x1D, 64, 128
+	Patch WALL2x2, 128, 256
+	Patch WALL4x4, 128, 384
+	Patch WALL1x1D, 0, 384
+}
+
+Texture WALLTX2N, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/Auto/WALL1x1D.png", 0, 64
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 192, 0
+	Patch "Materials/NormalMaps/Auto/WALL2x2D.png", 128, 64
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x2D.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 192
+	Patch "Materials/NormalMaps/Auto/WALL2x1D.png", 64, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/WALL1x1D.png", 0, 384
+}
+
+Texture WALLTX2S, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Specular/Auto/WALL1x1D.png", 0, 64
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 0
+	Patch "Materials/Specular/Auto/WALL4x4.png", 192, 0
+	Patch "Materials/Specular/Auto/WALL2x2D.png", 128, 64
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 0
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 128
+	Patch "Materials/Specular/Auto/WALL2x2D.png", 0, 256
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 128
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 192
+	Patch "Materials/Specular/Auto/WALL2x1D.png", 64, 128
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 256
+	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 384
+	Patch "Materials/Specular/Auto/WALL1x1D.png", 0, 384
 }
 
 Texture WALF1x1_, 256, 640

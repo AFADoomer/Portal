@@ -247,30 +247,6 @@ Material Texture "COMPTAL8"
 	specular "Materials/Specular/Auto/WALL1x1.png"
 }
 
-Material Texture "WALL1x1D"
-{
-	normal "Materials/NormalMaps/Auto/WALL1x1.png"
-	specular "Materials/Specular/Auto/WALL1x1.png"
-}
-
-Material Texture "WALL2x1D"
-{
-	normal "Materials/NormalMaps/Auto/WALL2x1.png"
-	specular "Materials/Specular/Auto/WALL2x1.png"
-}
-
-Material Texture "WALL2x2D"
-{
-	normal "Materials/NormalMaps/Auto/WALL2x2.png"
-	specular "Materials/Specular/Auto/WALL2x2.png"
-}
-
-Material Texture "WALL4x4D"
-{
-	normal "Materials/NormalMaps/Auto/WALL4x4.png"
-	specular "Materials/Specular/Auto/WALL4x4.png"
-}
-
 Material Texture "WALL1x1S"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
