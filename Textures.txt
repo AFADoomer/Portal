@@ -84,89 +84,222 @@ Texture BEAMGRID, 256, 256
 	Patch "Patches/BeamGrid.png", 0, 0
 }
 
-
 Texture WALL1x1, 128, 128
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Patches/WALL1x1.png", 0, 0
+	Patch "Patches/WALL_1.png", 0, 0
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture WALL2x1, 128, 128
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Patches/WALL2x1.png", 0, 0
+	Patch "Patches/WALL_1.png", 0, 0
+	Patch "Patches/BORD2x1.png", 0, 0 { Style Overlay }
+
 }
 
 Texture WALL2x2, 128, 128
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Patches/WALL2x2.png", 0, 0
+	Patch "Patches/WALL_1.png", 0, 0
+	Patch "Patches/BORD2x2.png", 0, 0 { Style Overlay }
 }
 
 Texture WALL4x4, 128, 128
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Patches/WALL4x4.png", 0, 0
+	Patch "Patches/WALL_1.png", 0, 0
+	Patch "Patches/BORD4x4.png", 0, 0 { Style Overlay }
+}
+
+Texture WALL1x1D, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/RIDGES.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+
+Texture WALL2x1D, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/RIDGES.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD2x1.png", 0, 0 { Style Overlay }
+
+}
+
+Texture WALL2x2D, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/RIDGES.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD2x2.png", 0, 0 { Style Overlay }
+}
+
+Texture WALL4x4D, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/RIDGES.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD4x4.png", 0, 0 { Style Overlay }
+}
+
+Texture WALL1x1S, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+
+Texture WALL2x1S, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/BORD2x1.png", 0, 0 { Style Overlay }
+}
+
+Texture WALL2x2S, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/BORD2x2.png", 0, 0 { Style Overlay }
+
+}
+
+Texture WALL4x4S, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALL_2.png", 0, 0
+	Patch "Patches/BORD4x4.png", 0, 0 { Style Overlay }
+}
+
+Texture WALLTX1, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch WALL2x2, 0, 64
+	Patch WALL2x2, 128, 0
+	Patch WALL2x2D, 192, 0
+	Patch WALL4x4, 128, 64
+	Patch WALL1x1D, 0, 0
+	Patch WALL4x4D, 0, 128
+	Patch WALL4x4D, 0, 256
+	Patch WALL2x2, 128, 128
+	Patch WALL2x2, 0, 192
+	Patch WALL2x1, 64, 128
+	Patch WALL2x1, 128, 256
+	Patch WALL2x1D, 128, 384
+	Patch WALL1x1, 0, 384
+}
+
+Texture WALLTX1N, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 64
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 192, 0
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 64
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 192
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 64, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 384
+}
+
+Texture WALLTX1S, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 64
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 0
+	Patch "Materials/Specular/Auto/WALL2x2.png", 192, 0
+	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 64
+	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 0
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 128
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 256
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 128
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 192
+	Patch "Materials/Specular/Auto/WALL2x1.png", 64, 128
+	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 256
+	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 384
+	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 384
 }
 
 Texture WALF1x1_, 256, 640
 {
-	Patch "Patches/WALL1x1.png", 0, 0
-	Patch "Patches/WALL1x1.png", 0, 128
-	Patch "Patches/WALL1x1.png", 0, 256
-	Patch "Patches/WALL1x1.png", 0, 384
-	Patch "Patches/WALL1x1.png", 0, 512
-	Patch "Patches/WALL1x1.png", 128, 0
-	Patch "Patches/WALL1x1.png", 128, 128
-	Patch "Patches/WALL1x1.png", 128, 256
-	Patch "Patches/WALL1x1.png", 128, 384
-	Patch "Patches/WALL1x1.png", 128, 512
+	Patch WALL1x1, 0, 0
+	Patch WALL1x1, 0, 128
+	Patch WALL1x1, 0, 256
+	Patch WALL1x1, 0, 384
+	Patch WALL1x1, 0, 512
+	Patch WALL1x1, 128, 0
+	Patch WALL1x1, 128, 128
+	Patch WALL1x1, 128, 256
+	Patch WALL1x1, 128, 384
+	Patch WALL1x1, 128, 512
 }
 
 Texture WALF2x1_, 256, 640
 {
-	Patch "Patches/WALL2x1.png", 0, 0
-	Patch "Patches/WALL2x1.png", 0, 128
-	Patch "Patches/WALL2x1.png", 0, 256
-	Patch "Patches/WALL2x1.png", 0, 384
-	Patch "Patches/WALL2x1.png", 0, 512
-	Patch "Patches/WALL2x1.png", 128, 0
-	Patch "Patches/WALL2x1.png", 128, 128
-	Patch "Patches/WALL2x1.png", 128, 256
-	Patch "Patches/WALL2x1.png", 128, 384
-	Patch "Patches/WALL2x1.png", 128, 512
+	Patch WALL2x1, 0, 0
+	Patch WALL2x1, 0, 128
+	Patch WALL2x1, 0, 256
+	Patch WALL2x1, 0, 384
+	Patch WALL2x1, 0, 512
+	Patch WALL2x1, 128, 0
+	Patch WALL2x1, 128, 128
+	Patch WALL2x1, 128, 256
+	Patch WALL2x1, 128, 384
+	Patch WALL2x1, 128, 512
 }
 
 Texture WALF2x2_, 256, 640
 {
-	Patch "Patches/WALL2x2.png", 0, 0
-	Patch "Patches/WALL2x2.png", 0, 128
-	Patch "Patches/WALL2x2.png", 0, 256
-	Patch "Patches/WALL2x2.png", 0, 384
-	Patch "Patches/WALL2x2.png", 0, 512
-	Patch "Patches/WALL2x2.png", 128, 0
-	Patch "Patches/WALL2x2.png", 128, 128
-	Patch "Patches/WALL2x2.png", 128, 256
-	Patch "Patches/WALL2x2.png", 128, 384
-	Patch "Patches/WALL2x2.png", 128, 512
+	Patch WALL2x2, 0, 0
+	Patch WALL2x2, 0, 128
+	Patch WALL2x2, 0, 256
+	Patch WALL2x2, 0, 384
+	Patch WALL2x2, 0, 512
+	Patch WALL2x2, 128, 0
+	Patch WALL2x2, 128, 128
+	Patch WALL2x2, 128, 256
+	Patch WALL2x2, 128, 384
+	Patch WALL2x2, 128, 512
 }
 
 Texture WALF4x4_, 256, 640
 {
-	Patch "Patches/WALL4x4.png", 0, 0
-	Patch "Patches/WALL4x4.png", 0, 128
-	Patch "Patches/WALL4x4.png", 0, 256
-	Patch "Patches/WALL4x4.png", 0, 384
-	Patch "Patches/WALL4x4.png", 0, 512
-	Patch "Patches/WALL4x4.png", 128, 0
-	Patch "Patches/WALL4x4.png", 128, 128
-	Patch "Patches/WALL4x4.png", 128, 256
-	Patch "Patches/WALL4x4.png", 128, 384
-	Patch "Patches/WALL4x4.png", 128, 512
+	Patch WALL4x4, 0, 0
+	Patch WALL4x4, 0, 128
+	Patch WALL4x4, 0, 256
+	Patch WALL4x4, 0, 384
+	Patch WALL4x4, 0, 512
+	Patch WALL4x4, 128, 0
+	Patch WALL4x4, 128, 128
+	Patch WALL4x4, 128, 256
+	Patch WALL4x4, 128, 384
+	Patch WALL4x4, 128, 512
 }
 
 Texture WALF1x1, 512, 640
@@ -1467,11 +1600,11 @@ Texture COMPTAL1, 128, 128
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", 0, 0
 	Patch "Patches/COMPTALL.png", 64, 0
-	Patch "Patches/WALLOVLY.png", -64, -64 { Style Overlay }
-	Patch "Patches/WALLOVLY.png", -64, 0 { Style Overlay }
-	Patch "Patches/WALLOVLY.png", 64, -64 { Style Overlay }
-	Patch "Patches/WALLOVLY.png", 64, 0 { Style Overlay }
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", -64, -64 { Style Overlay }
+	Patch "Patches/BORD1x1.png", -64, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 64, -64 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 64, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture COMPTAL2, 128, 128
@@ -1479,7 +1612,7 @@ Texture COMPTAL2, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", -64, 0
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture COMPTAL3, 128, 128
@@ -1487,7 +1620,7 @@ Texture COMPTAL3, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", -192, 0
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture COMPTAL4, 128, 128
@@ -1495,7 +1628,7 @@ Texture COMPTAL4, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", -384, 0
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture COMPTAL5, 128, 128
@@ -1503,7 +1636,7 @@ Texture COMPTAL5, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", 0, -128
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture COMPTAL6, 128, 128
@@ -1511,7 +1644,7 @@ Texture COMPTAL6, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", -128, -128
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture COMPTAL7, 128, 128
@@ -1519,7 +1652,7 @@ Texture COMPTAL7, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", -256, -128
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
 Texture COMPTAL8, 128, 128
@@ -1527,5 +1660,5 @@ Texture COMPTAL8, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", -384, -128
-	Patch "Patches/WALLOVLY.png", 0, 0 { Style Overlay }
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
