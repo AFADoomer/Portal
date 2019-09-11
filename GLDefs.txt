@@ -276,3 +276,9 @@ Material Texture "WALLTX1"
 	normal "WALLTX1N"
 	specular "WALLTX1S"
 }
+
+Material Texture "WALLTX2"
+{
+	normal "WALLTX2N"
+	specular "WALLTX2S"
+}

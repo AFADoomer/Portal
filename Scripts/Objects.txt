@@ -1211,11 +1211,12 @@ class LightFixture : Actor
 	{
 		if (!user_lightlevel) { user_lightlevel = 15.0; }
 
-		light = AlphaLight(Spawn("AlphaLight", pos - (0, 0, 4)));
+		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4)));
 		if (light)
 		{
 			light.master = self;
-			light.bAttenuate = true;
+			light.angle = angle;
+			light.pitch = 0;
 			light.maxradius = 256.0;
 			light.clr = color("168 168 192");
 			light.alpha = bStandstill ? 0.0 : user_lightlevel;
@@ -1236,7 +1237,7 @@ class LightFixture : Actor
 	{
 		if (light)
 		{
-			light.alpha = (bStandstill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_lightlevel;
+			light.alpha = (bStandStill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_lightlevel;
 		}
 
 		Super.Tick();
@@ -1564,7 +1565,7 @@ class FlatText : Actor
 			if (newsprite && sprite != newsprite) { sprite = newsprite; }
 		}
 
-//		Super.Tick();
+		Super.Tick();
 
 		if (!master && !user_text) { Destroy(); }
 

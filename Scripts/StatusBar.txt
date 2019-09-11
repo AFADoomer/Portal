@@ -34,6 +34,7 @@ class PortalStatusBar : BaseStatusBar
 
 		if (
 			!gun ||
+			!crosshair || 
 			CPlayer.cheats & CF_CHASECAM ||
 			gamestate == GS_TITLELEVEL || 
 			CPlayer.health <= 0
