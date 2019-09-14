@@ -52,9 +52,9 @@ Script "OpenDoor" (int close, int tag)
 {
 	if (!close)
 	{
-		PlaySound(0, "button/success", CHAN_6);
 		if (doorstate[tag] == close)
 		{
+			PlaySound(0, "button/success", CHAN_6);
 			Door_Open(tag, 128);
 			Floor_LowerByValue(tag, 128, 32);
 		}
