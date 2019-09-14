@@ -62,7 +62,7 @@ class AlphaLight : DynamicLight
 			clr.b = AlphaLight(master).clr.b / d;
 			alpha = master.alpha;
 
-			args[LIGHT_INTENSITY] = AlphaLight(master).args[LIGHT_INTENSITY] * 3 / 4;
+			args[LIGHT_INTENSITY] = min(32, AlphaLight(master).args[LIGHT_INTENSITY] * 3 / 4);
 		}
 		else
 		{

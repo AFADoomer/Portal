@@ -30,7 +30,7 @@ Class PortalFindHitPointTracer : LineTracer
 				{
 					return TRACE_Skip;
 				}
-				if (Texman.GetName(Results.HitTexture) ~== "GRATE")
+				else if (Texman.GetName(Results.HitTexture) ~== "GRATE")
 				{
 					if (nogrates) { return TRACE_Stop; }
 					return TRACE_Skip;

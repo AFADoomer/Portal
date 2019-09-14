@@ -1217,7 +1217,7 @@ class LightFixture : Actor
 			light.master = self;
 			light.angle = angle;
 			light.pitch = 0;
-			light.maxradius = 256.0;
+			light.maxradius = 378.0;
 			light.clr = color("168 168 192");
 			light.alpha = bStandstill ? 0.0 : user_lightlevel;
 			light.scale.y = 1 / user_lightlevel;
