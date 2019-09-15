@@ -2,6 +2,7 @@ class PortalSpot : Actor
 {
 	Actor pair, camera, ring;
 	PortalSpot replacement;
+	Actor replacing;
 	PlayerPawn closest;
 	Array<Actor> Activators;
 	Array<Actor> BeamSources;
@@ -113,7 +114,7 @@ class PortalSpot : Actor
 		}
 		else
 		{
-			OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, CheckSight(players[consoleplayer].mo) ? 0.0 : 0.5);
+			OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY) ? 0.5 : 0.0);
 		}
 
 		if (replacement/* && replacement.open*/ || int(lineangle) != GetLineAngle()) { DoDestroy(); }
@@ -308,8 +309,8 @@ class PortalSpot : Actor
 		double a, p, r;
 		[a, p, r] = results.toAngles();
 
-		if (toucher.vel.length() < 16.0) { toucher.vel *= 1.05; }
 		toucher.vel = RotateVector3(toucher.vel, a - toucher.angle, -p + toucher.pitch, r - toucher.roll);
+		if (toucher.vel.length() < 16.0) { toucher.vel *= 1.05; }
 
 		toucher.angle = a;
 		toucher.pitch = -p;
@@ -539,7 +540,11 @@ class PortalSpot : Actor
 
 			SetOrigin(newpos, false);
 
-			if (CheckValidity()) { return true; }
+			if (CheckValidity())
+			{
+				if (replacing) { PortalSpot(replacing).DoDestroy(); }
+				return true;
+			}
 
 			if (position == maxposition && angle != slopeangle) // Try aligning with the plane's slope angle
 			{

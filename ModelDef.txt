@@ -412,9 +412,12 @@ Model LaserTrigger
 
 	Offset 0.0 0.0 7.0;
 
+	SurfaceSkin 0 0 "WALL1x1S"
+
 	FrameIndex UNKN A 0 0
 
 	SurfaceSkin 0 1 "lasercube2.png"
+	SurfaceSkin 0 0 "WALL1x1S"
 
 	FrameIndex UNKN B 0 0
 }

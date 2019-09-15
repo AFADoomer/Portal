@@ -235,7 +235,11 @@ class PortalGun : Weapon
 				portalB = portal;
 			}
 */
-			if (portalB && destroyold) { PortalSpot(portalB).replacement = portal; }
+			if (portalB && destroyold)
+			{
+				PortalSpot(portalB).replacement = portal;
+				PortalSpot(portalB).replacing = portalB;
+			}
 			portalB = portal;
 		}
 		else
@@ -247,7 +251,11 @@ class PortalGun : Weapon
 				portalA = portal;
 			}
 */
-			if (portalA && destroyold) { PortalSpot(portalA).replacement = portal; }
+			if (portalA && destroyold)
+			{
+				PortalSpot(portalA).replacement = portal;
+				PortalSpot(portalA).replacing = portalA;
+			}
 			portalA = portal;
 		}
 	}

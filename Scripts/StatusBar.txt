@@ -22,10 +22,6 @@ class PortalStatusBar : BaseStatusBar
 		if (!CPlayer) { return; }
 
 		TextureID CrosshairImage;
-		double size = 1.0;
-		Vector2 dimensions;
-		double w, h;
-		double maxwidth = max(52.0, int(crosshairscale * screen.GetWidth() / 20));
 		PortalGun gun;
 		color pri = "00 7B FF";
 		color alt = "FF 84 00";
@@ -63,7 +59,7 @@ class PortalStatusBar : BaseStatusBar
 
 	void DrawCrosshair(String texture, color clr)
 	{
-		double maxwidth = max(80.0, int(crosshairscale * screen.GetWidth() / 20));
+		double maxwidth = int(screen.GetWidth() * crosshairscale / 8);
 
 		TextureID icon = TexMan.CheckForTexture(texture, TexMan.Type_Any);
 
