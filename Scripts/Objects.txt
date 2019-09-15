@@ -1209,7 +1209,7 @@ class LightFixture : Actor
 
 	override void PostBeginPlay()
 	{
-		if (!user_lightlevel) { user_lightlevel = 15.0; }
+		if (!user_lightlevel) { user_lightlevel = 10.0; }
 
 		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4)));
 		if (light)
@@ -1217,7 +1217,7 @@ class LightFixture : Actor
 			light.master = self;
 			light.angle = angle;
 			light.pitch = 0;
-			light.maxradius = 378.0;
+			light.maxradius = 384.0;
 			light.clr = color("168 168 192");
 			light.alpha = bStandstill ? 0.0 : user_lightlevel;
 			light.scale.y = 1 / user_lightlevel;

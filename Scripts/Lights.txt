@@ -39,30 +39,34 @@ class AlphaLight : DynamicLight
 			Vector2 temp = RotateVector((spawnoffset.x, spawnoffset.y), -master.angle);
 			spawnoffset = (temp.x, temp.y, spawnoffset.z);
 
-			if (master is "AttenuatedAlphaLight") { maxradius = AlphaLight(master).maxradius; }
+			if (master is "AttenuatedAlphaLight")
+			{
+				maxradius = AlphaLight(master).maxradius / 4;
+				angle = master.angle;
+			}
 		}
 
 		Super.PostBeginPlay();
 
 		CVar debug = Cvar.FindCVar("g_debuglights");
 
-		if (debug && debug.GetBool()) { FlatText.SpawnString(self, String.Format("%i", maxradius), 0x550055); }
+		if (debug && debug.GetBool()) { FlatText.SpawnString(self, String.Format("%i", maxradius), (master is "AttenuatedAlphaLight") ? 0x555500 : 0x550055); }
 	}
 
 	override void Tick()
 	{
 		Super.Tick();
 
+		if (IsFrozen()) { return; }
+
 		if (master is "AttenuatedAlphaLight")
 		{
-			int d = master.pitch == 90 ? 2 : 16;
+			clr.r = AlphaLight(master).clr.r / 16;
+			clr.g = AlphaLight(master).clr.g / 16;
+			clr.b = AlphaLight(master).clr.b / 16;
+			alpha = master.alpha * 10.0;
 
-			clr.r = AlphaLight(master).clr.r / d;
-			clr.g = AlphaLight(master).clr.g / d;
-			clr.b = AlphaLight(master).clr.b / d;
-			alpha = master.alpha;
-
-			args[LIGHT_INTENSITY] = min(32, AlphaLight(master).args[LIGHT_INTENSITY] * 3 / 4);
+			args[LIGHT_INTENSITY] = min(32, AlphaLight(master).args[LIGHT_INTENSITY] * 1 / 4);
 		}
 		else
 		{
@@ -135,20 +139,19 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 	{
 		if (!user_lightlevel) { user_lightlevel = 5.0; }
 
-		base = AlphaLight(Spawn("AlphaLight", pos));
-		if (base) { base.master = self; }
-
 		bSpot = true;
 		SpotInnerAngle = 1;
-		SpotOuterAngle = 170;
+		SpotOuterAngle = 70;
 
 		if (!master)
 		{
 			pitch = 90;
-			SpotOuterAngle = 70;
 			maxradius *= 1.75;
-
-			if (base) { base.SetOrigin((base.pos.xy, base.pos.z - 4), false); }
+		}
+		else
+		{
+			base = AlphaLight(Spawn("AlphaLight", pos));
+			if (base) { base.master = self; }
 		}
 
 		Super.PostBeginPlay();
@@ -159,13 +162,17 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 
 	override void Tick()
 	{
-		if (IsFrozen()) { return; }
+		if (IsFrozen())
+		{
+			if (flickertime) { flickertime++; }
+			return;
+		}
 
 		Super.Tick();
 
 		if (!flickertime && !bDormant && !tid)
 		{
-			if (Distance3D(players[consoleplayer].mo) < 196.0) { Activate(self); }
+			if (Distance2D(players[consoleplayer].mo) < 196.0) { Activate(self); }
 		}
 
 		if (level.time < flickertime)
@@ -175,6 +182,12 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 		else
 		{
 			args[LIGHT_INTENSITY] = int(maxradius);
+		}
+
+		if (pitch == 90)
+		{
+			// Change ceiling brightness directly instead of light spawning
+			curSector.SetPlaneLight(Sector.ceiling, args[LIGHT_INTENSITY]);
 		}
 	}
 
@@ -186,7 +199,7 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 			{
 				flickertime = level.time + Random(15, 45);
 
-				if (flickertime > level.time + 35) { A_PlaySound("lights/flicker", CHAN_AUTO, FRandom(0.125, 0.25), false, ATTN_NORM, false, FRandom(0.8, 1.2)); }
+				if (flickertime > level.time + 35 && Random(0, 2)) { A_PlaySound("lights/flicker", CHAN_AUTO, FRandom(0.125, 0.25), false, ATTN_NORM, false, FRandom(0.8, 1.2)); }
 
 				Super.Activate(activator);
 				if (base) { base.Activate(self); }
@@ -214,6 +227,7 @@ class LightSpawner : Actor
 
 	Default
 	{
+		//$Sprite LightSpawner
 		+NOINTERACTION
 		+INVISIBLE
 		Height 0;
@@ -379,7 +393,8 @@ class LightSpawner : Actor
 					AlphaLight(mo).clr.r = int(basecolor.r * scale);
 					AlphaLight(mo).clr.g = int(basecolor.g * scale);
 					AlphaLight(mo).clr.b = int(basecolor.b * scale);
-					AlphaLight(mo).maxradius = max(rowsize, colsize);
+					AlphaLight(mo).maxradius = max(rowsize, colsize) * 4.0;
+					AttenuatedAlphaLight(mo).user_lightlevel = 1.0;
 
 					if (tid)
 					{
