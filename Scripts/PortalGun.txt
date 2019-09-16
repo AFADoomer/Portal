@@ -214,7 +214,6 @@ class PortalGun : Weapon
 	void PortalSetup(PortalSpot portal, int frame, bool destroyold = true)
 	{
 		portal.frame = frame;
-		portal.pair = frame ? portalA : portalB;
 
 		int index;
 		if (owner) { index = owner.PlayerNumber() + 1; }
@@ -225,39 +224,6 @@ class PortalGun : Weapon
 		if (spr) { portal.sprite = spr; }
 
 		if (portal.pair) { PortalSpot(portal.pair).pair = portal; }
-
-		if (frame)
-		{
-/*
-			if (destroyold && PortalSpot(portal) && PortalSpot(portal).CheckSpawn())
-			{
-				PortalSpot(portalB).replacement = portal;
-				portalB = portal;
-			}
-*/
-			if (portalB && destroyold)
-			{
-				PortalSpot(portalB).replacement = portal;
-				PortalSpot(portalB).replacing = portalB;
-			}
-			portalB = portal;
-		}
-		else
-		{
-/*
-			if (destroyold && PortalSpot(portal) && PortalSpot(portal).CheckSpawn())
-			{
-				PortalSpot(portalA).replacement = portal;
-				portalA = portal;
-			}
-*/
-			if (portalA && destroyold)
-			{
-				PortalSpot(portalA).replacement = portal;
-				PortalSpot(portalA).replacing = portalA;
-			}
-			portalA = portal;
-		}
 	}
 
 	double RoundToMultiple(double i, double n)

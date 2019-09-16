@@ -1,8 +1,6 @@
 class PortalSpot : Actor
 {
 	Actor pair, camera, ring;
-	PortalSpot replacement;
-	Actor replacing;
 	PlayerPawn closest;
 	Array<Actor> Activators;
 	Array<Actor> BeamSources;
@@ -117,7 +115,7 @@ class PortalSpot : Actor
 			OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY) ? 0.5 : 0.0);
 		}
 
-		if (replacement/* && replacement.open*/ || int(lineangle) != GetLineAngle()) { DoDestroy(); }
+		if (int(lineangle) != GetLineAngle()) { DoDestroy(); }
 
 		if (IsFrozen()) { return; }
 
@@ -400,20 +398,58 @@ class PortalSpot : Actor
 			Distance2D(pair) < 32.0
 		) { return false; }
 
-		if (GetCVar("g_allportalsurfaces")) { return true; }
-
-		Actor spot;
-
-		for (int i = 0; i < 27; i += 3) // Check specific coordinates around the portal to make sure they're on a portalable surface
+		if (!GetCVar("g_allportalsurfaces") && !forcelocation)
 		{
-			spot = DoTrace(self, angle, 8, pitch + 180, (offsets[i], offsets[i + 1], offsets[i + 2]), hittracer); // Fire a tracer
+			Actor spot;
 
-			if (!spot.IsVisible(closest, true)) { return false; } // Make sure the spot is inside the map
+			for (int i = 0; i < 27; i += 3) // Check specific coordinates around the portal to make sure they're on a portalable surface
+			{
+				spot = DoTrace(self, angle, 8, pitch + 180, (offsets[i], offsets[i + 1], offsets[i + 2]), hittracer); // Fire a tracer
 
-			if (!CheckTextureName(hittracer.Results.HitTexture, "PORT") && !CheckTextureName(hittracer.Results.HitTexture, "LITW")) { return false; } // Make sure the texture is a portal-able one
+				if (!spot.IsVisible(closest, true)) { return false; } // Make sure the spot is inside the map
+
+				if (!CheckTextureName(hittracer.Results.HitTexture, "PORT") && !CheckTextureName(hittracer.Results.HitTexture, "LITW")) { return false; } // Make sure the texture is a portal-able one
+			}
 		}
 
+		SetupPortal();
+
 		return true;
+	}
+
+	void SetupPortal()
+	{
+		if (master)
+		{
+			PortalGun gun = PortalGun(master.FindInventory("PortalGun", true));
+
+			if (gun)
+			{
+				if (frame)
+				{
+					if (gun.portalB) { PortalSpot(gun.portalB).DoDestroy(); }
+					gun.portalB = self;
+
+					if (gun.portalA)
+					{
+						PortalSpot(gun.portalA).pair = self;
+						pair = gun.portalA;
+					}
+				}
+				else
+				{
+					if (gun.portalA) { PortalSpot(gun.portalA).DoDestroy(); }
+					gun.portalA = self;
+					PortalSpot(gun.portalA).pair = gun.portalB;
+
+					if (gun.portalB)
+					{
+						PortalSpot(gun.portalB).pair = self;
+						pair = gun.portalB;
+					}
+				}
+			}
+		}
 	}
 
 	bool Reposition()
@@ -542,7 +578,6 @@ class PortalSpot : Actor
 
 			if (CheckValidity())
 			{
-				if (replacing) { PortalSpot(replacing).DoDestroy(); }
 				return true;
 			}
 
@@ -596,10 +631,12 @@ class PortalSpot : Actor
 			pitch = -spot.pitch;
 			roll = spot.roll;
 
+			SetupPortal();
+
 			return true;
 		}
 
-		if (!forcelocation && !CheckValidity()) { return Reposition(); }
+		if (!CheckValidity()) { return Reposition(); }
 
 		return true;
 	}
@@ -696,14 +733,6 @@ class PortalSpot : Actor
 
 	void DoDestroy()
 	{
-/*
-		if (replacement && PortalSpot(pair))
-		{
-			replacement.pair = pair;
-			PortalSpot(pair).pair = replacement;
-		}
-*/
-
 		pair = self;
 	}
 
