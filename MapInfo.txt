@@ -1,7 +1,7 @@
 gameinfo
 {
 	dimcolor = "0 0 0"
-	dimamount = 0.35
+	dimamount = 0.75
 	bluramount = 0.5
 	borderflat = "WALL2x2S"
 
@@ -11,7 +11,7 @@ gameinfo
 	menufontcolor_action = "Gray"
 	menufontcolor_header = "PortalGreen"
 	menufontcolor_highlight = "White"
-	menufontcolor_selection = "Orange"
+	menufontcolor_selection = "PortalGreen"
 	menuslidercolor = "PortalGreen"
 
 	PlayerClasses = "PortalPlayer"

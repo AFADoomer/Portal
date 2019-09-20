@@ -19,3 +19,5 @@ version "4.2"
 
 #include "scripts/statusbar.txt"
 #include "scripts/handlers.txt"
+
+#include "scripts/menus/portallistmenu.txt"

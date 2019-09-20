@@ -3,3 +3,16 @@ PORTALGUNPICKUP = "Picked up the Portal Gun";
 PORTALGUNPICKUP2 = "Picked up the Dual Portal Gun";
 PORTALGUNTAG = "Portal Gun";
 PORTALGUNTAG2 = "Dual Portal Gun";
+
+MAIN_NEWGAME = "Start a new game.";
+MAIN_CONFIGURATION = "Change configuration settings.";
+MAIN_LOADGAME = "Load a saved game.";
+MAIN_SAVEGAME = "Save the current game.";
+MAIN_EXIT = "Leave the game.";
+
+CNTRLMNU_SWITCHTEXT1 = "Press ENTER to change a bound key, or BACKSPACE to clear the key binding.";
+CNTRLMNU_SWITCHTEXT2 = "Press new key to bind, or press ESCAPE to cancel.";
+
+JOYMNU_NOCON = "No controllers detected.";
+JOYMNU_DISABLED1 = "";
+JOYMNU_DISABLED2 = "Controller support must be enabled in order to detect a controller.";

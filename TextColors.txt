@@ -1,6 +1,6 @@
 PortalGreen
 {
-	#0a1d1f	#28727a
+	#0a1d1f	#37a2ad
 Console:
 	#28727a	#184347	0 256
 Flat:
