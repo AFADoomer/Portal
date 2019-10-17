@@ -1,3 +1,188 @@
+class CarryActor : Actor
+{
+	Vector3 oldpos;
+	double oldangle;
+	Sound slidesound;
+	Array<Actor> touchers;
+	Vector3[64] offsets;
+	bool fizzle;
+	int offset;
+
+	Property SlideSound:slidesound;
+	Property Fizzle:fizzle;
+
+	Default
+	{
+		//$Category Portal/Decorations/Carryable
+		+ALLOWBOUNCEONACTORS
+		+BOUNCEONACTORS
+		+MBFBOUNCER
+		+BOUNCEAUTOOFF
+		+SLIDESONWALLS
+		+PUSHABLE
+		+WINDTHRUST
+		+SOLID
+		+CANPASS
+		+SHOOTABLE
+		+NOBLOOD
+		+NOTAUTOAIMED
+		+NODAMAGE
+		BounceType "Grenade";
+		BounceFactor 0.25;
+		BounceSound "cube/bounce";
+		WallBounceSound "cube/bounce";
+		CarryActor.SlideSound "cube/slide";
+		carryActor.Fizzle False;
+	}
+
+	States
+	{
+		Fizzle:
+			UNKN A 1 { Utilities.Fizzle(self); }
+			Loop;
+	}
+
+	override void BeginPlay()
+	{
+		A_SetSize(radius * scale.x, height * scale.y); // This sets based on Default scale properties
+		offset = Random(0, 35);
+	}
+
+	override void PostBeginPlay()
+	{
+		A_SetSize(radius * scale.x, height * scale.y); // This sets based on UDMF scale properties
+
+		Super.PostBeginPlay();
+
+		bDormant = SpawnFlags & MTF_DORMANT;
+
+		bPushable = !bStandStill && !bDormant;
+		bNoGravity = bStandStill;
+		bNoInteraction = bStandStill;
+
+		pushfactor = double(100) / mass;
+
+		if (scale.x > 1.5 || scale.y > 1.5) { bPushable = false; }
+	}
+
+	override void Tick()
+	{
+		if (!fizzle && pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
+		{
+			scale *= 0.9;
+
+			if (Scale.X < 0.05) { Destroy(); return; }
+		} 
+
+		// Handling so that bounce sound doesn't play if the object didn't move 
+		// or when it's being carried, and so that the angle doesn't stutter when
+		// the object is pushed but cannnot move.
+		if (pos == oldpos || (master is "PlayerPawn"))
+		{
+			bNoBounceSound = true;
+		}
+		else
+		{
+			bNoBounceSound = false;
+		}
+
+		oldpos = pos;
+		oldangle = angle;
+
+		// Stackable movable objects
+		if ((level.time + offset) % 10 == 0) { CheckTouchers(); }
+
+		if (fizzle) { Utilities.CheckFizzle(self, "Fizzle"); }
+
+		for (int i = 0; i < min(touchers.Size(), 64); i++)
+		{
+			if (touchers[i] && touchers[i] != master)
+			{
+				if (
+					Distance3D(touchers[i]) > (Radius + touchers[i].radius) * 2.0 ||
+					touchers[i].pos.z < pos.z + height
+				) { touchers.Delete(i); }
+				else { offsets[i] = touchers[i].pos - pos; }
+			}
+			else { touchers.Delete(i); touchers.ShrinkToFit(); }
+		}
+
+		Super.Tick();
+/*
+		if (master && master is "PortalPlayer")
+		{
+			if (PortalPlayer(master).DragTarget == self) { vel = PortalPlayer(master).dragvel; }
+
+		}
+*/
+		for (int i = 0; i < min(touchers.Size(), 64); i++)
+		{
+			if (
+				touchers[i] && 
+				(
+					(Distance2D(touchers[i]) < (Radius + touchers[i].radius) * 1.4 && touchers[i].pos.z == pos.z + height) ||
+					deltaangle(angle, AngleTo(touchers[i])) < 45 ||
+					(touchers[i].bOnMobj && Distance3D(touchers[i]) < radius * 2)
+				)
+			)
+			{
+				if (!(touchers[i] is "PlayerPawn") && touchers[i].pos.z == pos.z + height) { touchers[i].vel = vel; }
+				else if (touchers[i].CheckMove(pos.xy + offsets[i].xy)) { touchers[i].SetOrigin(pos + offsets[i], true); }
+				else if (touchers[i].pos.z < pos.z + height) { touchers[i].DamageMobj(self, self, int(max(Speed, 0.5) * vel.length()), "Crush"); }
+			}
+		}
+
+		angle = oldangle;
+
+		if (bNoBounceSound && oldangle) { angle = oldangle; }
+
+		double volume = (pos.z == floorz) ? vel.xy.length() / 25 : 0.0;
+
+		if (volume)
+		{
+			A_PlaySound(slidesound, CHAN_5 | CHAN_NOSTOP, volume, true);
+			A_SoundVolume(CHAN_5, volume);
+		}
+		else
+		{
+			A_StopSound(CHAN_5);
+		}
+	}
+
+	override void Touch(Actor toucher)
+	{
+		if (Distance2D(toucher) > Radius + toucher.Radius) { return; }
+		if (toucher == self || toucher == toucher.master || toucher.bNoGravity) { return; }
+		if (toucher.pos.z > pos.z + height + 32.0 || toucher.pos.z <= pos.z) { return; }
+		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
+	}
+
+	void CheckTouchers()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		Actor mo;
+
+		while (mo = Actor(it.Next(false)))
+		{
+			if (mo.bPushable) { Touch(mo); }
+		}
+
+		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
+
+		while (mo = Actor(it.Next(false)))
+		{
+			Touch(mo);
+		}
+
+		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
+
+		while (mo = Actor(it.Next(false)))
+		{
+			Touch(mo);
+		}
+	}
+}
+
 class DoorSprite : Actor
 {
 	Default
@@ -9,6 +194,7 @@ class DoorSprite : Actor
 		+DONTTHRUST
 		Radius 0;
 		Height 64;
+		YScale 1.18;
 	}
 
 	States
@@ -19,18 +205,17 @@ class DoorSprite : Actor
 	}
 }
 
-class Chair : Actor
+class Chair : CarryActor
 {
 	Default
 	{
-		//$Category Portal/Decorations
-		+SLIDESONWALLS
-		+PUSHABLE
-		+SOLID
-		+CANPASS
-		Height 18;
+		Height 17;
 		Radius 14;
-		Mass 50;
+		Mass 150;
+		BounceFactor 0.04;
+		BounceSound "chair/bounce";
+		WallBounceSound "chair/bounce2";
+		Carryactor.SlideSound "chair/slide";
 	}
 
 	States
@@ -43,6 +228,14 @@ class Chair : Actor
 	override void BeginPlay()
 	{
 		ChangeStatNum(Thinker.STAT_USER);
+	}
+
+	override void PostBeginPlay()
+	{
+		A_SpawnItemEx ("Block8x8", -16.0, 0.0, 18.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block8x8", -16.0, 0.0, 26.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		Super.PostBeginPlay();
 	}
 }
 
@@ -73,14 +266,17 @@ class Monitor : Actor
 
 	override void PostBeginPlay()
 	{
-		light = AlphaLight(Spawn("AlphaLight", pos + RotateVector((32, 0), angle)));
+		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos + RotateVector((4, 0), angle)));
 		if (light)
 		{
 			light.master = self;
 			light.bAttenuate = true;
-			light.maxradius = 16.0;
-			light.clr = color("32 1 0");
+			light.maxradius = 48.0;
+			light.clr = color("64 33 32");
 			light.alpha = (bStandstill && user_text == "") ? 0.0 : 1.0;
+			light.pitch = pitch;
+			light.angle = angle;
+			AttenuatedAlphaLight(light).user_lightlevel = 1.0;
 		}
 
 		if (!bStandStill && user_text != "") { FlatText.SpawnString(self, user_text, 0xFF4000, 6.75 * cos(pitch), 10.5, 25 * sin(pitch), 0.2); }
@@ -91,6 +287,8 @@ class Monitor : Actor
 	override void Tick()
 	{
 		Super.Tick();
+
+		if (IsFrozen() || bDormant) { return; }
 
 		if (user_text != "" || user_screen)
 		{
@@ -127,9 +325,8 @@ class Desk : Actor
 	Default
 	{
 		//$Category Portal/Decorations
-		+SOLID
 		Height 25;
-		Radius 22;
+		Radius 1;
 		Mass 150;
 	}
 
@@ -138,6 +335,32 @@ class Desk : Actor
 		Spawn:
 			UNKN A -1;
 			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		A_SpawnItemEx("Block36x1", 10.0, -10.5, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("Block36x1", 10.0, 10.5, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 0.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 0.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 0.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 0.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 0.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 0.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 10.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 10.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 10.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 10.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 10.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 10.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 20.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 20.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 20.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 20.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 20.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 20.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		Super.PostBeginPlay();
 	}
 }
 
@@ -223,6 +446,14 @@ class Pipe : Actor
 		frame = user_variant;
 
 		Super.PostBeginPlay();
+	}
+}
+
+class PipeBend : Pipe
+{
+	Default
+	{
+		//$Title Pipe Bend
 	}
 }
 
@@ -1190,14 +1421,23 @@ class Launcher : Actor
 class LightFixture : Actor
 {
 	AlphaLight light;
+	Class<Actor> paneclass;
 	Actor panes;
 	double user_lightlevel;
+	double OuterAngle;
+
+	Property PaneClass:paneclass;
+	Property LightOuterAngle:outerangle;
 
 	Default
 	{
+		//$Category Portal/Objects
+		//$Title Light Fixture (Observation Area)
 		+NOGRAVITY
 		+NOINTERACTION
 		Height 2;
+		LightFixture.PaneClass "LightFixturePanes";
+		LightFixture.LightOuterAngle 70;
 	}
 
 	States
@@ -1209,7 +1449,9 @@ class LightFixture : Actor
 
 	override void PostBeginPlay()
 	{
-		if (!user_lightlevel) { user_lightlevel = 10.0; }
+		if (!user_lightlevel) { user_lightlevel = 2.0; }
+
+		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
 
 		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4)));
 		if (light)
@@ -1218,26 +1460,45 @@ class LightFixture : Actor
 			light.angle = angle;
 			light.pitch = 0;
 			light.maxradius = 384.0;
-			light.clr = color("168 168 192");
+			light.clr = fillcolor;
 			light.alpha = bStandstill ? 0.0 : user_lightlevel;
 			light.scale.y = 1 / user_lightlevel;
+			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
 		}
 
-		panes = Spawn("LightFixturePanes", pos);
+		panes = Spawn(paneclass, pos);
 		if (panes)
 		{
 			panes.master = light;
 			panes.roll = roll;
 			panes.pitch = pitch;
 			panes.angle = angle;
+			panes.scale = scale;
+			panes.SetShade(fillcolor);
 		}
 	}
 
 	override void Tick()
 	{
+		If (IsFrozen()) { return; }
+
 		if (light)
 		{
 			light.alpha = (bStandStill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_lightlevel;
+			light.clr = fillcolor;
+		}
+
+		if (panes)
+		{
+			let c = fillcolor;
+
+			int r = max(c.r, 8);
+			int g = max(c.g, 8);
+			int b = max(c.b, 8);
+
+			c = color(r, g, b);
+
+			panes.SetShade(C);
 		}
 
 		Super.Tick();
@@ -1250,13 +1511,61 @@ class LightFixture : Actor
 	}
 }
 
+class LightFixtureHallway : LightFixture
+{
+	int user_radius;
+
+	Default
+	{
+		//$Title Light Fixture (Standard)
+	}
+
+	override void PostBeginPlay()
+	{
+		if (!user_lightlevel) { user_lightlevel = 1.5; }
+
+		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
+
+		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (4 * sin(-pitch), 0, 4 * cos(-pitch))));
+		if (light)
+		{
+			light.master = self;
+			light.angle = angle;
+			light.pitch = pitch - 90;
+			light.maxradius = user_radius ? user_radius : (ceilingz - floorz) * 0.75;
+			light.clr = fillcolor;
+			light.alpha = bStandstill ? 0.0 : user_lightlevel;
+			light.scale.y = 1 / user_lightlevel;
+			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
+		}
+
+		panes = Spawn(paneclass, pos);
+		if (panes)
+		{
+			panes.master = light;
+			panes.roll = roll;
+			panes.pitch = pitch;
+			panes.angle = angle;
+			panes.scale = scale;
+			panes.SetShade(fillcolor);
+		}
+	}
+}
+
 class LightFixturePanes : Actor
 {
+	Actor bulb;
+	Class<Actor> bulbclass;
+
+	Property BulbClass:bulbclass;
+
 	Default
 	{
 		+NOGRAVITY
 		+NOINTERACTION
 		+BRIGHT
+		Renderstyle "STYLE_AddStencil";
+		LightFixturePanes.BulbClass "LightFixtureBulb";
 	}
 
 	States
@@ -1264,6 +1573,27 @@ class LightFixturePanes : Actor
 		Spawn:
 			UNKN A -1;
 			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (bulbclass)
+		{
+			bulb = Spawn(bulbclass, pos);
+			if (bulb)
+			{
+				bulb.master = self;
+				bulb.roll = roll;
+				bulb.pitch = pitch;
+				bulb.angle = angle;
+				bulb.scale = scale;
+			}
+		}
+	}
+
+	override void OnDestroy()
+	{
+		if (bulb) { bulb.Destroy(); }
 	}
 
 	override void Tick()
@@ -1275,7 +1605,43 @@ class LightFixturePanes : Actor
 
 		Super.Tick();
 	}
+}
 
+class LightFixtureBulb : Actor
+{
+	Default
+	{
+		+BRIGHT
+		+NOINTERACTION
+		+NOGRAVITY
+		Renderstyle "STYLE_AddStencil";
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+
+	override void Tick()
+	{
+		if (master)
+		{
+			let c = master.fillcolor;
+
+			int r = max(c.r, 8);
+			int g = max(c.g, 8);
+			int b = max(c.b, 8);
+
+			c = color(r, g, b);
+
+			SetShade(c);
+		}
+
+		Super.Tick();
+	}
 }
 
 class FlatText : Actor
@@ -1559,7 +1925,7 @@ class FlatText : Actor
 			drawn = true;
 		}
 
-		if (value)
+		if (value && value != 32)
 		{
 			int newsprite = GetSpriteIndex(String.Format("F%03i", value));
 			if (newsprite && sprite != newsprite) { sprite = newsprite; }
@@ -1581,8 +1947,6 @@ class FlatText : Actor
 		double position = 0;
 		double width = 16 * 0.125 * master.scale.x * scale;
 		double height = 33 * 0.125 * master.scale.y * scale;
-
-		int time = level.time;
 
 		for (int i = 0; i < digits; i++)
 		{
@@ -1616,7 +1980,7 @@ class FlatText : Actor
 				}
 
 				digits--;
-				input.Remove(0, 1);
+				input.Remove(0, 2);
 			}
 			else
 			{
@@ -1635,12 +1999,10 @@ class FlatText : Actor
 				}
 
 				position -= width;
+				input.Remove(0, 1);
 			}
-
-			input.Remove(0, 1);
 		}
 	}
-
 }
 
 class Silhouette : Zombieman
@@ -1660,6 +2022,7 @@ class Silhouette : Zombieman
 		Renderstyle "Stencil";
 		StencilColor "000000";
 		Alpha 0.3;
+		DropItem "";
 	}
 
 	States
@@ -1683,5 +2046,458 @@ class Silhouette : Zombieman
 		}
 
 		Super.Tick();
+	}
+}
+
+class Tank : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		+NOGRAVITY
+		+DONTTHRUST
+		Radius 64;
+		Height 1;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class Ladder : LadderBase
+{
+	Default
+	{
+		//$Category Portal/Ladders
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class LadderExtension : Ladder
+{
+	Default
+	{
+		//$Title Ladder Extension
+	}
+}
+
+class LadderRung : Ladder
+{
+	Default
+	{
+		//$Title Ladder Rung
+		Height 4;
+		Radius 16;
+	}
+}
+
+class DebrisWall : Actor
+{
+	Default
+	{
+		//$Category Portal/Flat Sprites
+		+FLATSPRITE
+		+NOGRAVITY
+		+DONTTHRUST
+		Radius 0;
+		Height 0;
+		RenderRadius 128.0;
+	}
+
+	States
+	{
+		Spawn:
+			DEBR A -1;
+			Stop;
+	}
+}
+
+class DebrisWall2 : DebrisWall
+{
+	States
+	{
+		Spawn:
+			DEBR B -1;
+			Stop;
+	}
+}
+
+class DebrisWall3 : DebrisWall
+{
+	States
+	{
+		Spawn:
+			DEBR C -1;
+			Stop;
+	}
+}
+
+class DebrisWall4 : DebrisWall
+{
+	States
+	{
+		Spawn:
+			DEBR D -1;
+			Stop;
+	}
+}
+
+class DebrisWall5 : DebrisWall
+{
+	States
+	{
+		Spawn:
+			DEBR E -1;
+			Stop;
+	}
+}
+
+class Cone : CarryActor
+{
+	Default
+	{
+		Height 18;
+		Radius 6;
+		Mass 100;
+		BounceFactor 0.02;
+		BounceSound "cone/bounce";
+		WallBounceSound "cone/bounce2";
+		Carryactor.SlideSound "cone/slide";
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void BeginPlay()
+	{
+		ChangeStatNum(Thinker.STAT_USER);
+	}
+}
+
+class OilBarrel : CarryActor
+{
+	int user_variant;
+
+	Default
+	{
+		//$Title Oil Drum
+		Height 33;
+		Radius 12;
+		Mass 1500;
+		BounceFactor 0.001;
+		BounceSound "barrel/bounce";
+		WallBounceSound "barrel/bounce";
+		Carryactor.SlideSound "barrel/slide";
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void BeginPlay()
+	{
+		ChangeStatNum(Thinker.STAT_USER);
+	}
+
+	override void PostBeginPlay()
+	{
+		frame = user_variant;
+
+		Super.PostBeginPlay();
+	}
+}
+
+class Crate : Cube
+{
+	int user_variant;
+
+	Default
+	{
+		//$Category Portal/Decorations
+		+SOLID
+		+CANPASS
+		Height 50;
+		Radius 32;
+		Scale 1.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		frame = user_variant;
+
+		Super.PostBeginPlay();
+
+		if (scale.x > 0.5 || scale.y > 0.5) { bPushable = false; }
+	}
+}
+
+class IndustrialLight : LightFixtureHallway
+{
+	Default
+	{
+		//$Title Industrial Light
+		LightFixture.PaneClass "IndustrialLightPanes";
+		LightFixture.LightOuterAngle 160;
+	}
+}
+
+class IndustrialLightPanes : LightFixturePanes
+{
+	Default
+	{
+		LightFixturePanes.BulbClass "IndustrialLightBulb";
+	}
+}
+
+class IndustrialLightBulb : LightFixtureBulb {}
+
+class Stairway : Actor
+{
+	Default
+	{
+		//$Category Portal
+		+NOGRAVITY
+		-SOLID
+		+SHOOTABLE
+		+NOBLOOD
+		+INVULNERABLE
+		+NODAMAGE
+		+DONTTHRUST
+		+NOTAUTOAIMED
+		Height 16;
+		Radius 1;
+		RenderRadius 256.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		double f = 2.5 / 1.5;
+
+		// Frame the railings and supports
+		A_SpawnItemEx ("BlockBase", 0.0, 26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 0.0, -26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -15.0, 26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -15.0, -26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+/*
+		A_SpawnItemEx ("BlockBase", 0.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 0.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -20.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -20.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -40.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -40.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -60.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -60.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -80.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -80.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -100.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -100.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -112.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -112.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -112.0, -12.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -112.0, 12.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+*/
+		A_SpawnItemEx ("BlockBase", -40.0, 26.0, 8.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -40.0, -26.0, 8.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -65.0, 26.0, -23.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -65.0, -26.0, -23.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -90.0, 26.0, -48.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", -90.0, -26.0, -48.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+
+
+		// Thing-based steps
+		double y = 12.0;
+		double z = -14.0;
+		for (double x = -10.0; x >= -116.0; x -= 10.5)
+		{
+			A_SpawnItemEx ("Step", x, y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
+			A_SpawnItemEx ("Step", x, -y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
+
+			z -= 12.0;
+		}
+	}
+}
+
+class Rail : Actor
+{
+	Default
+	{
+		//$Category Portal
+		//$Title Rail (Long)
+		+NOGRAVITY
+		-SOLID
+		+SHOOTABLE
+		+NOBLOOD
+		+INVULNERABLE
+		+NODAMAGE
+		+DONTTHRUST
+		+NOTAUTOAIMED
+		Height 16;
+		Radius 1;
+		RenderRadius 256.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 20.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 40.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 60.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 80.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 100.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class RailMedium : Rail
+{
+	Default
+	{
+		//$Title Rail (Medium)
+	}
+
+	override void PostBeginPlay()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 20.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 40.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 60.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 70.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class RailShort : Rail
+{
+	Default
+	{
+		//$Title Rail (Short)
+	}
+
+	override void PostBeginPlay()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 20.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class RailStub : Rail
+{
+	Default
+	{
+		//$Title Rail (Stub)
+	}
+
+	override void PostBeginPlay()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("BlockBase", 10.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class RailPost : Rail
+{
+	Default
+	{
+		//$Title Rail (Post)
+	}
+
+	override void PostBeginPlay()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class Tile2x2 : CarryActor
+{
+	bool moved;
+
+	Default
+	{
+		-SOLID;
+		Height 32;
+		Radius 16;
+		Mass 200;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		pushfactor = 0.0;
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (level.time > 5 && !moved && vel.length() && !(master && (master is "PlayerPawn")))
+		{
+			if (pos.z <= floorz + 8)
+			{
+				height = 6;
+				bSolid = true;
+				bNoInteraction = false;
+				moved = true;
+				frame = 1;
+				pushfactor = double(100) / mass;
+			}
+		}
+	}
+}
+
+class Tile4x4 : Tile2x2
+{
+	Default
+	{
+		Height 16;
+		Radius 8;
+		Mass 50;
 	}
 }

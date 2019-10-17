@@ -14,8 +14,10 @@ Material ProcessMaterial()
 
 	Material material;
 #if defined(reflection)
-//	material.Base = color + texture(reflection, vec2(pow(norm.x, 1.0 / amt), norm.z)) * (1.0 - texCoord.y);
-	material.Base = color + texture(reflection, vec2(1.0, 1.0) - texCoord) * mod(1.0 - texCoord.y, 1.0) * amt;
+	material.Base = color + texture(reflection, vec2(pow(norm.x, 1.0 / amt), norm.z)) * (1.0 - texCoord.y) * amt;
+//	material.Base = color + texture(reflection, vec2(pow(norm.x, 1.0 / amt), norm.z)) * mod(1.0 - texCoord.y, 1.0) * 10.0 * amt;
+//	material.Base = color + texture(reflection, vec2(1.0, 1.0) - texCoord) * mod(1.0 - texCoord.y, 1.0) * 10.0 * amt;
+//	material.Base = color + texture(reflection, vec2(1.0, 1.0) - texCoord) * mod(1.0 - texCoord.y, 1.0) * 10.0 * amt;
 #else
 	material.Base = color + getTexel(norm.xz * 0.5) * 0.0625 * amt;
 #endif

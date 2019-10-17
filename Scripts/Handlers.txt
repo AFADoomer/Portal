@@ -4,6 +4,7 @@ class OverlayItem
 	String icon;
 	double alpha;
 	color clr;
+	int type;
 }
 
 class OverlayHandler : EventHandler
@@ -30,7 +31,7 @@ class OverlayHandler : EventHandler
 		return OverlayItems.Size();
 	}
 
-	void AddItem(Actor thing, String iconName = "", color clr = 0xDE1B15, double alpha = 1.0)
+	void AddItem(Actor thing, String iconName = "", color clr = 0xDE1B15, double alpha = 1.0, int type = 0)
 	{
 		if (!thing) { return; }
 
@@ -40,6 +41,7 @@ class OverlayHandler : EventHandler
 			OverlayItems[i].icon = iconName;
 			OverlayItems[i].alpha = alpha;
 			OverlayItems[i].clr = clr;
+			OverlayItems[i].type = type;
 		}
 		else
 		{
@@ -48,13 +50,14 @@ class OverlayHandler : EventHandler
 			item.icon = iconName;
 			item.alpha = alpha;
 			item.clr = clr;
+			item.type = type;
 
 			OverlayItems.Push(item);
 		}
 	}
 
 
-	static void Add(Actor thing, String iconName = "", int actorTID = 0, color clr = 0xDE1B15, double alpha = 1.0)
+	static void Add(Actor thing, String iconName = "", int actorTID = 0, color clr = 0xDE1B15, double alpha = 1.0, int type = 0)
 	{
 		if (iconName == "") { return; }
 
@@ -67,7 +70,7 @@ class OverlayHandler : EventHandler
 
 				while (mo = Actor(it.Next()))
 				{
-					Add(mo, iconName, 0, clr, alpha); // Add each thing that has a matching TID
+					Add(mo, iconName, 0, clr, alpha, type); // Add each thing that has a matching TID
 				}
 			}
 
@@ -77,7 +80,7 @@ class OverlayHandler : EventHandler
 		OverlayHandler handler = OverlayHandler(EventHandler.Find("OverlayHandler"));
 		if (!handler) { return; } // If no handler was found (somehow), silently fail
 
-		handler.AddItem(thing, iconName, clr, alpha);
+		handler.AddItem(thing, iconName, clr, alpha, type);
 	}
 
 	static void Remove(Actor thing)
@@ -109,7 +112,7 @@ class OverlayHandler : EventHandler
 			if (!mo) continue;
 
 			double dist = p.mo.Distance3D(mo);
-//			if (dist > 256) { continue; }
+			if (OverlayItems[i].type == 1 && dist < 256) { continue; }
 
 			Vector3 worldpos = e.viewpos + level.Vec3Diff(e.viewpos, mo.pos); // World position of object, offset from viewpoint
 			Vector3 screenpos = PortalCoordUtil.WorldToScreen(worldpos, e.viewpos, e.viewpitch, e.viewangle, e.viewroll, p.fov); // Translate that to the screen, using the viewpoint's info
@@ -120,8 +123,18 @@ class OverlayHandler : EventHandler
 
 			TextureID image = TexMan.CheckForTexture(OverlayItems[i].icon, TexMan.Type_Any);
 
-			Vector2 dimensions = TexMan.GetScaledSize(image);
+			Vector2 dimensions = TexMan.GetScaledSize(image) * vid_scalefactor;
 			dimensions /= dist / 512 * p.fov / 90; // Scale with fov to account for zooming
+
+			if (OverlayItems[i].type == 1)
+			{
+				double h = abs(Actor.deltaangle(p.mo.AngleTo(mo), mo.angle));
+				if (h > 90) { h = 180 - h; }
+				dimensions.x *= (1 - h / 90);
+
+				double v = abs((mo.pitch - PitchTo(p.mo, mo)) / 2);
+				dimensions.y *= (1 - v / 90);
+			}
 
 			color clr = OverlayItems[i].clr;
 //			double alpha = max(1.0 - (dist - 256) / 256, 0);
@@ -129,5 +142,16 @@ class OverlayHandler : EventHandler
 
 			screen.DrawTexture (image, false, drawpos.x, drawpos.y, DTA_DestWidthF, dimensions.x, DTA_DestHeightF, dimensions.y, DTA_AlphaChannel, true, DTA_FillColor, clr & 0xFFFFFF, DTA_Alpha, alpha, DTA_CenterOffset, true);
 		}
+	}
+
+	ui double PitchTo(Actor mo, Actor source = null, double zoffset = 0.0)
+	{
+		if (!source) { source = Actor(self); }
+		if (!source) { return 0; }
+
+		double distxy = max(source.Distance2D(mo), 1);
+		double distz = source.pos.z + zoffset - mo.pos.z;
+
+		return atan(distz / distxy);
 	}
 }

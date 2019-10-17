@@ -41,6 +41,20 @@ Texture PORTWAL3, 341, 256
 	Patch "Patches/CWALL3.png", 337, 0
 }
 
+Texture CWALLN, 341, 256
+{
+	XScale 2.66
+	YScale 2.0
+	Patch "Materials/NormalMaps/CWALL.png", 0, 0
+}
+
+Texture CWALLS, 341, 256
+{
+	XScale 2.66
+	YScale 2.0
+	Patch "Materials/Specular/CWALL.png", 0, 0
+}
+
 Texture FLOOR, 128, 128
 {
 	XScale 2.0
@@ -60,6 +74,13 @@ Texture GRAYDIRT, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/GRAYDIRT.png", 0, 0
+}
+
+Texture GRAYDIR2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/GRAYDIR2.png", 0, 0
 }
 
 Texture GRAYWATR, 128, 128
@@ -246,6 +267,25 @@ Texture WALLTX1S, 256, 512
 	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 384
 }
 
+Texture WALLTX1D, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Displacement/WALL2x2.png", 0, 64
+	Patch "Materials/Displacement/WALL2x2.png", 128, 0
+	Patch "Materials/Displacement/WALL2x2D.png", 192, 0
+	Patch "Materials/Displacement/WALL4x4.png", 128, 64
+	Patch "Materials/Displacement/WALL1x1D.png", 0, 0
+	Patch "Materials/Displacement/WALL4x4D.png", 0, 128
+	Patch "Materials/Displacement/WALL4x4D.png", 0, 256
+	Patch "Materials/Displacement/WALL2x2.png", 128, 128
+	Patch "Materials/Displacement/WALL2x2.png", 0, 192
+	Patch "Materials/Displacement/WALL2x1.png", 64, 128
+	Patch "Materials/Displacement/WALL2x1.png", 128, 256
+	Patch "Materials/Displacement/WALL2x1D.png", 128, 384
+	Patch "Materials/Displacement/WALL1x1.png", 0, 384
+}
+
 Texture WALLTX2, 256, 512
 {
 	XScale 2.0
@@ -303,6 +343,25 @@ Texture WALLTX2S, 256, 512
 	Patch "Materials/Specular/Auto/WALL1x1D.png", 0, 384
 }
 
+Texture WALLTX2D, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Displacement/WALL1x1D.png", 0, 64
+	Patch "Materials/Displacement/WALL2x2.png", 128, 0
+	Patch "Materials/Displacement/WALL4x4.png", 192, 0
+	Patch "Materials/Displacement/WALL2x2D.png", 128, 64
+	Patch "Materials/Displacement/WALL2x2.png", 0, 0
+	Patch "Materials/Displacement/WALL4x4.png", 0, 128
+	Patch "Materials/Displacement/WALL2x2D.png", 0, 256
+	Patch "Materials/Displacement/WALL2x2.png", 128, 128
+	Patch "Materials/Displacement/WALL4x4.png", 0, 192
+	Patch "Materials/Displacement/WALL2x1D.png", 64, 128
+	Patch "Materials/Displacement/WALL2x2.png", 128, 256
+	Patch "Materials/Displacement/WALL4x4.png", 128, 384
+	Patch "Materials/Displacement/WALL1x1D.png", 0, 384
+}
+
 Texture WALF1x1_, 256, 640
 {
 	Patch WALL1x1, 0, 0
@@ -357,6 +416,62 @@ Texture WALF4x4_, 256, 640
 	Patch WALL4x4, 128, 256
 	Patch WALL4x4, 128, 384
 	Patch WALL4x4, 128, 512
+}
+
+Texture WALF1x1D, 256, 640
+{
+	Patch "Materials/Displacement/WALL1x1.png", 0, 0
+	Patch "Materials/Displacement/WALL1x1.png", 0, 128
+	Patch "Materials/Displacement/WALL1x1.png", 0, 256
+	Patch "Materials/Displacement/WALL1x1.png", 0, 384
+	Patch "Materials/Displacement/WALL1x1.png", 0, 512
+	Patch "Materials/Displacement/WALL1x1.png", 128, 0
+	Patch "Materials/Displacement/WALL1x1.png", 128, 128
+	Patch "Materials/Displacement/WALL1x1.png", 128, 256
+	Patch "Materials/Displacement/WALL1x1.png", 128, 384
+	Patch "Materials/Displacement/WALL1x1.png", 128, 512
+}
+
+Texture WALF2x1D, 256, 640
+{
+	Patch "Materials/Displacement/WALL2x1.png", 0, 0
+	Patch "Materials/Displacement/WALL2x1.png", 0, 128
+	Patch "Materials/Displacement/WALL2x1.png", 0, 256
+	Patch "Materials/Displacement/WALL2x1.png", 0, 384
+	Patch "Materials/Displacement/WALL2x1.png", 0, 512
+	Patch "Materials/Displacement/WALL2x1.png", 128, 0
+	Patch "Materials/Displacement/WALL2x1.png", 128, 128
+	Patch "Materials/Displacement/WALL2x1.png", 128, 256
+	Patch "Materials/Displacement/WALL2x1.png", 128, 384
+	Patch "Materials/Displacement/WALL2x1.png", 128, 512
+}
+
+Texture WALF2x2D, 256, 640
+{
+	Patch "Materials/Displacement/WALL2x2.png", 0, 0
+	Patch "Materials/Displacement/WALL2x2.png", 0, 128
+	Patch "Materials/Displacement/WALL2x2.png", 0, 256
+	Patch "Materials/Displacement/WALL2x2.png", 0, 384
+	Patch "Materials/Displacement/WALL2x2.png", 0, 512
+	Patch "Materials/Displacement/WALL2x2.png", 128, 0
+	Patch "Materials/Displacement/WALL2x2.png", 128, 128
+	Patch "Materials/Displacement/WALL2x2.png", 128, 256
+	Patch "Materials/Displacement/WALL2x2.png", 128, 384
+	Patch "Materials/Displacement/WALL2x2.png", 128, 512
+}
+
+Texture WALF4x4D, 256, 640
+{
+	Patch "Materials/Displacement/WALL4x4.png", 0, 0
+	Patch "Materials/Displacement/WALL4x4.png", 0, 128
+	Patch "Materials/Displacement/WALL4x4.png", 0, 256
+	Patch "Materials/Displacement/WALL4x4.png", 0, 384
+	Patch "Materials/Displacement/WALL4x4.png", 0, 512
+	Patch "Materials/Displacement/WALL4x4.png", 128, 0
+	Patch "Materials/Displacement/WALL4x4.png", 128, 128
+	Patch "Materials/Displacement/WALL4x4.png", 128, 256
+	Patch "Materials/Displacement/WALL4x4.png", 128, 384
+	Patch "Materials/Displacement/WALL4x4.png", 128, 512
 }
 
 Texture WALF1x1, 512, 640
@@ -680,6 +795,13 @@ Texture DOOR2, 128, 128
 	Patch "Patches/DOOR2.png", 0, 0
 }
 
+Texture DOOR4, 160, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/DOOR4.png", 0, 0
+}
+
 Texture LIFT, 160, 160
 {
 	XScale 2.0
@@ -722,6 +844,13 @@ Texture INSET2, 16, 16
 	Patch "Patches/INSET.png", 0, 0 { Rotate 90 }
 }
 
+Texture PIPE, 512, 1024
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/CONCDIRT.png", 0, 0
+}
+/*
 Texture PIPE, 128, 128
 {
 	XScale 4.0
@@ -735,12 +864,19 @@ Texture PIPE2, 128, 128
 	YScale 4.0
 	Patch "Patches/PIPE.png", 0, 0 { Rotate 90 }
 }
-
+*/
 Texture GRATE, 64, 64
 {
 	XScale 4.0
 	YScale 4.0
 	Patch "Patches/GRATE.png", 0, 0
+}
+
+Texture GRATE2, 64, 64
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GRATE2.png", 0, 0
 }
 
 Texture PILLAR, 64, 64
@@ -750,10 +886,10 @@ Texture PILLAR, 64, 64
 	Patch "Patches/PILLAR.png", 0, 0
 }
 
-Texture GRAYWALL, 128, 128
+Texture GRAYWALL, 256, 256
 {
-	XScale 2.0
-	YScale 2.0
+	XScale 4.0
+	YScale 4.0
 	Patch "Patches/GRAYWALL.png", 0, 0
 }
 
@@ -762,7 +898,7 @@ Texture WALLDOOR, 64, 256
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/CWALL.png", -4, 0
-	Patch "Patches/Door3.png", 0, 64
+	Patch "Patches/Door3.png", 0, 84
 }
 
 Texture WAL2DOOR, 64, 256
@@ -770,7 +906,7 @@ Texture WAL2DOOR, 64, 256
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/CWALL2.png", -4, 0
-	Patch "Patches/Door3.png", 0, 64
+	Patch "Patches/Door3.png", 0, 84
 }
 
 Sprite DOORA0, 64, 128
@@ -781,6 +917,14 @@ Sprite DOORA0, 64, 128
 	Patch "Patches/Door3.png", 0, 0
 }
 
+Sprite DOORB0, 64, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Offset 32, 128
+	Patch "Patches/Door3_O.png", 0, 0
+}
+
 Texture EMANGRIL, 256, 256
 {
 	XScale 4.0
@@ -788,6 +932,15 @@ Texture EMANGRIL, 256, 256
 	WorldPanning
 	Patch "Patches/EMANGRIL.png", 0, 0
 }
+
+Texture KILLGRIL, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	WorldPanning
+	Patch "Patches/KILLGRIL.png", 0, 0
+}
+
 
 Texture PITFADE, 128, 128
 {
@@ -1406,7 +1559,7 @@ Texture SLIME, 256, 256
 	Patch "Patches/Slime.png", 0, 0
 }
 
-Texture SLIMEOV, 256, 256
+Texture SLIMEOV, 512, 512
 {
 	XScale 2.0
 	YScale 2.0
@@ -1718,4 +1871,151 @@ Texture COMPTAL8, 128, 128
 	YScale 2.0
 	Patch "Patches/COMPTALL.png", -384, -128
 	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture TANK, 512, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Tank.png", 0, 0
+}
+
+Texture WALLGR, 512, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALLGR.png", 0, 0
+}
+
+Texture GIRDER, 128, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Girder.png", 0, 0
+}
+
+Texture FLOORMET, 128, 128
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/FloorMet.png", 0, 0
+}
+
+Texture GRIDWAL1, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GridWal1.png", 0, 0
+}
+
+Texture GRIDWAL2, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GridWal2.png", 0, 0
+}
+
+Sprite DEBRC0, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Offset 128, 128
+	Patch "Patches/GridWal2.png", 0, 0
+}
+
+
+Texture HOLEWALL, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/HoleWalL.png", 0, 0
+}
+
+Sprite DEBRA0, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Offset 128, 128
+	Patch "Patches/HoleWalL.png", 0, 0
+}
+
+Texture HOLEWALS, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/HoleWalS.png", 0, 0
+}
+
+Sprite DEBRB0, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Offset 128, 128
+	Patch "Patches/HoleWalS.png", 0, 0
+}
+
+Texture HOLEWALM, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/HoleWalM.png", 0, 0
+}
+
+Sprite DEBRD0, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Offset 128, 128
+	Patch "Patches/HoleWalM.png", 0, 0
+}
+
+Texture HOLEWALT, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/HoleWalT.png", 0, 0
+}
+
+Sprite DEBRE0, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Offset 128, 128
+	Patch "Patches/HoleWalT.png", 0, 0
+}
+
+
+Texture BTSWALL, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/BTSWALL.png", 0, 0
+}
+
+Texture BTSWALL2, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/BTSWALL2.png", 0, 0
+}
+
+Texture CHAINLNK, 512, 512
+{
+	XScale 48.0
+	YScale 48.0
+	Patch "Patches/CHAINLNK.png", 0, 0
+}
+
+Texture BORDWALL, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/BORDWALL.png", 0, 0
+}
+
+Texture BORDWAL2, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/BORDWAL2.png", 0, 0
 }

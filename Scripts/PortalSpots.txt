@@ -11,6 +11,7 @@ class PortalSpot : Actor
 	PortalFindHitPointTracer hittracer;
 	Line linedef;
 	Portal_Quaternion inportal, outportal;
+	int offset;
 
 	Default
 	{
@@ -55,6 +56,8 @@ class PortalSpot : Actor
 		ChangeStatNum(Thinker.STAT_USER + 1);
 
 		A_SetSize(64.0, -1, false); // Set the range for where the portals start finding activators
+
+		offset = Random(0, 35);
 	}
 
 	override void PostBeginPlay()
@@ -110,10 +113,8 @@ class PortalSpot : Actor
 				ring.frame = frame;
 			}
 		}
-		else
-		{
-			OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY) ? 0.5 : 0.0);
-		}
+
+		OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY) ? 0.5 : 0.0, 1);
 
 		if (int(lineangle) != GetLineAngle()) { DoDestroy(); }
 
@@ -122,6 +123,7 @@ class PortalSpot : Actor
 		if (pair && pair != self && open && PortalSpot(pair).open && ring)
 		{
 			bInvisible = false;
+
 			if (finalpos == (0, 0, 0)) { finalpos = pos; }
 			SetOrigin(finalpos, false);
 
@@ -138,7 +140,7 @@ class PortalSpot : Actor
 
 					Portal_Quaternion orientation = Portal_Quaternion.createFromAngles(
 						players[consoleplayer].mo.angleTo(self, true), 
-						PitchTo(self, players[consoleplayer].mo, PlayerPawn(players[consoleplayer].mo).viewheight * players[consoleplayer].crouchfactor), 
+						PitchTo(self, players[consoleplayer].mo, 32.0 * players[consoleplayer].crouchfactor), 
 						players[consoleplayer].mo.roll
 						);
 					Portal_Quaternion relative = outportal.multiplyQuat(inportal.inverse());
@@ -163,7 +165,7 @@ class PortalSpot : Actor
 				TexMan.SetCameraToTexture(PortalSpot(pair).camera, PortalSpot(pair).camtex, camfov);
 			}
 
-			CheckOtherActivators();
+			if ((level.time + offset) % 10 == 0) { CheckOtherActivators(); }
 
 			for (int i = 0; i < Activators.Size(); i++)
 			{
@@ -391,13 +393,6 @@ class PortalSpot : Actor
 
 	virtual bool CheckValidity()
 	{
-		if ( // Make sure you don't overlap with your own other portal (or a static portal)
-			pair && 
-			angle == pair.angle &&
-			abs(pos.z - pair.pos.z) < 64.0 &&
-			Distance2D(pair) < 32.0
-		) { return false; }
-
 		if (!GetCVar("g_allportalsurfaces") && !forcelocation)
 		{
 			Actor spot;
@@ -413,6 +408,13 @@ class PortalSpot : Actor
 		}
 
 		SetupPortal();
+
+		if ( // Make sure you don't overlap with your own other portal (or a static portal)
+			pair && 
+			angle == pair.angle &&
+			abs(pos.z - pair.pos.z) < 64.0 &&
+			Distance2D(pair) < 32.0
+		) { return false; }
 
 		return true;
 	}
@@ -465,7 +467,7 @@ class PortalSpot : Actor
 
 		Vector3 startpos = pos;
 
-		While (position <= maxposition && !waterlevel)
+		While (linedef && position <= maxposition && !waterlevel)
 		{
 			Vector3 newpos = startpos;
 
@@ -598,13 +600,7 @@ class PortalSpot : Actor
 			}
 		}
 
-		Actor sparks = Spawn("SparkSpawner", shotpos);
-		if (sparks)
-		{
-			sparks.angle = angle;
-			sparks.pitch = pitch;
-		}
-
+		DoDestroy();
 		A_PlaySound("portal/invalid", CHAN_AUTO);
 
 		Destroy();
@@ -700,8 +696,8 @@ class PortalSpot : Actor
 		while (mo = Actor(it.Next(false)))
 		{
 			if (
-				Activators.Find(mo) == Activators.Size() &&
-				Distance2D(mo) <= 32.0
+				Distance2D(mo) <= 32.0 &&
+				Activators.Find(mo) == Activators.Size()
 			)
 			{
 /*
@@ -734,6 +730,13 @@ class PortalSpot : Actor
 	void DoDestroy()
 	{
 		pair = self;
+
+		Actor sparks = Spawn("SparkSpawner", shotpos == (0, 0, 0) ? SpawnPoint : shotpos);
+		if (sparks)
+		{
+			sparks.angle = angle;
+			sparks.pitch = pitch;
+		}
 	}
 
 	double PitchTo(Actor mo, Actor source = null, double zoffset = 0.0)

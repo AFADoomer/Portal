@@ -9,3 +9,5 @@ High-resolution COMPTALL texture used as a base for a few textures is from the D
 Water/Slime texture derived from one used in Blade of Agony, since that's what my water shader was originally written for - No idea where they got it from right now.
 
 Everything else has been drawn or modeled from scratch; a few models originally came from my still-unfinished Star Trek mod.
+
+Music - Apparent Solution - Brendon Moeller

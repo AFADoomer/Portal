@@ -1,0 +1,253 @@
+class Utilities : Actor
+{
+	static void SpawnLights(Actor base, int rows = 1, int cols = 1, int rowsize = 16, int colsize = 16, bool activate = false)
+	{
+		if (!base) { return; }
+
+		CVar density = Cvar.FindCVar("g_lightdensity");
+
+		double f = 0.5;
+
+		if (density)
+		{
+			f = clamp(density.GetFloat(), 0.1, 1.0); 
+		}
+
+		rows = max(1, int(rows * f));
+		cols = max(1, int(cols * f));
+		rowsize = int(rowsize / f);
+		colsize = int(colsize / f);
+
+		int rowpos = -(rows * rowsize) / 2 + rowsize / 2;
+		int colpos = -(cols * colsize) / 2 + colsize / 2;
+		int basecolpos = colpos;
+
+		color basecolor = base.fillcolor != -0x9000000 ? base.fillcolor : 0x383840;
+
+		for (int r = 0; r < rows; r++)
+		{
+			for (int c = 0; c < cols; c++)
+			{
+				bool sp;
+				Actor mo;
+				[sp, mo] = base.A_SpawnItemEx("AttenuatedAlphaLight", 1.0, colpos, rowpos, 0, 0, 0, 0, SXF_NOCHECKPOSITION);
+				if (sp && mo)
+				{
+					if (activate) { mo.Activate(null); }
+
+					mo.master = base;
+					mo.angle = base.angle;
+					mo.pitch = base.pitch;
+
+					double scale = (LightSpawner(base) && LightSpawner(base).user_maxradius) ? 1.0 : max(4096.0 / (cols * colsize * rows * rowsize), 1.25);
+
+					AlphaLight(mo).clr.r = int(basecolor.r * scale);
+					AlphaLight(mo).clr.g = int(basecolor.g * scale);
+					AlphaLight(mo).clr.b = int(basecolor.b * scale);
+					AlphaLight(mo).maxradius = (LightSpawner(base) && LightSpawner(base).user_maxradius) ? LightSpawner(base).user_maxradius : clamp(max(rowsize, colsize) * 4.0, 16.0, 512.0 * f);
+					AttenuatedAlphaLight(mo).user_lightlevel = 1.0;
+
+					if (base.tid)
+					{
+						mo.ChangeTID(base.tid);
+					}
+				}
+
+				colpos += colsize;
+			}
+
+			rowpos += rowsize;
+			colpos = basecolpos;
+		}
+	}
+
+	static Line GetCurrentLine(Actor mo)
+	{
+		Line linedef;
+		double dist;
+
+		BlockLinesIterator it = BlockLinesIterator.Create(mo);
+
+		While (it.Next())
+		{
+			Line current = it.curline;
+
+			// Discard lines that definitely don't cross the actor's center point
+			if (
+				(current.v1.p.x > mo.pos.x + mo.radius && current.v2.p.x > mo.pos.x + mo.radius) ||
+				(current.v1.p.x < mo.pos.x - mo.radius && current.v2.p.x < mo.pos.x - mo.radius) ||
+				(current.v1.p.y > mo.pos.y + mo.radius && current.v2.p.y > mo.pos.y + mo.radius) ||
+				(current.v1.p.y < mo.pos.y - mo.radius && current.v2.p.y < mo.pos.y - mo.radius) 
+			) { continue; }
+
+			// Find the line that is closest based on proximity to end vertices
+			double curdist = (current.v1.p - mo.pos.xy + current.v2.p - mo.pos.xy).Length();
+			if (!linedef || curdist <= dist)
+			{
+				linedef = current;
+				dist = curdist;
+			}
+		}
+
+		return linedef;		
+	}
+
+	// Handling for terrain-based pitch/roll calculations...
+	static double SetPitchRoll(Actor mo, bool cube = true, bool force = false)
+	{
+		if (!mo) { return 0; }
+
+		double xoffset = 0;
+		double yoffset = 0;
+
+		double testwidth = mo.radius + yoffset;
+		double testlength;
+
+		if (!testlength) { testlength = mo.radius + xoffset; }
+
+		// Account for current pitch/roll when measuring corner heights
+		testwidth *= abs(cos(mo.roll));
+		testlength *= abs(cos(mo.pitch));
+
+		testlength = max(testlength, 1);
+		testwidth = max(testwidth, 1);
+
+		double points[4], minz = 0x7FFFFFFF, maxz = -0x7FFFFFFF;
+
+		// Get the relative z-height at the four corners of the actor
+		points[0] = mo.GetZAt(testlength, testwidth);
+		points[1] = mo.GetZAt(testlength, -testwidth);
+		points[2] = mo.GetZAt(-testlength, testwidth);
+		points[3] = mo.GetZAt(-testlength, -testwidth);
+
+		for (int i = 0; i < 4; i++)
+		{
+			double maxstep = mo.MaxStepHeight;
+			double maxdrop = mo.MaxDropoffHeight;
+
+			if (points[i] > mo.pos.z + maxstep) { points[i] = 0; } // Ignore the point if you can't climb that high
+			if (points[i] < mo.pos.z - maxdrop) { points[i] = 0; } // Ignore the point if it's a dropoff
+			else { points[i] -= mo.floorz; }
+		}
+
+		// Use those values to calculate the pitch.roll amounts
+		double pitchinput = (points[0] + points[1]) / 2 - (points[2] + points[3]) / 2;
+		double rollinput = (points[1] + points[3]) / 2 - (points[0] + points[2]) / 2;
+
+		pitchinput = atan(pitchinput / (testlength * 2));
+		rollinput = atan(rollinput / (testwidth * 2));
+
+		if (cube)
+		{
+			// It's a cube.  Stop rolling if it's on a flat face...
+			if (int(mo.pitch) % 90 == int(-pitchinput)) { pitchinput = -mo.pitch; }
+			if (int(mo.roll) % 90 == int(rollinput)) { rollinput = mo.roll; }
+		}
+
+		// Interpolate to the new values
+		if (force || level.time && level.time < 15)
+		{
+			mo.pitch = -pitchinput;
+			mo.roll = rollinput;
+		}
+		else
+		{
+			int pstep = 1; //max(1, int(abs(mo.pitch % 90 + pitchinput) / 10));
+			int rstep = 1; //max(1, int(abs(mo.roll % 90 - rollinput) / 10));
+
+			if (mo.pitch > -pitchinput) { mo.pitch = max(mo.pitch - pstep, -pitchinput); }
+			else if (mo.pitch < -pitchinput) { mo.pitch = min(mo.pitch + pstep, -pitchinput); }
+
+			if (mo.roll > rollinput) { mo.roll = max(mo.roll - rstep, rollinput); }
+			else if (mo.roll < rollinput) { mo.roll = min(mo.roll + rstep, rollinput); }
+		}
+
+		// Return the amount that you need to adjust the model z position by in order to keep it looking like it's actually on the ground
+		double deltaz = testlength * sin(abs(mo.pitch)) + testwidth * sin(abs(mo.roll));
+
+		return deltaz; 
+	}
+
+	static void Fizzle(Actor mo)
+	{
+		if (mo.master && PortalPlayer(mo.master))
+		{
+			PortalPlayer(mo.master).DragTarget = null;
+			mo.master = null;
+		}
+
+		mo.bSolid = false;
+		mo.bInvulnerable = true;
+		mo.bNoTarget = true;
+		mo.bMBFBouncer = false;
+
+		mo.alpha = max(mo.alpha - 0.05, 0);
+		mo.gravity = 0.1;
+		mo.vel = (0, 0, 0.5);
+		mo.scale *= 1.01;
+
+		mo.A_SetRenderStyle(mo.alpha, STYLE_TranslucentStencil);
+
+		let spark = mo.A_SpawnProjectile("SingleSpark", FRandom(-mo.Height / 2, mo.Height / 2), FRandom(-mo.Radius, mo.Radius), FRandom(0, 360), CMF_AIMDIRECTION, -90 + FRandom(-45, 45));
+		spark.master = mo;
+
+		if (mo.alpha <= 0) { mo.Destroy(); }
+	}
+
+	static bool CheckFizzle(Actor mo, StateLabel fizzlestate = "Death")
+	{
+		if (!mo.InStateSequence(mo.CurState, mo.FindState(fizzlestate)))
+		{
+			if (mo.waterlevel) { Utilities.DoFizzle(mo, fizzlestate);  return true; } // Needs to be smarter to detect if it's slime or normal water.  Can't check current 3D floor in ZScript right now, apparently?
+			if (mo.pos.z == mo.floorz && mo.floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any)) { Utilities.DoFizzle(mo, fizzlestate); return true; } 
+
+			Line current = Utilities.GetCurrentLine(mo);
+			if (current)
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					Side HitSide = current.sidedef[i];
+
+					if (HitSide)
+					{
+						TextureID tex = HitSide.GetTexture(Side.mid);
+
+						if (tex && TexMan.GetName(tex) ~== "EMANGRIL")
+						{
+							if (HitSide.flags & Side.WALLF_WRAP_MIDTEX || current.flags & Line.ML_WRAP_MIDTEX) { mo.SetStateLabel(fizzlestate); return true; } // If it's floor-to-ceiling, skip checks
+							else
+							{
+								double yoffset = HitSide.GetTextureYOffset(1);
+								Vector2 size = TexMan.GetScaledSize(tex);
+
+								if (current.flags & Line.ML_DONTPEGBOTTOM) // Lower unpegged
+								{
+									if (mo.pos.z > mo.floorz + yoffset - 24.0 && mo.pos.z + mo.height < mo.floorz + yoffset + size.y + 24.0)
+									{
+										Utilities.DoFizzle(mo, fizzlestate); return true; 
+									}
+								}
+								else
+								{
+									if (mo.pos.z > mo.ceilingz + yoffset + 24.0 && mo.pos.z + mo.height < mo.ceilingz + yoffset - size.y - 24.0)
+									{
+										Utilities.DoFizzle(mo, fizzlestate); return true; 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	static void DoFizzle(Actor mo, StateLabel fizzlestate = "Death")
+	{
+		mo.ClearBounce();
+		mo.A_PlaySound("cube/fizzle", CHAN_AUTO | CHAN_NOSTOP);
+		mo.SetStateLabel(fizzlestate);
+	}
+}

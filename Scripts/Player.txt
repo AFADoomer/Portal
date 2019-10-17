@@ -6,16 +6,19 @@ class PortalPlayer : PlayerPawn
 	int waterstate, stepdelay;
 	Vector3 dragvel, oldvel;
 	Sector activesector;
-	PortalFindHitPointTracer actortracer;
+	UsePointTracer actortracer;
 	CarryPointTracer carrytracer;
 	Line lastline;
 	TextureID AimTexture;
+	Actor climbing;
+	double AirSpeed;
+	Array<Actor> touchers;
 
 	Default
 	{
 		Speed 0.5;
 		Health 100;
-		Radius 16;
+		Radius 12;
 		Height 56;
 		Mass 100;
 		PainChance 255;
@@ -76,7 +79,7 @@ class PortalPlayer : PlayerPawn
 
 	override void PostBeginPlay()
 	{
-		actortracer = new("PortalFindHitPointTracer");
+		actortracer = new("USePointTracer");
 		carrytracer = new("CarryPointTracer");
 
 		Super.PostBeginPlay();
@@ -96,9 +99,22 @@ class PortalPlayer : PlayerPawn
 		{
 			DoInteractions();
 			DoFootsteps();
+			CheckTouchers();
+
+			for (int i = 0; i < min(touchers.Size(), 64); i++)
+			{
+				if (touchers[i])
+				{
+					if (
+						Distance3D(touchers[i]) > (Radius + touchers[i].radius) ||
+						touchers[i].pos.z + touchers[i].height < pos.z
+					) { touchers.Delete(i); }
+				}
+				else { touchers.Delete(i); touchers.ShrinkToFit(); }
+			}
 
 			Line current = CurrentLine();
-			if (current)
+			if (current && current.alpha > 0)
 			{
 				for (int i = 0; i < 2; i++)
 				{
@@ -128,6 +144,30 @@ class PortalPlayer : PlayerPawn
 									if (pos.z > ceilingz + yoffset + 24.0 && pos.z + height < ceilingz + yoffset - size.y - 24.0)
 									{
 										ClearPortals();
+									}
+								}
+							}
+						}
+						else if (tex && TexMan.GetName(tex) ~== "KILLGRIL")
+						{
+							if (HitSide.flags & Side.WALLF_WRAP_MIDTEX || current.flags & Line.ML_WRAP_MIDTEX) { DamageMobj(null, null, player.health, "Death Grille"); } // If it's floor-to-ceiling, skip checks
+							else
+							{
+								double yoffset = HitSide.GetTextureYOffset(1);
+								Vector2 size = TexMan.GetScaledSize(tex);
+
+								if (current.flags & Line.ML_DONTPEGBOTTOM) // Lower unpegged
+								{
+									if (pos.z > floorz + yoffset - 24.0 && pos.z + height < floorz + yoffset + size.y + 24.0)
+									{
+										DamageMobj(null, null, player.health, "Death Grille");
+									}
+								}
+								else
+								{
+									if (pos.z > ceilingz + yoffset + 24.0 && pos.z + height < ceilingz + yoffset - size.y - 24.0)
+									{
+										DamageMobj(null, null, player.health, "Death Grille");
 									}
 								}
 							}
@@ -177,8 +217,7 @@ class PortalPlayer : PlayerPawn
 
 			if (player.health > 0 && player.health < GetMaxHealth(true)) { player.health++; player.mo.health = player.health; }
 
-			double airspeed = vel.length();
-			double volume = clamp((airspeed - 10) / 35.0, 0.0, 1.0);
+			double volume = clamp((AirSpeed - 10) / 35.0, 0.0, 1.0);
 			A_PlaySound("world/whoosh", CHAN_7 | CHAN_NOSTOP, volume);
 			A_SoundVolume(CHAN_7, volume);
 		}
@@ -195,6 +234,311 @@ class PortalPlayer : PlayerPawn
 
 		Super.Tick();
 	}
+
+	override void MovePlayer ()
+	{
+		let player = self.player;
+		UserCmd cmd = player.cmd;
+
+		// [RH] 180-degree turn overrides all other yaws
+		if (player.turnticks)
+		{
+			player.turnticks--;
+			Angle += (180. / TURN180_TICKS);
+		}
+		else
+		{
+			Angle += cmd.yaw * (360./65536.);
+		}
+
+		player.onground = (pos.z <= floorz) || bOnMobj || bMBFBouncer || (player.cheats & CF_NOCLIP2);
+
+		// killough 10/98:
+		//
+		// We must apply thrust to the player and bobbing separately, to avoid
+		// anomalies. The thrust applied to bobbing is always the same strength on
+		// ice, because the player still "works just as hard" to move, while the
+		// thrust applied to the movement varies with 'movefactor'.
+
+		if (cmd.forwardmove | cmd.sidemove)
+		{
+			double forwardmove, sidemove;
+			double bobfactor;
+			double friction, movefactor;
+			double fm, sm;
+
+			[friction, movefactor] = GetFriction();
+			bobfactor = friction < ORIG_FRICTION ? movefactor : ORIG_FRICTION_FACTOR;
+
+			if (!player.onground && !bNoGravity && !waterlevel && !climbing)
+			{
+				// [RH] allow very limited movement if not on ground.
+				movefactor *= level.aircontrol;
+				bobfactor *= level.aircontrol;
+			}
+
+			fm = cmd.forwardmove;
+			sm = cmd.sidemove;
+			[fm, sm] = TweakSpeeds (fm, sm);
+			fm *= Speed / 256;
+			sm *= Speed / 256;
+
+			// When crouching, speed and bobbing have to be reduced
+			if (CanCrouch() && player.crouchfactor != 1)
+			{
+				fm *= player.crouchfactor;
+				sm *= player.crouchfactor;
+				bobfactor *= player.crouchfactor;
+			}
+
+			forwardmove = fm * movefactor * (35 / TICRATE);
+			sidemove = sm * movefactor * (35 / TICRATE);
+
+			if (forwardmove)
+			{
+				Bob(Angle, cmd.forwardmove * bobfactor / 256., true);
+				ForwardThrust(forwardmove, Angle);
+			}
+			if (sidemove)
+			{
+				let a = Angle - 90;
+				Bob(a, cmd.sidemove * bobfactor / 256., false);
+				Thrust(sidemove, a);
+			}
+
+			if (!(player.cheats & CF_PREDICTING) && (forwardmove != 0 || sidemove != 0))
+			{
+				PlayRunning ();
+			}
+
+			if (player.cheats & CF_REVERTPLEASE)
+			{
+				player.cheats &= ~CF_REVERTPLEASE;
+				player.camera = player.mo;
+			}
+		}
+	}
+
+	override void CheckCheats()
+	{
+		let player = self.player;
+		// No-clip cheat
+		if ((player.cheats & (CF_NOCLIP | CF_NOCLIP2)) == CF_NOCLIP2)
+		{ // No noclip2 without noclip
+			player.cheats &= ~CF_NOCLIP2;
+		}
+		bNoClip = (player.cheats & (CF_NOCLIP | CF_NOCLIP2) || Default.bNoClip);
+		if (player.cheats & CF_NOCLIP2)
+		{
+			bNoGravity = true;
+		}
+		else if (!climbing && !bFly && !Default.bNoGravity) // Added 'climbing' check
+		{
+			bNoGravity = false;
+		}
+	}
+
+	override void PlayerThink()
+	{
+		let player = self.player;
+		UserCmd cmd = player.cmd;
+		
+		CheckFOV();
+
+		if (player.inventorytics)
+		{
+			player.inventorytics--;
+		}
+		CheckCheats();
+
+		if (bJustAttacked)
+		{ // Chainsaw/Gauntlets attack auto forward motion
+			cmd.yaw = 0;
+			cmd.forwardmove = 0xc800/2;
+			cmd.sidemove = 0;
+			bJustAttacked = false;
+		}
+
+		bool totallyfrozen = CheckFrozen();
+
+		// Handle crouching
+		CheckCrouch(totallyfrozen);
+		CheckMusicChange();
+
+		if (player.playerstate == PST_DEAD)
+		{
+			DeathThink ();
+			return;
+		}
+
+		if (player.jumpTics != 0)
+		{
+			player.jumpTics--;
+			if (player.onground && player.jumpTics < -18)
+			{
+				player.jumpTics = 0;
+			}
+		}
+
+		if (player.morphTics && !(player.cheats & CF_PREDICTING)) { MorphPlayerThink (); }
+
+		// Crouching moves down while climbing
+		if (climbing && cmd.buttons & BT_CROUCH) { vel.z -= 0.95; }
+
+
+		bool waslanded = player.onground;
+
+		CheckPitch();
+		HandleMovement();
+
+		if (level.time > 35 && !waslanded && player.onground && airspeed > 12)
+		{
+			A_PlaySound("player/land", CHAN_AUTO, 0.125);
+		}
+
+		airspeed = vel.length();
+
+		// Only recalculate the view position if you're not climbing or if you are climbing at speed
+		// Keeps the float bob effect from being visible to the player
+		if (!climbing || abs(vel.length()) > 1.0) { CalcHeight (); }
+
+		// Bobbing while on the ladder is caused by P_ZMovement in p_mobj.cpp and can't be altered (currently lines 3028-3035).  
+		// This flag tricks the player actor into only bobbing a tiny bit, but is an awful hack that depends on a quirk in the checks in the internal code.
+		// NOCLIP2 gets unset almost immediately after the check is made here, so never actually takes effect.
+		// Since this is just cosmetic (you only see it in chasecam or multiplayer), it may be best to comment it out, just in case internal code changes in the future.
+//		if (climbing) { player.cheats |= CF_NOCLIP2; }
+
+		if (!(player.cheats & CF_PREDICTING))
+		{
+			CheckEnvironment();
+			CheckUse();
+			CheckUndoMorph();
+			// Cycle psprites.
+			// Note that after this point the PlayerPawn may have changed due to getting unmorphed so 'self' is no longer safe to use.
+			player.mo.TickPSprites();
+			// Other Counters
+			if (player.damagecount)	player.damagecount--;
+			if (player.bonuscount) player.bonuscount--;
+
+			if (player.hazardcount)
+			{
+				player.hazardcount--;
+				if (!(level.time % player.hazardinterval) && player.hazardcount > 16*TICRATE)
+					player.mo.DamageMobj (NULL, NULL, 5, player.hazardtype);
+			}
+			player.mo.CheckPoison();
+			player.mo.CheckDegeneration();
+			player.mo.CheckAirSupply();
+		}
+	}
+
+	override void CheckJump()
+	{
+		let player = self.player;
+		// [RH] check for jump
+		if (player.cmd.buttons & BT_JUMP)
+		{
+			if (player.crouchoffset != 0)
+			{
+				// Jumping while crouching will force an un-crouch but not jump
+				player.crouching = 1;
+			}
+			else if (waterlevel >= 2)
+			{
+				Vel.Z = 4 * Speed;
+			}
+			else if (bNoGravity && !climbing)
+			{
+				Vel.Z = 3.;
+			}
+			else if (climbing && !player.onground && level.IsJumpingAllowed())
+			{
+				if (abs(deltaangle(angle, AngleTo(climbing))) > 60)
+				{
+					if (player.cmd.forwardmove > 0)
+					{
+						Thrust(Speed / 2, angle);
+						Vel.Z = 1.0;
+					}
+				}
+				else
+				{
+					Vel.Z = 3.;
+				}
+			}
+			else if (level.IsJumpingAllowed() && player.onground && player.jumpTics == 0)
+			{
+				double jumpvelz = JumpZ * 35 / TICRATE;
+				double jumpfac = 0;
+
+				// [BC] If the player has the high jump power, double his jump velocity.
+				// (actually, pick the best factors from all active items.)
+				for (let p = Inv; p != null; p = p.Inv)
+				{
+					let pp = PowerHighJump(p);
+					if (pp)
+					{
+						double f = pp.Strength;
+						if (f > jumpfac) jumpfac = f;
+					}
+				}
+				if (jumpfac > 0) jumpvelz *= jumpfac;
+
+				Vel.Z += jumpvelz;
+				bOnMobj = false;
+				player.jumpTics = -1;
+				if (!(player.cheats & CF_PREDICTING)) A_PlaySound("*jump", CHAN_BODY);
+			}
+		}
+	}
+
+	override void CrouchMove(int direction)
+	{
+		let player = self.player;
+		
+		double defaultheight = FullHeight;
+		double savedheight = Height;
+		double crouchspeed = direction * CROUCHSPEED;
+		double oldheight = player.viewheight;
+
+		player.crouchdir = direction;
+		player.crouchfactor += crouchspeed;
+
+		maxstepheight = Default.maxstepheight * player.crouchfactor;
+
+		// check whether the move is ok
+		Height = defaultheight * player.crouchfactor;
+
+		bool canuncrouch = true;
+
+		for (int i = 0; i < min(touchers.Size(), 64); i++)
+		{
+			if (touchers[i])
+			{
+				if (pos.z + defaultheight > touchers[i].pos.z) { canuncrouch = false; }
+			}
+		}
+
+		if (!TryMove(Pos.XY, false, NULL) || !canuncrouch)
+		{
+			Height = savedheight;
+			if (direction > 0)
+			{
+				// doesn't fit
+				player.crouchfactor -= crouchspeed;
+				return;
+			}
+		}
+		Height = savedheight;
+
+		player.crouchfactor = clamp(player.crouchfactor, 0.5, 1.);
+		player.viewheight = ViewHeight * player.crouchfactor;
+		player.crouchviewdelta = player.viewheight - ViewHeight;
+
+		// Check for eyes going above/below fake floor due to crouching motion.
+		CheckFakeFloorTriggers(pos.Z + oldheight, true);
+	}
+
 
 	override bool CanCollideWith(Actor other, bool passive)
 	{
@@ -233,6 +577,39 @@ class PortalPlayer : PlayerPawn
 		}
 	}
 
+	void CheckTouchers()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		Actor mo;
+
+		while (mo = Actor(it.Next(false)))
+		{
+			Touch(mo);
+		}
+
+		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
+
+		while (mo = Actor(it.Next(false)))
+		{
+			Touch(mo);
+		}
+
+		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
+
+		while (mo = Actor(it.Next(false)))
+		{
+			Touch(mo);
+		}
+	}
+
+	override void Touch(Actor toucher)
+	{
+		if (Distance2D(toucher) > Radius + toucher.Radius) { return; }
+		if (toucher == self || toucher == toucher.master) { return; }
+		if (toucher.pos.z > pos.z + height + 32.0 || toucher.pos.z <= pos.z) { return; }
+		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
+	}
+
 	void DropCarried()
 	{
 /*
@@ -243,10 +620,16 @@ class PortalPlayer : PlayerPawn
 		}
 */
 
+		if (!DragTarget.TryMove(DragTarget.pos.xy, false))
+		{
+			A_PlaySound("*usefail", CHAN_AUTO);
+			return;
+		}
+
 		A_PlaySound("object/drop", CHAN_AUTO);
 
 		DragTarget.angle = angle;
-		DragTarget.vel = vel + dragvel; // + (RotateVector((1, 0), angle), -1);
+		DragTarget.vel = vel * DragTarget.pushfactor + dragvel; // + (RotateVector((1, 0), angle), -1);
 		DragTarget.bShootable = DragTarget.Default.bShootable;
 		DragTarget.bNoGravity = DragTarget.Default.bNoGravity;
 		DragTarget.master = null;
@@ -271,7 +654,6 @@ class PortalPlayer : PlayerPawn
 			if (dist < UseRange && abs(deltaangle(angle, AngleTo(currentportal))) < 75)
 			{
 				portalsource = PortalSpot(currentportal).pair;
-				actortracer.nogrates = true;
 				DoTrace(portalsource, angle - currentportal.angle + portalsource.angle + 180, UseRange * 1.5 - dist, pitch, 0, (player.viewheight - 32.0) * sin(portalsource.pitch), actortracer);
 			}
 		}
@@ -281,9 +663,9 @@ class PortalPlayer : PlayerPawn
 
 		if (AimTexture)
 		{
-				if (Texman.GetName(AimTexture).Left(5) ~== "GLASS")
+				if (Texman.GetName(AimTexture).Left(5) ~== "GLASS" || Texman.GetName(AimTexture).Left(5) ~== "PIPE")
 				{
-					reflectioncamera.SetOrigin(actortracer.Results.HitPos - AngleToVector(AngleTo(reflectioncamera), 0.5), false);
+//					reflectioncamera.SetOrigin(actortracer.Results.HitPos - AngleToVector(AngleTo(reflectioncamera), 0.5), false);
 					MirrorCamera(reflectioncamera).linedef = actortracer.Results.HitLine;
 				}
 		}
@@ -298,15 +680,23 @@ class PortalPlayer : PlayerPawn
 				{
 					if (
 						AimActor && 
-						(Distance2D(AimActor) < UseRange || portalsource) && 
-						AimActor.bPushable
+						(Distance2D(AimActor) < UseRange || portalsource)
 					)
 					{
-						A_PlaySound("object/pickup", CHAN_AUTO);
+						if (AimActor.bPushable)
+						{
+							A_PlaySound("object/pickup", CHAN_AUTO);
 
-						DragTarget = AimActor;
-						DragTarget.master = self;
-						DragTarget.bNoGravity = true;
+							DragTarget = AimActor;
+							DragTarget.master = self;
+							DragTarget.bNoGravity = true;
+						}
+						else if (Inventory(AimActor))
+						{
+							A_PlaySound(Inventory(AimActor).PickupSound, CHAN_AUTO);
+
+							AimActor.Touch(self);
+						}
 					}
 				}
 				else
@@ -323,7 +713,7 @@ class PortalPlayer : PlayerPawn
 
 		if (DragTarget)
 		{
-			dragvel = (player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90), player.cmd.pitch) / (256 * 100 / DragTarget.Mass);
+			Vector3 oldpos = DragTarget.pos;
 
 			double range = max(UseRange, (radius + DragTarget.radius) * 1.5);
 
@@ -355,6 +745,8 @@ class PortalPlayer : PlayerPawn
 			}
 
 			DragTarget.angle = angle;
+
+			dragvel = (DragTarget.pos - oldpos + (player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90), player.cmd.pitch)) / (5 * DragTarget.Mass);
 		}
 	}
 
@@ -408,10 +800,60 @@ class PortalPlayer : PlayerPawn
 		return texname;
 	}
 
+	Actor FindOnMObj()
+	{
+		BlockThingsIterator it = BlockThingsIterator.Create(self, 64.0);
+
+		while (it.Next())
+		{
+			let mo = it.thing;
+
+			if (mo == self) { continue; } // Ignore itself
+
+			if (mo.bSolid && pos.z == mo.pos.z + mo.height)
+			{
+				return mo;
+			}
+		}
+
+		return null;
+	}
+
 	String GetFlatSound(Name input)
 	{
 		if (waterlevel == 1) { return "footsteps/puddle"; }
 		else if (waterlevel == 2) { return "footsteps/wade"; }
+
+		if (bOnMobj)
+		{
+			Actor onmo = FindOnMobj();
+
+			if (onmo)
+			{
+				if (onmo is "BlockBase")
+				{
+					while(onmo.master) { onmo = onmo.master; }
+				}
+
+				Switch(onmo.GetClassName())
+				{
+					case 'BridgeBeam':
+						return "footsteps/glass";
+					case 'RailPost':
+					case 'RailStub':
+					case 'RailShort':
+					case 'RailMedium':
+					case 'RailLong':
+						return "footsteps/ladder";
+					case 'OilBarrel':
+					case 'Stairway':
+						return "footsteps/grate";
+					default:
+						return "footsteps/default";
+						break;
+				}
+			}
+		}
 
 		Switch(input)
 		{
@@ -419,6 +861,14 @@ class PortalPlayer : PlayerPawn
 			case 'WALL2x1':
 			case 'WALL2x2':
 			case 'WALL4x4':
+			case 'WALL1x1S':
+			case 'WALL2x1S':
+			case 'WALL2x2S':
+			case 'WALL4x4S':
+			case 'WALL1x1D':
+			case 'WALL2x1D':
+			case 'WALL2x2D':
+			case 'WALL4x4D':
 			case 'LITB1x1':
 			case 'LITB2x1':
 			case 'LITB2x2':
@@ -439,7 +889,14 @@ class PortalPlayer : PlayerPawn
 				return "footsteps/whitetile";
 				break;
 			case 'GRATE':
+			case 'GRATE2':
+			case 'FLOORMET':
 				return "footsteps/grate";
+			case 'GLASS':
+			case 'GLASSTRA':
+			case 'GLASS2':
+			case 'GLASS3':
+				return "footsteps/glass";
 			default:
 				return "footsteps/default";
 				break;
@@ -448,7 +905,7 @@ class PortalPlayer : PlayerPawn
 		return "";
 	}
 
-	void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, PortalFindHitPointTracer thistracer)
+	void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, UsePointTracer thistracer)
 	{
 		if (!origin) { origin = self; }
 
@@ -517,22 +974,28 @@ class MirrorCamera : SecurityCamera
 	{
 		Super.Tick();
 
-		if (!master || !master.player) { Destroy(); }
+		if (!master || !PlayerPawn(master)) { Destroy(); }
 
 		if (linedef)
 		{
-			if (!linedef.delta.x) { lineangle = 0; }
-			else if (!linedef.delta.y) { lineangle = 90; }
+			if (!linedef.delta.x)
+			{
+				lineangle = 0;
+			}
+			else if (!linedef.delta.y)
+			{
+				lineangle = 90;
+			}
 			else { lineangle = (atan(linedef.delta.y / linedef.delta.x) + 270) % 360; }
 
-			if (abs(deltaangle(lineangle, master.AngleTo(self))) > 90) { lineangle += 180; }
+			if (abs(deltaangle(lineangle, AngleTo(master))) > 90) { lineangle += 180; }
+
+			SetOrigin((linedef.v1.p + linedef.delta / 2, master.pos.z + PlayerPawn(master).viewheight), true);
 		}
 
 		if (master.player && master.player.camera)
 		{
-			angle = 180 - AngleTo(master);
-			pitch = master.player.camera.pitch;
-			roll = master.player.camera.roll;
+			angle = lineangle; // - AngleTo(master);
 		}
 	}
 

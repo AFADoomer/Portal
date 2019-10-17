@@ -588,7 +588,7 @@ class BridgeSpot : Actor
 			mo.pitch = pitch;
 			mo.angle = angle;
 
-			if (mo is "BridgeBeam") { BridgeBeam(mo).delay = level.time + steps; }
+			if (mo is "BridgeBeam") { BridgeBeam(mo).delay = level.time + steps + 1; }
 		}
 
 		if (!hitspot) { hitspot = Spawn("BridgeHitMarker", traceresults.HitPos, ALLOW_REPLACE); }
@@ -650,8 +650,7 @@ class BridgeBeam : Actor
 	{
 		Super.PostBeginPlay();
 
-		volume = 0.5;
-		A_PlaySound("bridge/loop", CHAN_6, volume, true, ATTN_STATIC);
+		StartSoundSequence("BridgeUp", 0);
 
 		if (!light && !bNoInteraction)
 		{
@@ -683,17 +682,14 @@ class BridgeBeam : Actor
 			{
 				light.SetOrigin(pos, false);
 				light.alpha = 0.5 + 0.4 * sin(3 * level.time - Distance3D(master));
-
-				if (volume > 0.03) { volume = max(0.03, volume - 0.005); }
-
-				A_SoundVolume(CHAN_6, volume * light.alpha);
 			}
 		}
 	}
 
 	override void OnDestroy()
 	{
-		A_StopSound(CHAN_6);
+		StartSoundSequence("BridgeDown", 0);
+
 		if (light) { light.Destroy(); }
 	}
 }

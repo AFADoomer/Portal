@@ -35,3 +35,34 @@ end
 	volume 16
 	playuntildone	fizzler/stop
 end
+
+:BridgeUp
+	volume 8
+	playuntildone   Bridge/start
+	volume 2
+	playrepeat	Bridge/loop
+end
+
+:BridgeDown
+	volume 16
+	playuntildone	Bridge/stop
+end
+
+:PistonUp
+	volume 25
+	playuntildone	piston/start
+	stopsound	piston/stop
+end
+
+:PistonDown
+	volume 25
+	playuntildone	piston/start
+	stopsound	piston/stop
+end
+
+[PistonMove
+	0	PistonUp
+	1	PistonDown
+	2	PistonUp
+	3	PistonDown
+]

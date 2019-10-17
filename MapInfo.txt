@@ -1,9 +1,11 @@
 gameinfo
 {
 	dimcolor = "0 0 0"
-	dimamount = 0.75
+	dimamount = 0.5
 	bluramount = 0.5
 	borderflat = "WALL2x2S"
+	titlemusic = "AS_Mel"
+	creditpage = ""
 
 	menufontcolor_title = "PortalGreen"
 	menufontcolor_label = "Gray"
@@ -89,6 +91,7 @@ defaultmap
 
 map MAP01 "Dooming with Portals" {}
 map MAP02 "Portal Gun Test Map" {}
+map TESTMAP "Test Map" {}
 
 DoomEdNums
 {
@@ -153,7 +156,34 @@ DoomEdNums
 	30058 = SkyViewpointAnchor
 	30059 = LightFixture
 	30060 = Silhouette
+	30061 = LightFixtureHallway
+	30062 = Tank
+	30063 = Ladder
+	30064 = LadderExtension
+	30065 = DebrisWall
+	30066 = DebrisWall2
+	30067 = DebrisWall3
+	30068 = DebrisWall4
+	30069 = DebrisWall5
+	30070 = Cone
+	30071 = OilBarrel
+	30072 = Crate
+	30073 = IndustrialLight
+	30074 = Stairway
+	30075 = LadderRung
+	30076 = PipeBend
+	30077 = Rail
+	30078 = RailMedium
+	30079 = RailShort
+	30080 = RailPost
+	30081 = RailStub
+	30082 = Tile2x2
+	30083 = Tile4x4
 	31000 = FlatText
 	31001 = ConfettiSpawner
+	31002 = ClimbableZone
+	31003 = Pivot
+	31004 = PivotWhite
 	32002 = LightSpawner
+	
 }

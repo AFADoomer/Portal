@@ -3,6 +3,17 @@ $ambient 101 ambient/waterloop point continuous 0.25
 $ambient 102 ambient/indoor/open1 continuous 0.0125
 $ambient 103 ambient/indoor/open2 continuous 0.0125
 $ambient 104 ambient/indoor/closed continuous 0.0125
+$ambient 105 ambient/machinery continuous 0.125
+
+menu/activate			m_next		// Activate a new menu
+menu/backup			m_back		// Backup to previous menu
+menu/prompt			m_prompt	// Activate a prompt "menu"
+menu/cursor			m_focus		// Move cursor up/down
+menu/change			m_next		// Select new value for option
+menu/invalid			m_invalid	// Menu not available
+menu/dismiss			m_cancel	// Dismiss a prompt message
+menu/choose			m_choose	// Choose a menu item
+menu/clear			m_cancel	// Close top menu
 
 $playersound	player	male	*death		DSEMPTY
 $playersound	player	male	*xdeath		DSEMPTY
@@ -12,12 +23,14 @@ $playersound	player	male	*grunt		DSEMPTY
 $playersound	player	male	*land		DSEMPTY
 $playersound	player	male	*jump		dsjump
 $playersound 	player 	male 	*usefail 	use_fail
+player/land		land
 
 ambient/sludgeloop	slime
 ambient/waterloop	water
 ambient/indoor/open1	indoor1
 ambient/indoor/open2	indoor2
 ambient/indoor/closed	indoor3
+ambient/machinery	machines
 
 portal/open		p_open
 portal/close		p_close
@@ -47,6 +60,9 @@ door/close		d_close
 door/lock		d_lock
 door/unlock		d_unlock
 
+door2/open		d2_open
+door2/close		d2_close
+
 platform/start		p_start
 platform/stop		p_stop
 platform/loop		p_loop
@@ -64,15 +80,44 @@ laser/loop		l_loop
 laser/hit		l_hit
 
 bridge/loop		b_loop
+bridge/start		b_start
+bridge/stop		b_stop
 
 spring/launch		f_launch
 
 cube/fizzle		c_fizzle
-cube/bounce		c_bounce
+
+cube/bounce		p_cube
+barrel/bounce		p_barrel
+cone/bounce		p_cone
+chair/bounce		p_chair
+
+cone/bounce2		p_cone2
+chair/bounce2		p_chair2
+
+cube/slide		s_cube
+barrel/slide		s_barrel
+cone/slide		s_cone
+chair/slide		s_chair
 
 object/pickup		i_pickup
 object/drop		i_drop
 object/usefail		use_fail
+
+$random piston/start { piston/start1 piston/start2 piston/start3 piston/start4 }
+piston/start1		pi_st_01
+piston/start2		pi_st_02
+piston/start3		pi_st_03
+piston/start4		pi_st_04
+
+$random piston/stop { piston/stop1 piston/stop2 piston/stop3 piston/stop4 }
+piston/stop1		pi_fi_01
+piston/stop2		pi_fi_02
+piston/stop3		pi_fi_03
+piston/stop4		pi_fi_04
+
+piston/up		pi_up
+piston/down		pi_down
 
 world/water/enter	splash
 world/water/exit	splash2
@@ -118,6 +163,18 @@ footsteps/wade1		wade1
 footsteps/wade2		wade2
 footsteps/wade3		wade3
 footsteps/wade4		wade4
+
+$random footsteps/ladder { footsteps/ladder1 footsteps/ladder2 footsteps/ladder3 footsteps/ladder4 }
+footsteps/ladder1	ladder1
+footsteps/ladder2	ladder2
+footsteps/ladder3	ladder3
+footsteps/ladder4	ladder4
+
+$random footsteps/glass { footsteps/glass1 footsteps/glass2 footsteps/glass3 footsteps/glass4 }
+footsteps/glass1	glass1
+footsteps/glass2	glass2
+footsteps/glass3	glass3
+footsteps/glass4	glass4
 
 $random lights/flicker { lights/flicker1 lights/flicker2 lights/flicker3 lights/flicker4 }
 lights/flicker1		flicker1

@@ -688,18 +688,40 @@ Model Pipe
 	Path "Models/"
 	Model 0 "pipe.md3"
 
-	Scale 0.75 1.07 0.75
+	SurfaceSkin 0 0 "wallpipe4.png"
+	FrameIndex UNKN C 0 0
 
-	FrameIndex UNKN D 0 0
-
-	SurfaceSkin 0 0 "pipe2.png"
-	FrameIndex UNKN A 0 0
-
-	SurfaceSkin 0 0 "pipe3.png"
+	SurfaceSkin 0 0 "wallpipe3.png"
 	FrameIndex UNKN B 0 0
 
-	SurfaceSkin 0 0 "pipe4.png"
+	SurfaceSkin 0 0 "wallpipe2.png"
+	FrameIndex UNKN A 0 0
+}
+
+Model PipeBend
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "pipebend.md3"
+
+	Scale 1.0 1.0 1.2
+
+	SurfaceSkin 0 0 "wallpipe4.png"
+	SurfaceSkin 0 1 "wallpipe4.png"
+	SurfaceSkin 0 2 "wallpipe4.png"
 	FrameIndex UNKN C 0 0
+
+	SurfaceSkin 0 0 "wallpipe3.png"
+	SurfaceSkin 0 1 "wallpipe3.png"
+	SurfaceSkin 0 2 "wallpipe3.png"
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "wallpipe2.png"
+	SurfaceSkin 0 1 "wallpipe2.png"
+	SurfaceSkin 0 2 "wallpipe2.png"
+	FrameIndex UNKN A 0 0
 }
 
 Model LaserEmitter
@@ -747,12 +769,23 @@ Model LightFixture
 
 	Path "Models/"
 	Model 0 "light.md3"
-	Path "Textures/"
-	Skin 0 "Gray2.png"
-
-	Scale 2.85 1.5 0.25
 
 	AngleOffset 90
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model LightFixtureHallway
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "light.md3"
+
+	AngleOffset 90
+	Offset 0.0 0.0 -1.0
 
 	FrameIndex UNKN A 0 0
 }
@@ -764,12 +797,365 @@ Model LightFixturePanes
 
 	Path "Models/"
 	Model 0 "light_panes.md3"
-	Path "Textures/"
-	Skin 0 "White.png"
-
-	Scale 2.85 1.5 0.25
 
 	AngleOffset 90
+	Offset 0.0 0.0 -1.0
 
 	FrameIndex UNKN A 0 0
+}
+
+Model LightFixtureBulb
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "light_bulb.md3"
+
+	AngleOffset 90
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Tank
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "tank.md3"
+
+	Scale 7.25 7.25 7.25
+
+	ZOffset 6.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model ClimbableZone
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "climbzone.md3"
+	Skin 0 "orange.png"
+
+	Offset -23.75 0.0 0.0
+	Scale 1.9 1.9 1.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Ladder
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "ladder.md3"
+	Skin 0 "GRAYDIR2"
+
+	Offset -4.0 0.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model LadderExtension
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "ladder.md3"
+	Path "Textures/"
+	SurfaceSkin 0 0 "gray2.png"
+	SurfaceSkin 0 1 "clear.png"
+
+	Offset -4.0 0.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model LadderRung
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "rung.md3"
+	Skin 0 "GRAYDIR2"
+
+	FrameIndex UNKN A 0 0
+}
+
+
+Model Cone
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "cone.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model OilBarrel
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "barrel.md3"
+
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "Barrel_Black.png"
+	FrameIndex UNKN B 0 0
+
+	Skin 0 "Barrel_Rusty.png"
+	FrameIndex UNKN D 0 0
+
+	Skin 0 "Barrel_Red.png"
+	FrameIndex UNKN E 0 0
+
+	Skin 0 "Barrel_Old.png"
+	FrameIndex UNKN C 0 0
+}
+
+Model Crate
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "cube.md3"
+
+	Offset 0.0 0.0 24.0;
+
+	Skin 0 "Crate_G.png"
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "Crate_B.png"
+	FrameIndex UNKN B 0 0
+}
+
+Model IndustrialLight
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "ilight.md3"
+
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model IndustrialLightPanes
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "ilight_light.md3"
+
+	Path "Textures/"
+	Skin 0 "Gloss.png"
+
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model IndustrialLightBulb
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "ilight_light_bulb.md3"
+
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+}
+
+
+Model Stairway
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "stairway.md3"
+	SurfaceSkin 0 0 "GRAYDIR2"
+
+	ZOffset -4.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Pivot
+{
+	Path "Models/"
+	Model 0 "doorframe.md3"
+
+	AngleOffset 90.0
+
+	Scale 1.0 1.0 0.9975
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PivotWhite
+{
+	Path "Models/"
+	Model 0 "doorframe.md3"
+
+	AngleOffset 90.0
+
+	Scale 1.0 1.0 0.9975
+
+	FrameIndex UNKN A 0 0
+}
+
+Model DoorFrame
+{
+	Path "Models/"
+	Model 0 "doorframe.md3"
+
+	Scale 1.0 1.0 0.9975
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SwingingDoor
+{
+	Path "Models/"
+	Model 0 "door.md3"
+
+	FrameIndex UNKN A 0 0
+
+	Path "Patches/"
+	Skin 0 "Door4_O.png"
+
+	FrameIndex UNKN B 0 0
+
+}
+
+Model SwingingDoorWhite
+{
+	Path "Models/"
+	Model 0 "door.md3"
+
+	Path "Patches/"
+	Skin 0 "Door5.png"
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "Door5_O.png"
+	FrameIndex UNKN B 0 0
+}
+
+Model Rail
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "rail_l.md3"
+	Skin 0 "GRAYDIR2"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model RailMedium
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "rail_m.md3"
+	Skin 0 "GRAYDIR2"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model RailShort
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "rail_s.md3"
+	Skin 0 "GRAYDIR2"
+
+	FrameIndex UNKN A 0 0
+}
+
+
+Model RailStub
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "rail_t.md3"
+	Skin 0 "GRAYDIR2"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model RailPost
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "rail_post.md3"
+	Skin 0 "GRAYDIR2"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Tile2x2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "tile.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+
+	PitchOffset 90
+	Offset 16.0 0.0 0.0
+	Scale 1.2 1.0 1.0
+
+	FrameIndex UNKN B 0 0
+}
+
+Model Tile4x4
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "tile.md3"
+	SurfaceSkin 0 0 "WALL4x4"
+
+	Scale 1.0 0.5 0.6
+
+	FrameIndex UNKN A 0 0
+
+	PitchOffset 90
+	Offset 8.0 0.0 0.0
+	Scale 0.6 0.5 1.0
+
+	FrameIndex UNKN B 0 0
 }

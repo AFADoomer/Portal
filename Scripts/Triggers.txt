@@ -49,7 +49,7 @@ class CubeTrigger : Actor
 
 		if (isFrozen()) { return; }
 
-		CheckCubeActivators();
+		CheckActivators();
 
 		for (int i = 0; i < Activators.Size(); i++)
 		{
@@ -126,7 +126,7 @@ class CubeTrigger : Actor
 		SetOrigin(SpawnPoint, false);
 	}
 
-	void CheckCubeActivators()
+	void CheckActivators()
 	{
 		ThinkerIterator it = ThinkerIterator.Create("Cube", Thinker.STAT_USER);
 		Cube mo;
@@ -139,6 +139,21 @@ class CubeTrigger : Actor
 				mo.pos.z - mo.zoffset <= pos.z + 4
 			)
 			{ Activators.Push(mo); }
+		}
+
+		// Monsters can also activate buttons 
+		it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		Actor mo2;
+
+		while (mo2 = Actor(it.Next(false)))
+		{
+			if (
+				mo2.bIsMonster &&
+				Activators.Find(mo2) == Activators.Size() &&
+				Distance2D(mo2) <= Radius && 
+				mo2.pos.z <= pos.z + 4
+			)
+			{ Activators.Push(mo2); }
 		}
 	}
 

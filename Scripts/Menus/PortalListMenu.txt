@@ -22,9 +22,9 @@ class PortalListMenu : ListMenu
 	override void Drawer()
 	{
 		// Draw the text description for the currently selected item
-		if (mDesc.mItems[mDesc.mSelectedItem] is "ListMenuItemSelectable")
+		if (mDesc.mSelectedItem > -1 && mDesc.mItems[mDesc.mSelectedItem] is "ListMenuItemSelectable")
 		{
-			DrawItemText(mDesc.mSelectedItem, breakWidth:Screen.GetWidth() - 180, scale:1.0);
+			DrawItemText(mDesc.mSelectedItem, breakWidth:Screen.GetWidth() - 180);
 		}
 
 		double menubase = Screen.GetHeight() - mDesc.mLinespacing;
@@ -226,7 +226,6 @@ class PortalSaveMenu : SaveMenu
 						int x = int((this.mCentered ? 20 : 0) + this.GetX());
 						int y = int(menubase + this.GetY());
 
-						if (this.mCentered) { text = text.MakeUpper(); }
 						screen.DrawText(font, this.mColor, x, y, text);
 					}
 				}
@@ -430,7 +429,6 @@ class PortalLoadMenu : LoadMenu
 						int x = int((this.mCentered ? 20 : 0) + this.GetX());
 						int y = int(menubase + this.GetY());
 
-						if (this.mCentered) { text = text.MakeUpper(); }
 						screen.DrawText(font, this.mColor, x, y, text);
 					}
 				}
@@ -567,9 +565,11 @@ class PortalOptionMenu : OptionMenu
 
 		for(int j = 0; j < current.mDesc.mItems.Size(); j++)
 		{
-			y = max(OptionMenuSettings.mLinespacing, y - OptionMenuSettings.mLinespacing);
+// Uncomment to bottom align menu
+//			y = max(OptionMenuSettings.mLinespacing, y - OptionMenuSettings.mLinespacing);
 			if (current.mDesc.mItems[j].Selectable()) { indent = max(indent, OptionWidth(current, Stringtable.Localize(current.mDesc.mItems[j].mLabel), accentfont)); }
 		}
+		y = OptionMenuSettings.mLinespacing * 4 / 3;
 
 		indent += x;
 
@@ -600,7 +600,9 @@ class PortalOptionMenu : OptionMenu
 		current.mDesc.mDrawTop = y;
 
 		int ytop = y + current.mDesc.mScrollTop * OptionMenuSettings.mLinespacing;
-		int lastrow = screen.GetHeight() - OptionMenuSettings.mLinespacing;
+// Uncomment to bottom align menu
+//		int lastrow = screen.GetHeight() - OptionMenuSettings.mLinespacing;
+		int lastrow = screen.GetHeight() - y;
 
 		int i;
 		for (i = 0; i < current.mDesc.mItems.Size() && y <= lastrow; i++)
@@ -706,6 +708,7 @@ class PortalOptionMenu : OptionMenu
 					{
 						int box_x = indent + spacing;
 						int box_y = y + 3;
+						screen.Clear (box_x - 1, box_y - 1, box_x + 33, box_y + OptionMenuSettings.mLinespacing * 3 / 4 + 1, 0xff454545);
 						screen.Clear (box_x, box_y, box_x + 32, box_y + OptionMenuSettings.mLinespacing * 3 / 4, this.mCVar.GetInt() | 0xff000000);
 					}
 
@@ -727,7 +730,6 @@ class PortalOptionMenu : OptionMenu
 
 					label = Stringtable.Localize(item.mLabel);
 
-					if (item.mCentered) { label = label.MakeUpper(); }
 					DrawOptionText(current, label, item.mCentered ? x + 20 : x, y, accentfont, OptionMenuSettings.mTitleColor);
 				}
 				else if (item is "OptionMenuFieldBase")
@@ -1030,8 +1032,8 @@ class PortalGameplayMenu : GameplayMenu
 	{
 		PortalOptionMenu.Draw(OptionMenu(self), 20, 20);
 
-		String s = String.Format("dmflags = %d   dmflags2 = %d", dmflags, dmflags2);
-		screen.DrawText (OptionFont(), OptionMenuSettings.mFontColorValue, (screen.GetWidth() - OptionWidth (s) * CleanXfac_1) / 2, 35 * CleanXfac_1, s, DTA_CleanNoMove_1, true);
+		String s = String.Format("dmflags = %d\ndmflags2 = %d", dmflags, dmflags2);
+		screen.DrawText (OptionFont(), OptionMenuSettings.mFontColorValue, 40, screen.GetHeight() - OptionFont().GetHeight() * 2.5, s);
 	}
 }
 
@@ -1041,8 +1043,8 @@ class PortalCompatibilityMenu : CompatibilityMenu
 	{
 		PortalOptionMenu.Draw(OptionMenu(self), 20, 20);
 
-		String s = String.Format("compatflags = %d  compatflags2 = %d", compatflags, compatflags2);
-		screen.DrawText (OptionFont(), OptionMenuSettings.mFontColorValue, (screen.GetWidth() - OptionWidth (s) * CleanXfac_1) / 2, 35 * CleanXfac_1, s, DTA_CleanNoMove_1, true);
+		String s = String.Format("compatflags = %d\ncompatflags2 = %d", compatflags, compatflags2);
+		screen.DrawText (OptionFont(), OptionMenuSettings.mFontColorValue, 40, screen.GetHeight() - OptionFont().GetHeight() * 2.5, s);
 	}
 }
 

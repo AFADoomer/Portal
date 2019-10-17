@@ -104,9 +104,6 @@ Script "TriggerGrille" (int OnOff, int tag)
 	{
 		SoundSequenceOnActor(tag, "FizzlerUp");
 
-		SetLineTexture(tag, SIDE_BACK, TEXTURE_MIDDLE, "EMANGRIL");
-		SetLineTexture(tag, SIDE_FRONT, TEXTURE_MIDDLE, "EMANGRIL");
-
 		for (i = 0; i < 255; i += 7)
 		{
 			TranslucentLine(tag, i, 0);
@@ -126,9 +123,6 @@ Script "TriggerGrille" (int OnOff, int tag)
 		}
 
 		TranslucentLine(tag, 0, 0);
-
-		SetLineTexture(tag, SIDE_BACK, TEXTURE_MIDDLE, "-");
-		SetLineTexture(tag, SIDE_FRONT, TEXTURE_MIDDLE, "-");
 	}
 
 	activated[tag] = 0;
@@ -344,4 +338,77 @@ Script "RotatePoly" (int dir, int id, int angle)
 {
 	if (dir) { Polyobj_OR_RotateLeft(id, 32, angle * 256 / 360); }
 	else { Polyobj_OR_RotateRight(id, 16, angle * 256 / 360); PlaySound(0, "button/success", CHAN_6); }
+}
+
+Script "GetWeapon" (void)
+{
+	SetMusicVolume(0.0);
+	SetMusic("AS_Bass");
+
+	for (int i = 0; i <= 0.25; i += 0.005)
+	{
+		Delay(1);
+		SetMusicVolume(i);
+	}
+/*
+	Delay(15 * 35);
+
+	for (int j = 0.25; j > 0.0; j -= 0.005)
+	{
+		Delay(1);
+		SetMusicVolume(j);
+	}
+*/
+}
+
+Script "RainbowLight" (int tid, int f)
+{
+	if (!tid) { Terminate; }
+
+	int r, g, b, i;
+
+	While(True)
+	{
+		r = Sin(f * Timer()) * 127 / 1.0 + 128;
+		g = Sin(f * Timer() + 0.333) * 127 / 1.0 + 128;
+		b = Sin(f * Timer() + 0.666) * 127 / 1.0 + 128;
+
+		i = r * 0x10000 + g * 0x100 + b;
+
+		SetActorProperty(tid, APROP_StencilColor, i);
+
+		Delay(1);
+	}
+}
+
+Script "PulseLight" (int tid, int f)
+{
+	if (!tid) { Terminate; }
+
+	int r, g, b, p, i, c;
+
+	c = GetActorProperty(tid, APROP_StencilColor);
+
+	r = c & 0x00FF0000;
+	r = r >> 16;
+
+	g = c & 0x0000FF00;
+	g = g >> 8;
+
+	b = c & 0x000000FF;
+
+	While(True)
+	{
+		p = Sin(f * Timer());
+
+		int r2 = p * (r / 2) / 1.0 + (r / 2);
+		int g2 = p * (g / 2) / 1.0 + (g / 2);
+		int b2 = p * (b / 2) / 1.0 + (b / 2);
+
+		i = r2 * 0x10000 + g2 * 0x100 + b2;
+
+		SetActorProperty(tid, APROP_StencilColor, i);
+
+		Delay(1);
+	}
 }

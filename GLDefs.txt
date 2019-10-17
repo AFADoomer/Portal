@@ -15,6 +15,7 @@ PointLight SmallRedLight
 HardwareShader Texture "Models/PortalGun_Tube.png" { Shader "Shaders/func_brightwarp.fp" Speed 8.0 }
 HardwareShader Texture "Models/PortalGun_Tube2.png" { Shader "Shaders/func_brightwarp.fp" Speed 8.0 }
 HardwareShader Texture "EMANGRIL" { Shader "Shaders/func_brightwarp.fp" Speed 1.0 }
+HardwareShader Texture "KILLGRIL" { Shader "Shaders/func_brightwarp.fp" Speed 32.0 }
 
 HardwareShader Texture "PORTAL0A" { Shader "Shaders/portal.fp" Speed 1.0 }
 HardwareShader Texture "PORTAL0B" { Shader "Shaders/portal.fp" Speed 1.0 }
@@ -41,9 +42,10 @@ Material Texture "SLIME"
 {
 	normal "Materials/NormalMaps/water.png"
 	specular "Materials/Specular/water.png"
+	texture displacement "materials/displacement/water.png"
 	specularlevel 2.0
 	shader "shaders/waves.fp"
-	Texture background "SLIMEOV"
+	Texture background "Textures/Shader/Water.png"
 	speed 0.5
 }
 
@@ -51,6 +53,7 @@ Material Texture "WATER"
 {
 	normal "Materials/NormalMaps/water.png"
 	specular "Materials/Specular/water.png"
+	texture displacement "materials/displacement/water.png"
 	specularlevel 2.0
 	shader "shaders/waves.fp"
 	Texture background "Textures/Shader/Water.png"
@@ -87,16 +90,17 @@ Material Texture "BUTTONB"
 
 Material Texture "PORTFL2"
 {
+	shader "shaders/displacement.fp"
 	normal "Materials/NormalMaps/Auto/PORTFLR.png"
 	specular "Materials/Specular/Auto/PORTFLR.png"
+	texture displacement "materials/displacement/PORTFLR.png"
 }
 
 Material Texture "PIPE"
 {
-	normal "Materials/NormalMaps/Auto/GLASS2.png"
-	specular "Materials/Specular/Auto/GLASS2.png"
-	shader "shaders/texture/glass.fp"
-	define amount = 5.0
+	normal "Materials/NormalMaps/Auto/ConcDirt.png"
+	specular "Materials/Specular/Auto/ConcDirt.png"
+	specularlevel 7.5;
 }
 
 Material Texture "GLASSTRA"
@@ -273,12 +277,451 @@ Material Texture "WALL4x4S"
 
 Material Texture "WALLTX1"
 {
+	shader "shaders/displacement.fp"
+	texture displacement "WALLTX1D"
 	normal "WALLTX1N"
 	specular "WALLTX1S"
 }
 
 Material Texture "WALLTX2"
 {
+	shader "shaders/displacement.fp"
+	texture displacement "WALLTX2D"
 	normal "WALLTX2N"
 	specular "WALLTX2S"
+}
+
+Material Texture "PORT2x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT2x1.png"
+}
+
+Material Texture "PORT2x2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT2x2.png"
+}
+
+Material Texture "PORT4x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT4x1.png"
+}
+
+Material Texture "PORT4x4"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT4x4.png"
+}
+
+Material Texture "PORTFLR"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORTFLR.png"
+}
+
+Material Texture "WALL1x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1.png"
+}
+
+Material Texture "WALL1x1D"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1D.png"
+}
+
+Material Texture "WALL2x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x1.png"
+}
+
+Material Texture "WALL2x1D"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x1D.png"
+}
+
+Material Texture "WALL2x2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x2.png"
+}
+
+Material Texture "WALL2x2D"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x2D.png"
+}
+
+Material Texture "WALL4x4"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL4x4.png"
+}
+
+Material Texture "WALL4x4D"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL4x4D.png"
+}
+
+Material Texture "WALL1x1S"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1S.png"
+}
+
+Material Texture "WALL2x1S"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x1S.png"
+}
+
+Material Texture "WALL2x2S"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x2S.png"
+}
+
+Material Texture "WALL4x4S"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL4x4S.png"
+}
+
+Material Texture "WALF1x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "WALF1x1D"
+}
+
+Material Texture "WALF2x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "WALF2x1D"
+}
+
+Material Texture "WALF2x2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "WALF2x2D"
+}
+
+Material Texture "WALF4x4"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "WALF4x4D"
+}
+
+Material Texture "PORTWALL"
+{
+//	shader "shaders/displacement.fp"
+//	texture displacement "materials/displacement/CWALL.png"
+	normal "CWALLN"
+	specular "CWALLS"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL2"
+{
+//	shader "shaders/displacement.fp"
+//	texture displacement "materials/displacement/CWALL.png"
+	normal "CWALLN"
+	specular "CWALLS"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL3"
+{
+//	shader "shaders/displacement.fp"
+//	texture displacement "materials/displacement/CWALL.png"
+	normal "CWALLN"
+	specular "CWALLS"
+	specularlevel 0.1
+}
+
+Material Texture "CEILING"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL4x4.png"
+	normal "Materials/NormalMaps/Auto/WALL4x4.png"
+	specular "Materials/Specular/Auto/WALL4x4.png"
+}
+
+Material Texture "FLOOR"
+{
+	specularlevel 3.0
+}
+
+Material Texture "GRAYDIRT"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1.png"
+	normal "Materials/NormalMaps/Auto/Floor.png"
+	specular "Materials/Specular/Auto/Floor.png"
+}
+
+Material Texture "GRAYDIR2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1.png"
+	normal "Materials/NormalMaps/Auto/Floor.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.25
+}
+
+Material Texture "INSET"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/INSET.png"
+}
+
+Material Texture "WALLBASE"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT4x4.png"
+}
+
+Material Texture "LITB1x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1.png"
+}
+
+Material Texture "LITB2x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x1.png"
+}
+
+Material Texture "LITB2x2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x2.png"
+}
+
+Material Texture "LITBW1x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1.png"
+}
+
+Material Texture "LITBW2x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x1.png"
+}
+
+Material Texture "LITW1x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT1x1.png"
+}
+
+Material Texture "LITW2x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT2x1.png"
+}
+
+Material Texture "LITW2x2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT2x2.png"
+}
+
+Material Texture "LITWW1x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT1x1.png"
+}
+
+Material Texture "LITWW2x1"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/PORT2x1.png"
+}
+
+Material Texture "WALLGR"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALLGR.png"
+}
+
+Material Texture "GIRDER"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/Girder.png"
+	specularlevel 0.25
+}
+
+Material Texture "FLOORMET"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/FloorMet.png"
+	specularlevel 0.25
+}
+
+Material Texture "GRIDWAL1"
+{
+	normal "Materials/NormalMaps/GridWall.png"
+	specular "Materials/Specular/GridWall.png"
+}
+
+Material Texture "GRIDWAL2"
+{
+	normal "Materials/NormalMaps/GridWall.png"
+	specular "Materials/Specular/GridWall.png"
+}
+
+Material Texture "BTSWALL"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BTSWALL.png"
+}
+
+Material Texture "BTSWALL2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BTSWALL.png"
+}
+
+Material Texture "HOLEWALL"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BTSWALL.png"
+}
+
+Material Texture "HOLEWALS"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BTSWALL.png"
+}
+
+Material Texture "HOLEWALM"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BTSWALL.png"
+	normal "Materials/NormalMaps/Auto/HoleWalL.png"
+	specular "Materials/Specular/Auto/HoleWalL.png"
+}
+
+Material Texture "HOLEWALT"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BTSWALL.png"
+	normal "Materials/NormalMaps/Auto/HoleWalS.png"
+	specular "Materials/Specular/Auto/HoleWalS.png"
+}
+
+Material Texture "BORDWAL2"
+{
+	normal "Materials/NormalMaps/Auto/BordWall.png"
+	specular "Materials/Specular/Auto/BordWall.png"
+}
+
+Material Texture "Models/Barrel.png"
+{
+	normal "Materials/NormalMaps/Barrel.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.5
+}
+
+Material Texture "Models/Barrel_Black.png"
+{
+	normal "Materials/NormalMaps/Barrel.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.5
+}
+
+Material Texture "Models/Barrel_Red.png"
+{
+	normal "Materials/NormalMaps/Barrel.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.5
+}
+
+Material Texture "Models/Barrel_Old.png"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BTSWALL.png"
+	normal "Materials/NormalMaps/Barrel.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.25
+}
+
+Material Texture "Models/Barrel_Rusty.png"
+{
+	normal "Materials/NormalMaps/Barrel.png"
+	specular "Materials/Specular/Barrel.png"
+}
+
+Material Texture "Models/Cone.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Cone.png"
+	specularlevel 6.0
+}
+
+Material Texture "Models/Crate_B.png"
+{
+	normal "Materials/NormalMaps/DoomCrate.png"
+	specular "Materials/Specular/DoomCrate.png"
+}
+
+Material Texture "Models/Crate_G.png"
+{
+	normal "Materials/NormalMaps/DoomCrate.png"
+	specular "Materials/Specular/DoomCrate.png"
+}
+
+Material Texture "Textures/Gloss.png"
+{
+	specularlevel 4.0
+}
+
+Material Texture "Models/Diffuser.png"
+{
+	normal "Materials/NormalMaps/Diffuser.png"
+	specular "Materials/Specular/Diffuser.png"
+	specularlevel 2.0
+}
+
+Material Texture "Patches/Door4.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/Floor.png"
+	specularlevel 0.25
+}
+
+Material Texture "Patches/Door4_O.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/Floor.png"
+	specularlevel 0.25
+}
+
+Material Texture "Patches/Door5.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/Floor.png"
+	specularlevel 0.25
+}
+
+Material Texture "Patches/Door5_O.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/Floor.png"
+	specularlevel 0.25
+}
+
+Material Texture "Models/DoorFrame.png"
+{
+	normal "Materials/NormalMaps/Barrel.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.1
 }

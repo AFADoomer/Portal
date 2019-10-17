@@ -3,8 +3,9 @@ class AlphaLight : DynamicLight
 {
 	Color clr;
 	double maxradius;
-	Vector3 spawnoffset;
+	Vector3 spawnoffset, oldpos;
 	int flickertime;
+	double oldangle, oldpitch, oldroll;
 
 	Property LightColor:clr;
 	Property LightRadius:maxradius;
@@ -25,6 +26,8 @@ class AlphaLight : DynamicLight
 		args[LIGHT_BLUE] = clr.b;
 		args[LIGHT_INTENSITY] = int(maxradius * scale.y * alpha);
 
+		ChangeStatNum(Thinker.STAT_USER + 3);
+
 		Super.BeginPlay();
 	}
 
@@ -44,6 +47,11 @@ class AlphaLight : DynamicLight
 				maxradius = AlphaLight(master).maxradius / 4;
 				angle = master.angle;
 			}
+
+			oldpos = master.pos;
+			oldangle = master.angle;
+			oldpitch = master.pitch;
+			oldroll = master.roll;
 		}
 
 		Super.PostBeginPlay();
@@ -82,6 +90,8 @@ class AlphaLight : DynamicLight
 
 	void Rotate()
 	{
+		if (master && (oldpos == master.pos && oldangle == master.angle && oldpitch == master.pitch && oldroll == master.roll)) { return; }
+
 		Vector2 temp = RotateVector((spawnoffset.y, spawnoffset.z), master.roll);
 		Vector3 offset = (spawnoffset.x, temp.x, temp.y);
 
@@ -96,6 +106,11 @@ class AlphaLight : DynamicLight
 		offset.z *= master.scale.y;
 
 		SetOrigin(master.pos + offset, true);
+
+		oldpos = master.pos;
+		oldangle = master.angle;
+		oldpitch = master.pitch;
+		oldroll = master.roll;
 	}
 
 	override void Activate(Actor activator)
@@ -123,6 +138,7 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 	{
 		//$Sprite internal:Light
 		+DYNAMICLIGHT.ATTENUATE
+		DynamicLight.SpotOuterAngle 70;
 	}
 
 	override void BeginPlay()
@@ -141,7 +157,6 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 
 		bSpot = true;
 		SpotInnerAngle = 1;
-		SpotOuterAngle = 70;
 
 		if (!master)
 		{
@@ -184,7 +199,7 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 			args[LIGHT_INTENSITY] = int(maxradius);
 		}
 
-		if (pitch == 90)
+		if (!master && pitch == 90)
 		{
 			// Change ceiling brightness directly instead of light spawning
 			curSector.SetPlaneLight(Sector.ceiling, args[LIGHT_INTENSITY]);
@@ -201,6 +216,12 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 
 				if (flickertime > level.time + 35 && Random(0, 2)) { A_PlaySound("lights/flicker", CHAN_AUTO, FRandom(0.125, 0.25), false, ATTN_NORM, false, FRandom(0.8, 1.2)); }
 
+				Super.Activate(activator);
+				if (base) { base.Activate(self); }
+			}
+			else if (LightSpawner(master) && LightSpawner(master).user_active)
+			{
+				flickertime = level.time + 1;
 				Super.Activate(activator);
 				if (base) { base.Activate(self); }
 			}
@@ -223,7 +244,8 @@ class LightSpawner : Actor
 {
 	Line linedef;
 	double linelength;
-	int user_rows, user_cols, user_rowsize, user_colsize;
+	int user_rows, user_cols, user_rowsize, user_colsize, user_maxradius;
+	bool user_active;
 
 	Default
 	{
@@ -253,12 +275,12 @@ class LightSpawner : Actor
 
 		TextureID tex;
 
-		if (linedef.sidedef[0] && !linedef.sidedef[1]) { DoLights(linedef.sidedef[0].GetTexture(Side.mid)); }
-		else if (linedef.sidedef[1] && !linedef.sidedef[0]) { DoLights(linedef.sidedef[1].GetTexture(Side.mid)); }
-		else if (user_rows && user_cols && user_rowsize && user_colsize)
+		if (user_rows && user_cols && user_rowsize && user_colsize)
 		{
-			SpawnLights(user_rows, user_cols, user_rowsize, user_colsize);
+			Utilities.SpawnLights(self, user_rows, user_cols, user_rowsize, user_colsize, user_active);
 		}
+		else if (linedef.sidedef[0] && !linedef.sidedef[1]) { DoLights(linedef.sidedef[0].GetTexture(Side.mid)); }
+		else if (linedef.sidedef[1] && !linedef.sidedef[0]) { DoLights(linedef.sidedef[1].GetTexture(Side.mid)); }
 		else
 		{
 			for (int i = 0; i < 3; i++)
@@ -363,50 +385,7 @@ class LightSpawner : Actor
 				}
 			}
 
-			SpawnLights(rows, cols, rowsize, colsize);
-		}
-	}
-
-	void SpawnLights(int rows, int cols, int rowsize, int colsize)
-	{
-		int rowpos = -(rows * rowsize) / 2 + rowsize / 2;
-		int colpos = -(cols * colsize) / 2 + colsize / 2;
-		int basecolpos = colpos;
-
-		color basecolor = fillcolor != -150994944 ? fillcolor : 0x383840;
-
-		for (int r = 0; r < rows; r++)
-		{
-			for (int c = 0; c < cols; c++)
-			{
-				bool sp;
-				Actor mo;
-				[sp, mo] = A_SpawnItemEx("AttenuatedAlphaLight", 1.0, colpos, rowpos, 0, 0, 0, 0, SXF_NOCHECKPOSITION);
-				if (sp && mo)
-				{
-					mo.master = self;
-					mo.angle = angle;
-					mo.pitch = pitch;
-
-					double scale = clamp(64.0 / (cols * colsize), 1.0, 2.25);
-
-					AlphaLight(mo).clr.r = int(basecolor.r * scale);
-					AlphaLight(mo).clr.g = int(basecolor.g * scale);
-					AlphaLight(mo).clr.b = int(basecolor.b * scale);
-					AlphaLight(mo).maxradius = max(rowsize, colsize) * 4.0;
-					AttenuatedAlphaLight(mo).user_lightlevel = 1.0;
-
-					if (tid)
-					{
-						mo.ChangeTID(tid);
-					}
-				}
-
-				colpos += colsize;
-			}
-
-			rowpos += rowsize;
-			colpos = basecolpos;
+			Utilities.SpawnLights(self, rows, cols, rowsize, colsize, user_active);
 		}
 	}
 }

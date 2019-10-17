@@ -1,0 +1,216 @@
+class Pivot : Actor
+{
+	Class<SwingingDoor> doorclass;
+	SwingingDoor door;
+	BlockBase blockers[32];
+	Actor frame;
+	double spawnangle;
+	double targetangle;
+	double user_startangle;
+	Line linedef;
+
+	Property DoorClass:doorclass;
+
+	Default
+	{
+		//$Category Portal/Doors
+		//$Title Door Frame (Green Door)
+		+NOINTERACTION
+		Height 0;
+		Radius 0;
+		Pivot.DoorClass "SwingingDoor";
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		bInvisible = true;
+
+		spawnangle = angle;
+
+		if (user_startangle) { angle -= user_startangle; }
+
+		targetangle = angle;
+
+		While (!frame)
+		{
+			frame = Spawn("DoorFrame", pos);
+			if (frame)
+			{
+				frame.angle = spawnangle + 90;
+				frame.master = self;
+			}
+		}
+
+		While (!door)
+		{
+			door = SwingingDoor(Spawn(doorclass, (pos.xy + RotateVector((14, 0), angle), pos.z)));
+			if (door)
+			{
+				door.angle = angle - 90;
+				door.master = self;
+
+				linedef = Utilities.GetCurrentLine(door);
+			}
+		}
+
+		for (int i = 2; i <= 30; i+=2)
+		{
+			While (!blockers[i])
+			{
+				blockers[i] = BlockBase(Spawn("DoorBlock", (pos.xy + RotateVector((i, 0), angle), pos.z)));
+				if (blockers[i]) { blockers[i].master = self; }
+			}
+		}
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		for (int i = 2; i <= 30; i+=2)
+		{
+			if (!blockers[i].CheckPosition(pos.xy + RotateVector((i, 0), angle)))
+			{
+				targetangle = angle;
+				return;
+			}
+		}		
+
+		if (angle > targetangle) { angle = max(angle - 3, targetangle); }
+		else if (angle < targetangle) { angle = min(angle + 3, targetangle); }
+
+		if (targetangle == spawnangle && angle >= spawnangle - 5 && angle < spawnangle)
+		{
+			A_PlaySound("door2/close", CHAN_AUTO | CHAN_NOSTOP, 0.5);
+		}
+
+		door.SetOrigin((pos.xy + RotateVector((16, 0), angle), pos.z), true);
+		door.angle = angle - 90;
+
+		if (linedef)
+		{
+			if (angle >= spawnangle - 35)
+			{
+				linedef.flags |= (Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
+			}
+			else
+			{
+				linedef.flags &= ~(Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
+			}
+		}
+
+		for (int i = 2; i <= 30; i+=2)
+		{
+			blockers[i].SetOrigin((pos.xy + RotateVector((i, 0), angle), pos.z), true);
+		}
+	}
+}
+
+class PivotWhite : Pivot
+{
+	Default
+	{
+		//$Title Door Frame (White Door)
+		Pivot.DoorClass "SwingingDoorWhite";
+	}
+}
+
+class DoorFrame : Actor
+{
+	Default
+	{
+		+NOINTERACTION
+		Radius 0;
+		Height 0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}	
+}
+
+class SwingingDoor : Actor
+{
+	int lastuse;
+
+	Default
+	{
+		+WALLSPRITE
+		+NOGRAVITY
+		-SOLID
+		+SPECIAL
+		Radius 16;
+		Height 64;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+		Open:
+			UNKN B 15;
+			Goto Spawn;
+	}
+
+	override void Touch(Actor toucher)
+	{
+		Super.Touch(toucher);
+
+		if (!master || !Pivot(master) || angle == Pivot(master).spawnangle - 90) { return; }
+
+		double da = abs(deltaangle(toucher.angle, master.angle));
+		if (da < 45 || da > 135) { return; }
+
+		double minangle = Pivot(master).spawnangle - 90;
+		double maxangle = Pivot(master).spawnangle;
+
+		if (master.angle >= minangle && master.angle <= maxangle)
+		{
+			double dist = Distance2D(toucher);
+	
+			Vector2 amt = toucher.vel.xy * clamp(dist, 1, 32) / 32;
+
+			double delta = toucher.vel.xy.length() * toucher.Speed * 4;
+			if (abs(deltaangle(toucher.angle, angle)) < 90) { delta *= -1; }
+
+			Pivot(master).targetangle = clamp(Pivot(master).targetangle + delta, minangle, maxangle);
+		}
+	}
+
+	override bool Used(Actor user)
+	{
+		if (!master || !Pivot(master) || level.time - lastuse <= 5) { return false; }
+
+		if (Pivot(master).angle == Pivot(master).spawnangle)
+		{
+			A_PlaySound("door2/open", CHAN_AUTO, 0.5);
+			SetStateLabel("Open");
+		}
+
+		if (Pivot(master).targetangle < Pivot(master).spawnangle)
+		{
+			Pivot(master).targetangle = Pivot(master).spawnangle;
+		}
+		else
+		{
+			Pivot(master).targetangle = Pivot(master).spawnangle - 90;
+		}
+
+		lastuse = level.time;
+
+		return true;
+	}
+}
+
+class SwingingDoorWhite : SwingingDoor {}
