@@ -17,6 +17,27 @@ Sprite POR0B0, 32, 32 { Patch UNKNA0, 0, 0 }
 
 Sprite UNKNB0, 32, 32 { Patch UNKNA0, 0, 0 }
 
+// Silence parsing errors from default MENUDEF
+Graphic M_DOOM, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_NGAME, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_OPTION, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_LOADG, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_SAVEG, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_QUITG, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_EPISOD, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_NEWG, 1, 1 { Patch BLACK, 0, 0 }
+Graphic M_SKILL, 1, 1 { Patch BLACK, 0, 0 }
+
+// These are here to silence parsing errors that come from the Doom animation definitions in gzdoom.pk3
+Texture LAVA1, 256, 256 { Patch SLIME, 0, 0 }
+Texture LAVA2, 256, 256 { Patch SLIME, 0, 0 }
+Texture LAVA3, 256, 256 { Patch SLIME, 0, 0 }
+Texture LAVA4, 256, 256 { Patch SLIME, 0, 0 }
+Texture FWATER1, 256, 256 { Patch WATER, 0, 0 }
+Texture FWATER2, 256, 256 { Patch WATER, 0, 0 }
+Texture FWATER3, 256, 256 { Patch WATER, 0, 0 }
+Texture FWATER4, 256, 256 { Patch WATER, 0, 0 }
+
 Texture PORTWALL, 341, 256
 {
 	XScale 2.66
