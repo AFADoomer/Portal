@@ -49,7 +49,7 @@ class CubeTrigger : Actor
 
 		if (isFrozen()) { return; }
 
-		CheckActivators();
+		if (level.time % 10 == 0) { CheckActivators(); }
 
 		for (int i = 0; i < Activators.Size(); i++)
 		{
@@ -101,7 +101,7 @@ class CubeTrigger : Actor
 		}
 		else
 		{
-			movetimeout--;
+			if (movetimeout > 0) { movetimeout--; }
 
 			if (movetimeout == 0 || !Activators.Size())
 			{
@@ -140,7 +140,7 @@ class CubeTrigger : Actor
 			)
 			{ Activators.Push(mo); }
 		}
-
+/*
 		// Monsters can also activate buttons 
 		it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
 		Actor mo2;
@@ -155,6 +155,7 @@ class CubeTrigger : Actor
 			)
 			{ Activators.Push(mo2); }
 		}
+*/
 	}
 
 	void ActivatePeers(bool OnOff)

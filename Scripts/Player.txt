@@ -385,7 +385,6 @@ class PortalPlayer : PlayerPawn
 		// Crouching moves down while climbing
 		if (climbing && cmd.buttons & BT_CROUCH) { vel.z -= 0.95; }
 
-
 		bool waslanded = player.onground;
 
 		CheckPitch();
@@ -584,21 +583,21 @@ class PortalPlayer : PlayerPawn
 
 		while (mo = Actor(it.Next(false)))
 		{
-			Touch(mo);
+			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
 		}
 
 		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
 
 		while (mo = Actor(it.Next(false)))
 		{
-			Touch(mo);
+			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
 		}
 
 		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
 
 		while (mo = Actor(it.Next(false)))
 		{
-			Touch(mo);
+			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
 		}
 	}
 
@@ -737,7 +736,7 @@ class PortalPlayer : PlayerPawn
 			if (Distance3D(DragTarget) > range * 1.5)
 			{
 				DragTarget.ClearInterpolation();
-				DragTarget.SetOrigin(dragtargetpos, false);
+				DragTarget.SetOrigin(dragtargetpos, true);
 			}
 			else
 			{

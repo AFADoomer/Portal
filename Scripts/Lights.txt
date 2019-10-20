@@ -260,7 +260,8 @@ class LightSpawner : Actor
 	{
 		Spawn:
 			UNKN A 1;
-			Loop;
+			UNKN A 1;
+			Stop;
 	}
 
 	override void PostBeginPlay()

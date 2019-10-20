@@ -32,7 +32,7 @@ class CarryActor : Actor
 		BounceSound "cube/bounce";
 		WallBounceSound "cube/bounce";
 		CarryActor.SlideSound "cube/slide";
-		carryActor.Fizzle False;
+		CarryActor.Fizzle False;
 	}
 
 	States
@@ -453,7 +453,7 @@ class PipeBend : Pipe
 {
 	Default
 	{
-		//$Title Pipe Bend
+		//$Title Pipe Bend (90 degrees, triple)
 	}
 }
 
@@ -1925,7 +1925,7 @@ class FlatText : Actor
 			drawn = true;
 		}
 
-		if (value && value != 32)
+		if (value && value != 32 && level.time % 15 == 0)
 		{
 			int newsprite = GetSpriteIndex(String.Format("F%03i", value));
 			if (newsprite && sprite != newsprite) { sprite = newsprite; }
