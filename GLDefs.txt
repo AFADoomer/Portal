@@ -107,6 +107,7 @@ Material Texture "GLASSTRA"
 {
 	normal "Materials/NormalMaps/Auto/GLASS.png"
 	specular "Materials/Specular/Auto/GLASS.png"
+	specularlevel 1.0
 }
 
 Material Texture "GLASS2"
@@ -115,6 +116,7 @@ Material Texture "GLASS2"
 	specular "Materials/Specular/Auto/GLASS2.png"
 	Texture reflection "PLAYVIEW"
 	shader "shaders/texture/glass.fp"
+	specularlevel 1.0
 }
 
 Material Texture "GLASS3"
@@ -122,6 +124,7 @@ Material Texture "GLASS3"
 	normal "Materials/NormalMaps/Auto/GLASS3.png"
 	specular "Materials/Specular/Auto/GLASS3.png"
 	shader "shaders/texture/glass.fp"
+	specularlevel 1.0
 }
 
 Material Texture "Models/PortalGun.png"
@@ -724,4 +727,29 @@ Material Texture "Models/DoorFrame.png"
 	normal "Materials/NormalMaps/Barrel.png"
 	specular "Materials/Specular/Barrel.png"
 	specularlevel 0.1
+}
+
+HardwareShader Sprite SMOKA0
+{
+	Shader "shaders/rotate.fp"
+	Speed 0.5
+}
+
+HardwareShader Sprite SMOKB0
+{
+	Shader "shaders/rotate.fp"
+	Speed -0.5
+}
+
+HardwareShader Sprite SMOKC0
+{
+	Shader "shaders/rotate.fp"
+	Speed 0.75
+}
+
+Material Texture "Models/LaserCube3.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS.png"
+	specular "Materials/Specular/Auto/GLASS.png"
+	specularlevel 1.0
 }
