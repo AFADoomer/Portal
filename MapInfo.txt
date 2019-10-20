@@ -74,6 +74,7 @@ skill nightmare
 gamedefaults
 {
 	AirControl = 0.1
+	Gravity = 550
 	LightMode = 0
 	CheckSwitchRange
 	EvenLighting
