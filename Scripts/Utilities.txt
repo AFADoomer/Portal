@@ -214,7 +214,8 @@ class Utilities : Actor
 
 						if (tex && TexMan.GetName(tex) ~== "EMANGRIL")
 						{
-							if (HitSide.flags & Side.WALLF_WRAP_MIDTEX || current.flags & Line.ML_WRAP_MIDTEX) { mo.SetStateLabel(fizzlestate); return true; } // If it's floor-to-ceiling, skip checks
+							if (!current.alpha) { return false; }
+							else if (HitSide.flags & Side.WALLF_WRAP_MIDTEX || current.flags & Line.ML_WRAP_MIDTEX) { mo.SetStateLabel(fizzlestate); return true; } // If it's floor-to-ceiling, skip checks
 							else
 							{
 								double yoffset = HitSide.GetTextureYOffset(1);
@@ -249,5 +250,90 @@ class Utilities : Actor
 		mo.ClearBounce();
 		mo.A_PlaySound("cube/fizzle", CHAN_AUTO | CHAN_NOSTOP);
 		mo.SetStateLabel(fizzlestate);
+	}
+
+	static LaserBeam, Actor DrawLaser(Actor origin, LaserBeam beam, Actor hitspot, TraceResults traceresults, Class<Actor> spawnclass = "LaserBeam", Class<Actor> puffclass = "LaserHit", int damage = 0, double zoffset = 0, bool drawdecal = true, double alpha = 1.0)
+	{
+		if (!traceresults || !origin) { return beam, hitspot; }
+
+		Vector3 beamoffset = origin.pos + (0, 0, zoffset);
+
+		double radiusoffset = traceresults.HitActor ? traceresults.HitActor.radius : 0;
+
+		double dist = ((beamoffset - traceresults.HitPos) - traceresults.HitVector * radiusoffset).length();
+
+		//Laser beam
+		Vector3 beampos = beamoffset + traceresults.HitVector * (dist / 2);
+		if (!beam)
+		{
+			beam = LaserBeam(Spawn(spawnclass, beampos, ALLOW_REPLACE));
+			if (beam)
+			{
+				beam.master = origin;
+				beam.target = origin;
+			}
+		}
+
+		if (beam)
+		{
+			beam.SetOrigin(beampos, false);
+
+			beam.pitch = origin.pitch - 90;
+			beam.angle = origin.angle;
+			beam.scale.x = beam.Default.scale.x * FRandom(0.5, 0.75);
+			beam.scale.y = dist * 2.225;
+			beam.alpha = beam.Default.alpha * alpha;
+		}
+
+		Actor flash = Spawn("Flare", traceresults.HitPos, ALLOW_REPLACE);
+		if (flash)
+		{
+			flash.scale *= 0.15;
+			flash.alpha = max(0.25, 0.6 * alpha);
+			flash.A_SetTics(2);
+		}
+
+		if (!hitspot) { hitspot = Spawn("LaserHitMarker", traceresults.HitPos + traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
+		if (hitspot)
+		{
+			hitspot.master = origin;
+			hitspot.SetOrigin(traceresults.HitPos + traceresults.HitVector * radiusoffset, false);
+		}
+
+		Actor puff;
+
+		if (traceresults.HitActor)
+		{
+			Actor m = origin;
+			while (m.master && m is "LaserSpot") { m = m.master; }
+
+			traceresults.HitActor.DamageMobj(beam, m, damage, "LaserBeam");
+
+			if (!traceresults.HitActor.bNoBlood && drawdecal)
+			{
+				puff = Spawn("SmokePuff", traceresults.HitPos + traceresults.HitVector * radiusoffset, ALLOW_REPLACE);
+				if (puff)
+				{
+					puff.angle = puff.AngleTo(origin);
+				}
+			}
+		}
+		else if (traceresults.HitType == TRACE_HitFloor || traceresults.HitType == TRACE_HitCeiling || traceresults.HitType == TRACE_HitWall)
+		{
+			// Spawn bullet puff
+			if (puffclass != "" && drawdecal)
+			{
+				puff = Spawn(puffclass, traceresults.HitPos + traceresults.HitVector * (radiusoffset + 3.0), ALLOW_REPLACE);
+
+				if (puff)
+				{
+						puff.angle = origin.AngleTo(puff);
+						puff.A_SprayDecal("LaserBeamScorch", 24.0);
+						puff.angle = puff.AngleTo(origin);
+				}
+			}
+		}
+
+		return beam, hitspot;
 	}
 }

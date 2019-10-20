@@ -42,9 +42,11 @@ Class PortalFindHitPointTracer : LineTracer
 					if (nogrates) { return TRACE_Stop; }
 					return TRACE_Skip;
 				}
-				else if (Texman.GetName(Results.HitTexture) ~== "EMANGRIL" && !(Results.HitLine.flags & Line.ML_WRAP_MIDTEX)) // If it's floor-to-ceiling, skip checks
+				else if (Texman.GetName(Results.HitTexture) ~== "EMANGRIL")
 				{
 					if (!Results.HitLine.alpha) { return TRACE_Skip; }
+
+					if (Results.HitLine.flags & Line.ML_WRAP_MIDTEX) { return TRACE_Stop; }
 
 					Side HitSide = Results.HitLine.sidedef[Results.Side];
 
@@ -94,12 +96,14 @@ Class LaserFindHitPointTracer : LineTracer
 		if (Results.HitType == TRACE_HitActor)
 		{
 			if (
+				Results.HitActor &&
 				Results.HitActor != skipactor && // Skip the origin
-				(skipactor != Results.HitActor.master) && // And the master
 				(!Results.HitActor.master || Results.HitActor.master != skipactor) && // And any children
-				Results.HitActor.species != skipspecies && // And any of the skipped species
+				(!Results.HitActor.species || Results.HitActor.species != skipspecies) && // And any of the skipped species
 				(Results.HitActor.bSolid || Results.HitActor.bShootable) // And only return shootable actors
-			) { return TRACE_Stop; } 
+			) { return TRACE_Stop; }
+
+			Results.HitActor = null; // Don't remember if you passed through an actor
 
 			return TRACE_Skip;
 		}

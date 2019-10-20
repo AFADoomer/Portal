@@ -129,8 +129,9 @@ class Flare : Actor
 
 	Default
 	{
-		+NOGRAVITY;
-		+NOINTERACTION;
+		+NOGRAVITY
+		+NOINTERACTION
+		+FORCEXYBILLBOARD
 		Radius 0;
 		Height 0;
 		RenderStyle "Add";
@@ -187,7 +188,7 @@ class LaserBeam : Actor
 	{
 		Spawn:
 			TNT1 A 0;
-			UNKN A 1;
+			UNKN A -1;
 			Stop;
 	}
 
@@ -204,6 +205,7 @@ class LaserBeamBlue : LaserBeam
 {
 	Default
 	{
+		Scale 2.0;
 		Alpha 0.25;
 	}
 }
@@ -228,6 +230,7 @@ class LaserLight : Actor
 class LaserSpot : Actor
 {
 	LaserFindHitPointTracer hittracer;
+	LaserBeam beam;
 	Actor hitspot, flare, flare2;
 
 	Default
@@ -247,6 +250,9 @@ class LaserSpot : Actor
 		Inactive:
 			UNKN A 1
 			{
+				A_StopSound(CHAN_6);
+
+				if (beam) { beam.Destroy(); }
 				if (hitspot) { hitspot.Destroy(); }
 				if (flare) { flare.Destroy(); }
 				if (flare2) { flare2.Destroy(); }
@@ -275,10 +281,41 @@ class LaserSpot : Actor
 		}
 	}
 
-	void A_FireLaser(int damage = 3, sound snd = "laser")
+	void A_FireLaser(int damage = 3, sound snd = "")
 	{
-		DoTrace(self, angle, 2048, pitch, 0, 0, hittracer);
-		DrawLaser(hittracer.Results, damage:damage);
+		if (snd != "")
+		{
+			A_PlaySound(snd, CHAN_6 | CHAN_NOSTOP, 0.125, true, ATTN_STATIC);
+		}
+
+		double zoffset;
+		if (master) { zoffset = pos.z - master.pos.z; }
+
+		DoTrace(master, angle, 2048, pitch, 0, zoffset, hittracer);
+		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, damage:damage, drawdecal:!(level.time % Random(5, 15)));
+
+		if (!flare2 && (!master || !(master is "LaserCube" || master is "PortalSpot"))) { flare2 = Spawn("Flare", pos + hittracer.Results.HitVector * 12.0, ALLOW_REPLACE); }
+		if (flare2)
+		{
+			flare2.master = self;
+			flare2.alpha = 0.9;
+			flare2.scale.x = flare2.Default.scale.x * FRandom(0.8, 1.0);
+			flare2.scale.y = flare2.Default.scale.y * FRandom(0.8, 1.0);
+			flare2.SetOrigin(pos + hittracer.Results.HitVector * 12.0, false);
+		}
+
+		if (hitspot)
+		{
+			if (!flare) { flare = Spawn("Flare", hitspot.pos, ALLOW_REPLACE); }
+			if (flare)
+			{
+				flare.master = self;
+				flare.alpha = 0.7 + FRandom(-0.2, 0.2);
+				flare.scale.x = flare.Default.scale.x * FRandom(0.2, 0.5);
+				flare.scale.y = flare.Default.scale.y * FRandom(0.2, 0.5);
+				flare.SetOrigin(hitspot.pos, false);
+			}
+		}
 	}
 
 	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, LaserFindHitPointTracer thistracer)
@@ -292,63 +329,6 @@ class LaserSpot : Actor
 
 		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
 		thistracer.Trace(origin.pos + (0, 0, zoffset), origin.CurSector, tracedir, dist, 0);
-	}
-
-	void DrawLaser(TraceResults traceresults, Class<Actor> spawnclass = "LaserBeam", Class<Actor> puffclass = "LaserHit", int damage = 3, double sparsity = 3.0)
-	{
-		if (!traceresults) { return; }
-
-		double distanceoffset = 24.0;
-
-		// Light flare
-
-		if (!flare2 && (!master || !(master is "LaserCube" || master is "PortalSpot"))) { flare2 = Spawn("Flare", pos + traceresults.HitVector * 12.0, ALLOW_REPLACE); }
-		if (flare2)
-		{
-			flare2.master = self;
-			flare2.alpha = 0.9;
-			flare2.SetOrigin(pos + traceresults.HitVector * 12.0, false);
-		}
-
-		Actor mo;
-
-		//Laser beam
-		mo = Spawn(spawnclass, pos + traceresults.HitVector * ((traceresults.Distance + distanceoffset) / 2 - distanceoffset + 4), ALLOW_REPLACE);
-		if (mo)
-		{
-			mo.master = self;
-			mo.target = self;
-			mo.pitch = pitch - 90;
-			mo.angle = angle;
-			mo.scale.x = FRandom(0.9, 1.2);
-			mo.scale.y = (traceresults.Distance + distanceoffset) * 2.175;
-		}
-
-		if (!hitspot) { hitspot = Spawn("LaserHitMarker", traceresults.HitPos - traceresults.HitVector * Radius, ALLOW_REPLACE); }
-		if (hitspot)
-		{
-			hitspot.master = self;
-			hitspot.SetOrigin(traceresults.HitPos - traceresults.HitVector * Radius, false);
-		}
-
-		if (traceresults.HitActor)
-		{
-			traceresults.HitActor.DamageMobj(mo, self, damage, "Laser");
-			if (traceresults.HitActor is "LaserCube" || traceresults.HitActor is "LaserTrigger") { return; }
-		}
-
-		// Sparkles
-		if (puffclass != "") { Actor puff = Spawn(puffclass, traceresults.HitPos, ALLOW_REPLACE); }
-
-		// Light flare
-		if (!flare) { flare = Spawn("Flare", traceresults.HitPos, ALLOW_REPLACE); }
-		if (flare)
-		{
-			flare.master = mo;
-			flare.alpha = 0.7 + FRandom(-0.2, 0.2);
-			flare.scale = flare.Default.scale * FRandom(0.2, 0.5);
-			flare.SetOrigin(traceresults.HitPos, false);
-		}
 	}
 }
 
@@ -405,17 +385,10 @@ class LaserEmitter : LaserSpot
 
 	States
 	{
-		Inactive:
-			UNKN A 1
-			{
-				A_StopSound(CHAN_6);
-			}
-			Goto Super::Inactive;
 		Active:
 			UNKN A 1
 			{
-				A_FireLaser();
-				A_PlaySound("laser/loop", CHAN_6, 0.05, true, ATTN_STATIC);
+				A_FireLaser(3, "laser/loop");
 			}
 			Loop;
 	}
@@ -427,18 +400,11 @@ class LaserEmitterBlue : LaserSpot
 
 	States
 	{
-		Inactive:
-			UNKN A 1
-			{
-				A_StopSound(CHAN_6);
-			}
-			Goto Super::Inactive;
 		Spawn:
 		Active:
 			UNKN A 1
 			{
-				A_FireGuideLaser();
-				A_PlaySound("laser/loop", CHAN_6, 0.0125, true, ATTN_STATIC);
+				A_FireGuideLaser("laser/loop");
 			}
 			Loop;
 	}
@@ -450,10 +416,18 @@ class LaserEmitterBlue : LaserSpot
 		Super.PostBeginPlay();
 	}
 
-	void A_FireGuideLaser()
+	void A_FireGuideLaser(sound snd = "")
 	{
-		DoTrace(self, angle, 2048, pitch, TRF_THRUACTORS, 0, hittracer2);
-		DrawGuideLaser(hittracer2.Results);
+		if (snd != "")
+		{
+			A_PlaySound(snd, CHAN_6 | CHAN_NOSTOP, 0.0125, true, ATTN_STATIC);
+		}
+
+		double zoffset;
+		if (master) { zoffset = master.pos.z + master.height - pos.z; }
+
+		DoTrace(master, angle, 2048, pitch, TRF_THRUACTORS, zoffset, hittracer2);
+		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer2.Results, "LaserBeamBlue", damage:0, drawdecal:false);
 	}
 
 	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, BridgeFindHitPointTracer thistracer)
@@ -464,27 +438,6 @@ class LaserEmitterBlue : LaserSpot
 
 		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
 		thistracer.Trace(origin.pos + (0, 0, zoffset), origin.CurSector, tracedir, dist, 0);
-	}
-
-	void DrawGuideLaser(TraceResults traceresults, Class<Actor> spawnclass = "LaserBeamBlue", Class<Actor> puffclass = "", int damage = 0, double sparsity = 3.0)
-	{
-		if (!traceresults) { return; }
-
-		double distanceoffset = 24.0;
-
-		Actor mo;
-
-		//Laser beam
-		mo = Spawn(spawnclass, pos + traceresults.HitVector * ((traceresults.Distance + distanceoffset) / 2 - distanceoffset + 4), ALLOW_REPLACE);
-		if (mo)
-		{
-			mo.master = self;
-			mo.target = self;
-			mo.pitch = pitch - 90;
-			mo.angle = angle;
-			mo.scale.x = FRandom(0.9, 1.2);
-			mo.scale.y = (traceresults.Distance + distanceoffset) * 2.175;
-		}
 	}
 }
 
