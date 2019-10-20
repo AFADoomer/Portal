@@ -154,18 +154,19 @@ class LaserCube : Cube
 		if (lasersource)
 		{
 			lasersource.master = self;
-			lasersource.SetOrigin(pos + (radius * 1.4 * cos(angle), radius * 1.4 * sin(angle), height * 0.5), true);
+//			lasersource.SetOrigin(pos + (radius * 1.4 * cos(angle), radius * 1.4 * sin(angle), height * 0.5), true);
+			lasersource.SetOrigin(pos + (0, 0, height / 2), false);
 			lasersource.angle = angle;
 
 			if (laserhit)
 			{
 				lasersource.SetStateLabel("Active");
-				if (interior.alpha < 1.0) { interior.alpha = min(1.0, interior.alpha + 0.05); }
+				if (interior.alpha < 0.7) { interior.alpha = min(0.7, interior.alpha + 0.05); }
 			}
 			else
 			{
 				lasersource.SetStateLabel("Inactive");
-				if (interior.alpha > 0.7) { interior.alpha = max(0.0, interior.alpha - 0.05); }
+				if (interior.alpha > 0.35) { interior.alpha = max(0.35, interior.alpha - 0.05); }
 			}
 		}
 
@@ -176,7 +177,7 @@ class LaserCube : Cube
 
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
-		if (inflictor is "LaserBeam")
+		if (inflictor is "LaserBeam" && source != self)
 		{
 			laserhit = true;
 		}
@@ -193,6 +194,7 @@ class LaserCubeInterior : Actor
 		Scale 0.45;
 		Renderstyle "Translucent";
 		Alpha 0.7;
+		Species "Laser";
 	}
 
 	override void Tick()

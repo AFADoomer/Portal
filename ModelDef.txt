@@ -6,10 +6,10 @@ Model Cube
 	Path "Models/"
 	Model 0 "cube.md3"
 
-	Offset 0.0 0.0 24.0;
+	Offset 0.0 0.0 25.1;
 	FrameIndex UNKN A 0 0
 
-	Offset 0.0 0.0 24.0;
+	Offset 0.0 0.0 25.1;
 	FrameIndex UNKN B 0 0 // For GZDB view
 }
 
@@ -20,12 +20,12 @@ Model LaserCube
 
 	Path "Models/"
 	Model 0 "cube.md3"
-	Skin 0 "lasercube.png"
+	Skin 0 "LaserCube4.png"
 
-	Offset 0.0 0.0 24.0;
+	Offset 0.0 0.0 25.1;
 	FrameIndex UNKN A 0 0
 
-	Offset 0.0 0.0 24.0;
+	Offset 0.0 0.0 25.1;
 	FrameIndex UNKN B 0 0 // For GZDB view
 }
 
@@ -36,12 +36,13 @@ Model LaserCubeInterior
 	DONTCULLBACKFACES
 
 	Path "Models/"
-	Model 0 "cube2.md3"
+	Model 0 "cube.md3"
+	Skin 0 "LaserCube3.png"
 
-	Offset 0.0 0.0 24.0;
+	Offset 0.0 0.0 25.1;
 	FrameIndex UNKN A 0 0
 
-	Offset 0.0 0.0 24.0;
+	Offset 0.0 0.0 25.1;
 	FrameIndex UNKN B 0 0 // For GZDB view
 }
 
