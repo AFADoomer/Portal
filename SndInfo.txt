@@ -127,6 +127,11 @@ $rolloff world/underwater log 8 16
 world/party		horn
 world/fan		fan
 world/whoosh		whoosh
+world/explosion		explode
+world/flareup		flareup
+
+switch/on		sw_on
+switch/off		sw_off
 
 $random footsteps/default { footsteps/default1 footsteps/default2 footsteps/default3 footsteps/default4 }
 footsteps/default1	default1

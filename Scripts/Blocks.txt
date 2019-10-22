@@ -75,7 +75,7 @@ class BlockBase : SwitchableDecoration
 			return 0;
 		}
 
-		return DamageMobj(inflictor, source, damage, mod, flags, angle);
+		return Super.DamageMobj(inflictor, source, damage, mod, flags, angle);
 	}
 
 	override void OnDestroy()

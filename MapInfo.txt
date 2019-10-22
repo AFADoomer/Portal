@@ -180,6 +180,7 @@ DoomEdNums
 	30081 = RailStub
 	30082 = Tile2x2
 	30083 = Tile4x4
+	30084 = Crusher
 	31000 = FlatText
 	31001 = ConfettiSpawner
 	31002 = ClimbableZone

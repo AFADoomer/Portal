@@ -884,6 +884,8 @@ Model LadderRung
 	USEACTORPITCH
 	USEACTORROLL
 
+	Offset -2.0 0.0 0.0
+
 	Path "Models/"
 	Model 0 "rung.md3"
 	Skin 0 "GRAYDIR2"
@@ -921,6 +923,9 @@ Model OilBarrel
 
 	Skin 0 "Barrel_Red.png"
 	FrameIndex UNKN E 0 0
+
+	Skin 0 "Barrel_Red2.png"
+	FrameIndex UNKN F 0 0
 
 	Skin 0 "Barrel_Old.png"
 	FrameIndex UNKN C 0 0
@@ -1160,3 +1165,54 @@ Model Tile4x4
 
 	FrameIndex UNKN B 0 0
 }
+
+Model Debris
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/Effects"
+
+	Model 0 "debris_1.md3"
+	Skin 0 "GRAYDIR2"
+	FrameIndex UNKN A 0 0
+
+	Model 0 "debris_2.md3"
+	Skin 0 "GRAYDIR2"
+	FrameIndex UNKN B 0 0
+
+	Model 0 "debris_3.md3"
+	Skin 0 "GRAYDIR2"
+	FrameIndex UNKN C 0 0
+}
+
+
+Model Crusher
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Scale 4.0 4.0 -0.1
+
+	Offset 0.0 0.0 0.25
+
+	Path "Models/"
+	Model 0 "barrel.md3"
+	Skin 0 "Barrel_Rusty.png"
+	FrameIndex UNKN A 0 0
+}
+
+Model ExplosionSphere
+{
+	Path "Models/"
+	Model 0 "sphere.md3"
+	Path "Textures/"
+	Skin 0 "White.png"
+
+	Rotating
+	Rotation-Speed 1.0
+
+	Scale 0.02 0.02 0.02
+	FrameIndex UNKN A 0 0
+}
+

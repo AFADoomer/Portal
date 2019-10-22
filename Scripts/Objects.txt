@@ -1,15 +1,18 @@
 class CarryActor : Actor
 {
 	Vector3 oldpos;
-	double oldangle;
+	double oldangle, spawnheight, spawnradius;
 	Sound slidesound;
 	Array<Actor> touchers;
 	Vector3[64] offsets;
-	bool fizzle;
+	bool fizzle, explode;
 	int offset;
+	bool crushed;
 
 	Property SlideSound:slidesound;
 	Property Fizzle:fizzle;
+	Property Explode:explode;
+
 
 	Default
 	{
@@ -31,8 +34,10 @@ class CarryActor : Actor
 		BounceFactor 0.25;
 		BounceSound "cube/bounce";
 		WallBounceSound "cube/bounce";
+		Health 35;
 		CarryActor.SlideSound "cube/slide";
 		CarryActor.Fizzle False;
+		CarryActor.Explode False;
 	}
 
 	States
@@ -40,6 +45,53 @@ class CarryActor : Actor
 		Fizzle:
 			UNKN A 1 { Utilities.Fizzle(self); }
 			Loop;
+		Death:
+			UNKN # 1 {
+				if (explode) { SetStateLabel("Death.Explode"); }
+				A_NoBlocking();
+			}
+			UNKN # -1;
+			Stop;
+		Death.Crush:
+			UNKN # 1;
+			UNKN # 0 {
+				if (explode) { SetStateLabel("Death.Explode"); }
+				else if (scale.y * spawnheight > 9.0)
+				{
+					double newscale = (ceilingz - floorz) / spawnheight;
+					if (newscale < scale.y)
+					{
+						scale.y = newscale;
+						scale.x = max(1.0, 1.0 / (newscale * 3));
+						A_SetSize(spawnradius * scale.x, spawnheight * scale.y);
+					}
+
+					SetStateLabel("Death.Crush");
+				}
+			}
+			UNKN # -1;
+			Stop;
+		Death.Explode:
+			UNKN # 4 {
+				Actor debris = Spawn("DebrisSpawner", pos);
+				if (debris) { debris.master = self; }
+
+				bNoGravity = true;
+				scale.y *= 0.9;
+				scale.x *= 1.1;
+				SetOrigin(pos + (0, 0, 0.2 * height), true);
+
+				frame++;
+			}
+			UNKN # 2 {
+				scale.y *= 0.8;
+				scale.x *= 1.2;
+				SetOrigin(pos + (0, 0, 0.4 * height), true);
+
+				Actor explosion = Spawn("Explosion", pos);
+				if (explosion) { explosion.master = self; }
+			}
+			Stop;
 	}
 
 	override void BeginPlay()
@@ -51,6 +103,10 @@ class CarryActor : Actor
 	override void PostBeginPlay()
 	{
 		A_SetSize(radius * scale.x, height * scale.y); // This sets based on UDMF scale properties
+		mass = int(mass * scale.x);
+
+		spawnheight = height;
+		spawnradius = radius;
 
 		Super.PostBeginPlay();
 
@@ -108,13 +164,13 @@ class CarryActor : Actor
 		}
 
 		Super.Tick();
-/*
+
 		if (master && master is "PortalPlayer")
 		{
 			if (PortalPlayer(master).DragTarget == self) { vel = PortalPlayer(master).dragvel; }
 
 		}
-*/
+
 		for (int i = 0; i < min(touchers.Size(), 64); i++)
 		{
 			if (
@@ -136,7 +192,9 @@ class CarryActor : Actor
 
 		if (bNoBounceSound && oldangle) { angle = oldangle; }
 
-		double volume = (pos.z == floorz) ? vel.xy.length() / 25 : 0.0;
+		double volume = 0.0;
+
+		if (health > 0 && (pos.z == floorz)) { volume = vel.xy.length() / 25; }
 
 		if (volume)
 		{
@@ -164,22 +222,34 @@ class CarryActor : Actor
 
 		while (mo = Actor(it.Next(false)))
 		{
-			if (mo.bPushable) { Touch(mo); }
+			if (mo.bSolid && !mo.bNoInteraction && mo.bPushable) { Touch(mo); }
 		}
 
 		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
 
 		while (mo = Actor(it.Next(false)))
 		{
-			Touch(mo);
+			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
 		}
 
 		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
 
 		while (mo = Actor(it.Next(false)))
 		{
-			Touch(mo);
+			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
 		}
+	}
+
+	override void OnDestroy()
+	{
+		A_StopSound(CHAN_5);
+	}
+
+	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	{
+		if (mod == "Crush" || explode) { return Super.DamageMobj(inflictor, source, damage, mod, flags, angle); }
+
+		return 0;
 	}
 }
 
@@ -1564,7 +1634,7 @@ class LightFixturePanes : Actor
 		+NOGRAVITY
 		+NOINTERACTION
 		+BRIGHT
-		Renderstyle "STYLE_AddStencil";
+		Renderstyle "AddStencil";
 		LightFixturePanes.BulbClass "LightFixtureBulb";
 	}
 
@@ -1614,7 +1684,8 @@ class LightFixtureBulb : Actor
 		+BRIGHT
 		+NOINTERACTION
 		+NOGRAVITY
-		Renderstyle "STYLE_AddStencil";
+		Renderstyle "AddStencil";
+		Alpha 0.6; 
 	}
 
 	States
@@ -2195,9 +2266,12 @@ class OilBarrel : CarryActor
 	Default
 	{
 		//$Title Oil Drum
+		+DONTTHRUST
+		-NODAMAGE
 		Height 33;
 		Radius 12;
 		Mass 1500;
+		Health 50;
 		BounceFactor 0.001;
 		BounceSound "barrel/bounce";
 		WallBounceSound "barrel/bounce";
@@ -2219,6 +2293,11 @@ class OilBarrel : CarryActor
 	override void PostBeginPlay()
 	{
 		frame = user_variant;
+
+		if (frame == 4)
+		{
+			explode = true;
+		}
 
 		Super.PostBeginPlay();
 	}
@@ -2309,24 +2388,6 @@ class Stairway : Actor
 		A_SpawnItemEx ("BlockBase", 0.0, -26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx ("BlockBase", -15.0, 26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx ("BlockBase", -15.0, -26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-/*
-		A_SpawnItemEx ("BlockBase", 0.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 0.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -20.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -20.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -40.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -40.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -60.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -60.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -80.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -80.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -100.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -100.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -112.0, 40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -112.0, -40.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -112.0, -12.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -112.0, 12.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-*/
 		A_SpawnItemEx ("BlockBase", -40.0, 26.0, 8.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx ("BlockBase", -40.0, -26.0, 8.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx ("BlockBase", -65.0, 26.0, -23.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
@@ -2499,5 +2560,23 @@ class Tile4x4 : Tile2x2
 		Height 16;
 		Radius 8;
 		Mass 50;
+	}
+}
+
+class Crusher : Actor
+{
+	Default
+	{
+		+NOINTERACTION
+		+MOVEWITHSECTOR
+		Height 0;
+		Radius 32;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
 	}
 }

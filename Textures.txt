@@ -2040,3 +2040,21 @@ Texture BORDWAL2, 256, 256
 	YScale 4.0
 	Patch "Patches/BORDWAL2.png", 0, 0
 }
+
+Sprite EXPLA0, 600, 600
+{
+	Offset 300, 300
+	XScale 1.75
+	YScale 1.75
+	Patch "Patches/Effects/ExplosionFlash.png", 0, 0
+}
+
+Texture SWITCH0, 32, 32
+{
+	Patch "SW3S0", 0, 0
+}
+
+Texture SWITCH1, 32, 32
+{
+	Patch "SW3S1", 0, 0
+}

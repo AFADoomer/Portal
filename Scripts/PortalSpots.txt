@@ -198,10 +198,7 @@ class PortalSpot : Actor
 						DoMove(Activators[i].Alternative, offset, false);
 
 						Activators[i].Alternative.angle = Activators[i].angle + (pair.angle - angle) + 180;
-
-						if (Activators[i].Alternative is "BridgeSpot") { Activators[i].Alternative.pitch = Activators[i].pitch + (pair.pitch - pitch); }
-						else { Activators[i].Alternative.pitch = Activators[i].pitch - (pair.pitch + pitch); }
-
+						Activators[i].Alternative.pitch = Activators[i].pitch + (pair.pitch - pitch);
 						Activators[i].Alternative.roll = Activators[i].roll + pair.roll - roll;
 					}
 				}
@@ -318,7 +315,7 @@ class PortalSpot : Actor
 
 		if (offset == (0, 0, 0)) { offset = pos - toucher.pos; }
 		offset = RotateVector3(offset, -angle + 180, pitch, -roll);
-		offset.x += max(toucher.vel.length() + toucher.Default.Radius, movedist + 0.5);
+		if (!(toucher is "LaserSpot")) { offset.x += max(toucher.vel.length() + toucher.Default.Radius, movedist + 0.5); }
 		if (toucher is "Cube") { offset.z += Cube(toucher).zoffset; }
 		offset.z = clamp(-offset.z, pair.floorz - pair.pos.z, pair.ceilingz - toucher.height - pair.pos.z); // Make sure the spawn spot isn't in the floor or ceiling...
 

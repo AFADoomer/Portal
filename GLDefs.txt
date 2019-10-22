@@ -749,7 +749,14 @@ HardwareShader Sprite SMOKC0
 
 Material Texture "Models/LaserCube3.png"
 {
-	normal "Materials/NormalMaps/Auto/GLASS.png"
-	specular "Materials/Specular/Auto/GLASS.png"
+	normal "Materials/NormalMaps/Auto/GLASS3.png"
+	specular "Materials/Specular/Auto/GLASS3.png"
 	specularlevel 1.0
+}
+
+Material Texture "Models/Diffuser.png"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/Diffuser.png"
+	specularlevel 0.25
 }
