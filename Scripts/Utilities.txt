@@ -28,6 +28,11 @@ class Utilities : Actor
 		{
 			for (int c = 0; c < cols; c++)
 			{
+				double scale = (LightSpawner(base) && LightSpawner(base).user_maxradius) ? 1.0 : max((4096.0 / f) / (cols * colsize * rows * rowsize), 1.25);
+				color clr = (int(basecolor.r * scale) .. " " .. int(basecolor.g * scale) .. " " .. int(basecolor.b * scale));
+				color clr2 = (int(basecolor.r * 10.0 / 16.0) .. " " .. int(basecolor.g * 10.0 / 16.0) .. " " .. int(basecolor.b * 10.0 / 16.0));
+				int maxradius = int((LightSpawner(base) && LightSpawner(base).user_maxradius) ? LightSpawner(base).user_maxradius : clamp(max(rowsize, colsize) * 4.0, 16.0, 512.0 * f));
+
 				bool sp;
 				Actor mo;
 				[sp, mo] = base.A_SpawnItemEx("AttenuatedAlphaLight", 1.0, colpos, rowpos, 0, 0, 0, 0, SXF_NOCHECKPOSITION);
@@ -44,7 +49,7 @@ class Utilities : Actor
 					AlphaLight(mo).clr.r = int(basecolor.r * scale);
 					AlphaLight(mo).clr.g = int(basecolor.g * scale);
 					AlphaLight(mo).clr.b = int(basecolor.b * scale);
-					AlphaLight(mo).maxradius = (LightSpawner(base) && LightSpawner(base).user_maxradius) ? LightSpawner(base).user_maxradius : clamp(max(rowsize, colsize) * 4.0, 16.0, 512.0 * f);
+					AlphaLight(mo).maxradius = (LightSpawner(base) && LightSpawner(base).user_maxradius) ? LightSpawner(base).user_maxradius : clamp(max(rowsize, colsize) * 4.0 * f, 16.0, 512.0 * f);
 					AttenuatedAlphaLight(mo).user_lightlevel = 1.0;
 
 					if (base.tid)
@@ -170,6 +175,14 @@ class Utilities : Actor
 
 	static void Fizzle(Actor mo)
 	{
+		if (mo.bSolid)
+		{
+			Sound DeathSound = mo.DeathSound;
+			if (!DeathSound) { DeathSound = "cube/fizzle"; }
+
+			mo.A_PlaySound(DeathSound, CHAN_VOICE, 1, false, mo.bBoss ? ATTN_NONE : ATTN_NORM);
+		}
+
 		if (mo.master && PortalPlayer(mo.master))
 		{
 			PortalPlayer(mo.master).DragTarget = null;
@@ -191,7 +204,7 @@ class Utilities : Actor
 		let spark = mo.A_SpawnProjectile("SingleSpark", FRandom(-mo.Height / 2, mo.Height / 2), FRandom(-mo.Radius, mo.Radius), FRandom(0, 360), CMF_AIMDIRECTION, -90 + FRandom(-45, 45));
 		spark.master = mo;
 
-		if (mo.alpha <= 0) { mo.Destroy(); }
+		if (!(mo is "CarryActor") && mo.alpha <= 0) { mo.Destroy(); }
 	}
 
 	static bool CheckFizzle(Actor mo, StateLabel fizzlestate = "Death")
@@ -252,7 +265,7 @@ class Utilities : Actor
 		mo.SetStateLabel(fizzlestate);
 	}
 
-	static LaserBeam, Actor DrawLaser(Actor origin, LaserBeam beam, Actor hitspot, TraceResults traceresults, Class<Actor> spawnclass = "LaserBeam", Class<Actor> puffclass = "LaserHit", int damage = 0, double zoffset = 0, bool drawdecal = true, double alpha = 1.0)
+	static LaserBeam, Actor DrawLaser(Actor origin, LaserBeam beam, Actor hitspot, TraceResults traceresults, Class<Actor> spawnclass = "LaserBeam", Class<Actor> puffclass = "", int damage = 0, double zoffset = 0, bool drawdecal = true, double alpha = 1.0)
 	{
 		if (!traceresults || !origin) { return beam, hitspot; }
 
@@ -276,7 +289,7 @@ class Utilities : Actor
 
 		if (beam)
 		{
-			beam.SetOrigin(beampos, false);
+			beam.SetXYZ(beampos);
 
 			beam.pitch = origin.pitch - 90;
 			beam.angle = origin.angle;
@@ -285,33 +298,32 @@ class Utilities : Actor
 			beam.alpha = beam.Default.alpha * alpha;
 		}
 
-		Actor flash = Spawn("Flare", traceresults.HitPos, ALLOW_REPLACE);
-		if (flash)
-		{
-			flash.scale *= 0.15;
-			flash.alpha = max(0.25, 0.6 * alpha);
-			flash.A_SetTics(2);
-		}
-
-		if (!hitspot) { hitspot = Spawn("LaserHitMarker", traceresults.HitPos + traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
+		if (!hitspot) { hitspot = Spawn("LaserHitMarker", traceresults.HitPos - traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
 		if (hitspot)
 		{
 			hitspot.master = origin;
-			hitspot.SetOrigin(traceresults.HitPos + traceresults.HitVector * radiusoffset, false);
+			hitspot.SetXYZ(traceresults.HitPos + traceresults.HitVector * radiusoffset);
+			hitspot.SetDamage(damage);
+
+			Actor flash = Spawn("Flare", hitspot.pos, ALLOW_REPLACE);
+			if (flash)
+			{
+				flash.scale *= 0.15;
+				flash.alpha = max(0.25, 0.6 * alpha);
+				flash.A_SetTics(2);
+			}
 		}
 
 		Actor puff;
-
 		if (traceresults.HitActor)
 		{
 			Actor m = origin;
 			while (m.master && m is "LaserSpot") { m = m.master; }
 
 			traceresults.HitActor.DamageMobj(beam, m, damage, "LaserBeam");
-
 			if (!traceresults.HitActor.bNoBlood && drawdecal)
 			{
-				puff = Spawn("SmokePuff", traceresults.HitPos + traceresults.HitVector * radiusoffset, ALLOW_REPLACE);
+				puff = Spawn("SmokePuff", hitspot.pos, ALLOW_REPLACE);
 				if (puff)
 				{
 					puff.angle = puff.AngleTo(origin);
@@ -321,19 +333,44 @@ class Utilities : Actor
 		else if (traceresults.HitType == TRACE_HitFloor || traceresults.HitType == TRACE_HitCeiling || traceresults.HitType == TRACE_HitWall)
 		{
 			// Spawn bullet puff
-			if (puffclass != "" && drawdecal)
+			if (puffclass != "")
 			{
-				puff = Spawn(puffclass, traceresults.HitPos + traceresults.HitVector * (radiusoffset + 3.0), ALLOW_REPLACE);
+				puff = Spawn(puffclass, hitspot.pos - traceresults.HitVector * 3.0, ALLOW_REPLACE);
 
 				if (puff)
 				{
+					if (LaserHitMarker(hitspot) && LaserHitMarker(hitspot).moved)
+					{
 						puff.angle = origin.AngleTo(puff);
-						puff.A_SprayDecal("LaserBeamScorch", 24.0);
-						puff.angle = puff.AngleTo(origin);
+						puff.A_SprayDecal("LaserBeamScorch", 8.0);
+					}
+					puff.angle = puff.AngleTo(origin);
 				}
 			}
 		}
 
 		return beam, hitspot;
+	}
+
+	// Ugh.  Math.  Adapted from https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+	static double DistanceFromLine(Actor mo, Line l)
+	{
+		if (!l || !mo) { return 0; }
+
+		Vector2 v1, v2, delta, point;
+
+		v1 = l.v1.p;
+		v2 = l.v2.p;
+		delta = l.delta;
+		point = mo.pos.xy;
+
+		double lengthsquared = (v2 - v1).length() ** 2;
+
+		if (!lengthsquared) { return (v1 - point).length(); }
+
+		double t = clamp((point - v1) dot delta / lengthsquared, 0, 1);
+		Vector2 projection = v1 + t * delta;
+
+		return (point - projection).length();
 	}
 }

@@ -6,7 +6,7 @@ class CarryActor : Actor
 	Array<Actor> touchers;
 	Vector3[64] offsets;
 	bool fizzle, explode;
-	int offset;
+	int offset, fizzletime;
 	bool crushed;
 
 	Property SlideSound:slidesound;
@@ -35,6 +35,7 @@ class CarryActor : Actor
 		BounceSound "cube/bounce";
 		WallBounceSound "cube/bounce";
 		Health 35;
+//		Gravity 0.7;
 		CarryActor.SlideSound "cube/slide";
 		CarryActor.Fizzle False;
 		CarryActor.Explode False;
@@ -43,8 +44,13 @@ class CarryActor : Actor
 	States
 	{
 		Fizzle:
-			UNKN A 1 { Utilities.Fizzle(self); }
-			Loop;
+			UNKN A 1;
+			UNKN A 0 {
+				Utilities.Fizzle(self);
+
+				if (fizzletime++ < 70) { SetStateLabel("Fizzle"); }
+			}
+			Stop;
 		Death:
 			UNKN # 1 {
 				if (explode) { SetStateLabel("Death.Explode"); }
@@ -56,6 +62,7 @@ class CarryActor : Actor
 			UNKN # 1;
 			UNKN # 0 {
 				if (explode) { SetStateLabel("Death.Explode"); }
+/*
 				else if (scale.y * spawnheight > 9.0)
 				{
 					double newscale = (ceilingz - floorz) / spawnheight;
@@ -68,6 +75,7 @@ class CarryActor : Actor
 
 					SetStateLabel("Death.Crush");
 				}
+*/
 			}
 			UNKN # -1;
 			Stop;
@@ -123,12 +131,25 @@ class CarryActor : Actor
 
 	override void Tick()
 	{
+		if (IsFrozen()) { return; }
+
 		if (!fizzle && pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
 		{
+			ClearBounce();
+
 			scale *= 0.9;
 
 			if (Scale.X < 0.05) { Destroy(); return; }
-		} 
+		}
+
+		if (master is "Launcher")
+		{
+			if (!vel.z || pos.z == ceilingz - height)
+			{
+				gravity = Default.gravity;
+				master = null;
+			}
+		}
 
 		// Handling so that bounce sound doesn't play if the object didn't move 
 		// or when it's being carried, and so that the angle doesn't stutter when
@@ -247,9 +268,35 @@ class CarryActor : Actor
 
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
-		if (mod == "Crush" || explode) { return Super.DamageMobj(inflictor, source, damage, mod, flags, angle); }
+		if (mod == "Crush" || mod == "Fizzle" || explode)
+		{
+			if (mod == "Crush" && scale.y * spawnheight > 9.0)
+			{
+				double newscale = (ceilingz - floorz) / spawnheight;
+				if (newscale < scale.y)
+				{
+					scale.y = newscale;
+					scale.x = max(1.0, 1.0 / (newscale * 3));
+					A_SetSize(spawnradius * scale.x, spawnheight * scale.y);
+				}
+			}
+
+			if (explode) { return Super.DamageMobj(inflictor, source, damage, mod, flags, angle); }
+		}
 
 		return 0;
+	}
+}
+
+class ActorVariant : Actor
+{
+	int user_variant;
+
+	override void PostBeginPlay()
+	{
+		frame = user_variant;
+
+		Super.PostBeginPlay();
 	}
 }
 
@@ -467,6 +514,7 @@ class PitDetails : Actor
 		Height 8;
 		Radius 1;
 		RenderRadius 64.0;
+		Species "Block";
 	}
 
 	States
@@ -498,6 +546,7 @@ class Pipe : Actor
 		Height 1;
 		Radius 24;
 		Mass 25;
+		Species "Block";
 	}
 
 	States
@@ -871,6 +920,7 @@ class Grid : Actor
 		+DONTTHRUST
 		Height 1;
 		Radius 64;
+		Species "Block";
 	}
 
 	States
@@ -943,7 +993,7 @@ class PlatformMoving : Platform
 {
 	Array<Actor> touchers;
 	Vector3[64] offsets;
-	BridgeFindHitPointTracer beamtracer;
+	LaserFindHitPointTracer beamtracer;
 	Actor beam;
 
 	Default
@@ -994,18 +1044,20 @@ class PlatformMoving : Platform
 		bDormant = SpawnFlags & MTF_DORMANT;
 		if (bDormant) { SetStateLabel("Inactive"); }
 
-		beamtracer = new("BridgeFindHitPointTracer");
+		beamtracer = new("LaserFindHitPointTracer");
 
-		DoTrace(self, angle + 180, 2048, -pitch, TRF_THRUACTORS, 0, beamtracer);
+		DoTrace(self, angle + 180, 2048, -pitch, 0, 0, beamtracer);
 
 		Super.PostBeginPlay();
 	}
 
-	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, BridgeFindHitPointTracer thistracer)
+	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, LaserFindHitPointTracer thistracer)
 	{
 		if (!thistracer) { return; }
 
 		if (!origin) { origin = self; }
+		thistracer.skipactor = origin;
+		thistracer.skipspecies = origin.species;
 
 		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
 		thistracer.Trace(origin.pos + (0, 0, zoffset), origin.CurSector, tracedir, dist, 0);
@@ -1038,8 +1090,9 @@ class PlatformMoving : Platform
 			if (touchers[i])
 			{
 				if (
-					Distance3D(touchers[i]) > (Radius + touchers[i].radius) * 2.0 ||
-					touchers[i].pos.z + touchers[i].height < pos.z
+					Distance3D(touchers[i]) > (Radius + touchers[i].radius) * 1.4 ||
+					touchers[i].pos.z + touchers[i].height < pos.z ||
+					!touchers[i].bOnMobj
 				) { touchers.Delete(i); }
 				else { offsets[i] = touchers[i].pos - pos; }
 			}
@@ -1050,10 +1103,10 @@ class PlatformMoving : Platform
 
 		FCheckPosition checkpos;
 
-		if (CheckMove(newpos, PCM_NOACTORS, checkpos))
+		if (CheckMove(newpos, 0, checkpos) && !(checkpos.thing is "PlatformEndpoint"))
 		{
 			SetOrigin((newpos, pos.z), true);
-			if (glass) { glass.SetOrigin(pos, true); }
+			if (glass) { glass.SetXYZ(pos); }
 
 			for (int i = 0; i < min(touchers.Size(), 64); i++)
 			{
@@ -1117,6 +1170,15 @@ class PlatformMoving : Platform
 		}
 	}
 
+}
+
+class PlatformEndPoint : Column // Placeholder Actor
+{
+	Default
+	{
+		//$Category Portal/Platforms
+		//$Title Platform Endpoint
+	}
 }
 
 class PlatformWhite : Platform
@@ -1400,8 +1462,7 @@ class Launcher : Actor
 		Vector3 trajectory;
 		double g;
 
-		Vector3 offset = (target.pos - toucher.pos);
-		Vector2 midpoint = (toucher.pos.x + offset.x / 2, toucher.pos.y + offset.y / 2);
+		Vector2 midpoint = pos.xy + ((target.pos.x - toucher.pos.x) / 2, (target.pos.y - toucher.pos.y) / 2);
 
 		double h = GetZAt(midpoint.x, midpoint.y, 0, GZF_ABSOLUTEPOS | GZF_CEILING) - toucher.height - 16.0;
 		double h1 = GetZAt(toucher.pos.x, toucher.pos.y, 0, GZF_ABSOLUTEPOS | GZF_CEILING) - toucher.height - 16.0;
@@ -1429,7 +1490,7 @@ class Launcher : Actor
 
 		while (mo = Actor(it.Next(false)))
 		{
-			if (mo != self && Distance3D(mo) - mo.radius <= Radius) { Touch(mo); }
+			if (mo != self && mo.bPushable && Distance3D(mo) - mo.radius <= Radius) { Touch(mo); }
 		}
 	}
 
@@ -1470,7 +1531,7 @@ class Launcher : Actor
 
 		if (!time) { time = 35.0; }
 
-		fire_velocity = (diff.xy.Unit(), 0) * lateral_speed;
+		fire_velocity.xy = diff.xy.Unit() * lateral_speed;
 
 		// System of equations. Hit max_height at t=.5*time. Hit target at t=time.
 		//
@@ -1596,7 +1657,7 @@ class LightFixtureHallway : LightFixture
 
 		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
 
-		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (4 * sin(-pitch), 0, 4 * cos(-pitch))));
+		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (RotateVector((4 * sin(-pitch), 0), angle), 4 * cos(-pitch))));
 		if (light)
 		{
 			light.master = self;
@@ -2172,6 +2233,20 @@ class LadderRung : Ladder
 	}
 }
 
+class TowerSegment : Ladder
+{
+	Default
+	{
+		//$Title Tower Segment
+		+SOLID
+		-NOINTERACTION
+		Height 42;
+		Radius 12;
+		LadderBase.ClimbRadius 24;
+		LadderBase.Friction 0.5; // Slow to climb these
+	}
+}
+
 class DebrisWall : Actor
 {
 	Default
@@ -2271,7 +2346,7 @@ class OilBarrel : CarryActor
 		Height 33;
 		Radius 12;
 		Mass 1500;
-		Health 50;
+		Health 150;
 		BounceFactor 0.001;
 		BounceSound "barrel/bounce";
 		WallBounceSound "barrel/bounce";
@@ -2294,7 +2369,7 @@ class OilBarrel : CarryActor
 	{
 		frame = user_variant;
 
-		if (frame == 4)
+		if (user_variant == 4)
 		{
 			explode = true;
 		}
@@ -2358,7 +2433,7 @@ class Stairway : Actor
 {
 	Default
 	{
-		//$Category Portal
+		//$Category Portal/Decorations
 		+NOGRAVITY
 		-SOLID
 		+SHOOTABLE
@@ -2413,7 +2488,7 @@ class Rail : Actor
 {
 	Default
 	{
-		//$Category Portal
+		//$Category Portal/Decorations
 		//$Title Rail (Long)
 		+NOGRAVITY
 		-SOLID
@@ -2578,5 +2653,103 @@ class Crusher : Actor
 		Spawn:
 			UNKN A -1;
 			Stop;
+	}
+}
+
+class BigPipe : ActorVariant
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Industrial Pipe
+		+NOGRAVITY
+		+DONTTHRUST
+		Height 0;
+		Radius 0;
+		RenderRadius 128.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (pitch == 0)
+		{
+			bNoInteraction = true;
+
+			Actor mo;
+			for (double x = 21.0; x <= 235.0; x += 42.0)
+			{
+				Vector3 newpos = pos + (RotateVector((x * scale.x, 0.0), angle), -21.0 * scale.y);
+
+				mo = Spawn("Block42x42", newpos);
+				if (mo)
+				{
+					if (mo.TryMove(newpos.xy, true)) { mo.master = self; }
+				}
+			}
+		}
+		else if (pitch == 270)
+		{
+			A_SetSize(16 * scale.y, 256 * scale.x);
+			bSolid = true;
+		}
+		else if (pitch == 90)
+		{
+			bNoInteraction = true;
+
+			double zheight = max(floorz, pos.z - 256 * scale.x);
+
+			Actor mo = Spawn("BlockBase", (pos.xy, zheight));
+			if (mo)
+			{
+				mo.master = self;
+				mo.A_SetSize(16 * scale.y, 256 * scale.x);
+			}
+		}
+
+		Super.PostBeginPlay();
+	}
+}
+
+class BigPipeBend : ActorVariant
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Industrial Pipe (90 Degree Bend)
+		+NOGRAVITY
+		+NOINTERACTION
+		+DONTTHRUST
+		Height 0;
+		Radius 0;
+		RenderRadius 64.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		Vector3 newpos;
+
+		newpos = pos + (RotateVector((-21.0 * scale.x, 0.0), angle), -21.0 * scale.y);
+		Actor mo = Spawn("Block42x42", newpos);
+		if (mo) { mo.master = self; }
+
+		newpos = pos + (RotateVector((-38.0 * scale.x, 0.0), angle), -42.0 * scale.y);
+		Actor mo2 = Spawn("Block42x42", newpos);
+		if (mo2) { mo2.master = self; }
+
+		Super.PostBeginPlay();
 	}
 }

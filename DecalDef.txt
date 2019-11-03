@@ -1,0 +1,25 @@
+decal LaserBeamScorch1
+{
+	pic CBOWMARK
+	shade "22 22 22"
+	x-scale 0.025
+	y-scale 0.025
+	randomflipx
+	randomflipy
+}
+
+decal LaserBeamScorch2
+{
+	pic CBOWMARK
+	shade "22 22 22"
+	x-scale 0.03125
+	y-scale 0.03125
+	randomflipx
+	randomflipy
+}
+
+DecalGroup LaserBeamScorch
+{
+	LaserBeamScorch1 1
+	LaserBeamScorch2 1
+}

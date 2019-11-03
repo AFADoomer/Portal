@@ -20,10 +20,10 @@ class Cube : CarryActor
 		+BOUNCEAUTOOFF
 		+CANBOUNCEWATER
 		-NODAMAGE
+		Health 100;
 		Height 51;
 		Radius 33;
-		Health 100;
-		Mass 100;
+		Mass 111;
 		Scale 0.45;
 		MaxDropoffHeight 26;
 		MaxStepHeight 26;
@@ -41,8 +41,7 @@ class Cube : CarryActor
 			UNKN A 1;
 			Loop;
 		Death:
-			UNKN A 1 { Utilities.Fizzle(self); }
-			Loop;
+			Goto Fizzle;
 	}
 
 	override void BeginPlay()
@@ -161,11 +160,13 @@ class LaserCube : Cube
 			if (laserhit)
 			{
 				lasersource.SetStateLabel("Active");
+				A_AttachLight("LaserLight", DynamicLight.PointLight, 0xDD0000, int(radius), int(radius), DynamicLight.LF_ATTENUATE, (0, 0, height / 2));
 				if (interior.alpha < 0.7) { interior.alpha = min(0.7, interior.alpha + 0.05); }
 			}
 			else
 			{
 				lasersource.SetStateLabel("Inactive");
+				A_RemoveLight("LaserLight");
 				if (interior.alpha > 0.35) { interior.alpha = max(0.35, interior.alpha - 0.05); }
 			}
 		}

@@ -114,7 +114,7 @@ class PortalSpot : Actor
 			}
 		}
 
-		OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY) ? 0.5 : 0.0, 1);
+		OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY | SF_SEEPASTSHOOTABLELINES) ? 0.5 : 0.0, 1);
 
 		if (int(lineangle) != GetLineAngle()) { DoDestroy(); }
 
@@ -169,7 +169,7 @@ class PortalSpot : Actor
 
 			for (int i = 0; i < Activators.Size(); i++)
 			{
-				if (Activators[i] && Activators[i] is "LaserHitMarker")
+				if (Activators[i] && Activators[i] is "LaserHitMarker" && Activators[i].damage > 0)
 				{
 					if (Distance3D(Activators[i]) > 32.0)
 					{

@@ -93,7 +93,7 @@ class PelletShell : Actor
 
 		if (master)
 		{
-			SetOrigin(master.pos, false);
+			SetXYZ(master.pos);
 
 			if (light && AlphaLight(light)) { AlphaLight(light).maxradius = 16.0 + 8 * sin(level.time * 4); }
 
@@ -132,6 +132,7 @@ class Flare : Actor
 		+NOGRAVITY
 		+NOINTERACTION
 		+FORCEXYBILLBOARD
+		+INTERPOLATEANGLES
 		Radius 0;
 		Height 0;
 		RenderStyle "Add";
@@ -152,7 +153,7 @@ class Flare : Actor
 		if (master)
 		{
 /*
-			SetOrigin(master.pos, false);
+			SetXYZ(master.pos);
 
 			if (players[consoleplayer].mo)
 			{
@@ -178,6 +179,7 @@ class LaserBeam : Actor
 		+NOINTERACTION
 		+NOBLOCKMAP
 		+BRIGHT
+		+INTERPOLATEANGLES
 		Radius 0;
 		Height 0;
 		RenderStyle "Add";
@@ -206,7 +208,6 @@ class LaserBeamBlue : LaserBeam
 	Default
 	{
 		Scale 2.0;
-		Alpha 0.25;
 	}
 }
 
@@ -257,7 +258,7 @@ class LaserSpot : Actor
 				if (flare) { flare.Destroy(); }
 				if (flare2) { flare2.Destroy(); }
 			}
-			Loop;
+			Wait;
 		Active:
 			UNKN A 1 A_FireLaser();
 			Loop;
@@ -292,7 +293,7 @@ class LaserSpot : Actor
 		if (master) { zoffset = pos.z - master.pos.z; }
 
 		DoTrace(master, angle, 2048, pitch, 0, zoffset, hittracer);
-		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, damage:damage, drawdecal:!(level.time % Random(5, 15)));
+		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, "LaserBeam", "LaserHit", damage, 0, !(level.time % Random(25, 45)), 1.0);
 
 		if (!flare2 && (!master || !(master is "LaserCube" || master is "PortalSpot"))) { flare2 = Spawn("Flare", pos + hittracer.Results.HitVector * 12.0, ALLOW_REPLACE); }
 		if (flare2)
@@ -301,7 +302,7 @@ class LaserSpot : Actor
 			flare2.alpha = 0.9;
 			flare2.scale.x = flare2.Default.scale.x * FRandom(0.8, 1.0);
 			flare2.scale.y = flare2.Default.scale.y * FRandom(0.8, 1.0);
-			flare2.SetOrigin(pos + hittracer.Results.HitVector * 12.0, false);
+			flare2.SetXYZ(pos + hittracer.Results.HitVector * 12.0);
 		}
 
 		if (hitspot)
@@ -313,12 +314,12 @@ class LaserSpot : Actor
 				flare.alpha = 0.7 + FRandom(-0.2, 0.2);
 				flare.scale.x = flare.Default.scale.x * FRandom(0.2, 0.5);
 				flare.scale.y = flare.Default.scale.y * FRandom(0.2, 0.5);
-				flare.SetOrigin(hitspot.pos, false);
+				flare.SetXYZ(hitspot.pos);
 			}
 		}
 	}
 
-	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, LaserFindHitPointTracer thistracer)
+	void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, LaserFindHitPointTracer thistracer)
 	{
 		if (!thistracer) { return; }
 
@@ -334,6 +335,9 @@ class LaserSpot : Actor
 
 class LaserHitMarker : Actor
 {
+	bool moved;
+	Vector3 oldpos;
+
 	Default
 	{
 		Radius 1;
@@ -341,6 +345,7 @@ class LaserHitMarker : Actor
 		+NOGRAVITY
 		+NOINTERACTION
 		+INVISIBLE
+		+INTERPOLATEANGLES
 	}
 
 	States
@@ -364,7 +369,11 @@ class LaserHitMarker : Actor
 			pitch = master.pitch;
 		}
 
+		moved = (pos != oldpos);
+
 		Super.Tick();
+
+		oldpos = pos;
 	}
 
 	override void OnDestroy()
@@ -396,8 +405,6 @@ class LaserEmitter : LaserSpot
 
 class LaserEmitterBlue : LaserSpot
 {
-	BridgeFindHitPointTracer hittracer2;
-
 	States
 	{
 		Spawn:
@@ -411,9 +418,12 @@ class LaserEmitterBlue : LaserSpot
 
 	override void PostBeginPlay()
 	{
-		hittracer2 = new("BridgeFindHitPointTracer");
-
 		Super.PostBeginPlay();
+
+		double zoffset;
+		if (master) { zoffset = pos.z - master.pos.z; }
+
+		DoTrace(master, angle, 2048, pitch, 0, zoffset, hittracer);
 	}
 
 	void A_FireGuideLaser(sound snd = "")
@@ -423,21 +433,7 @@ class LaserEmitterBlue : LaserSpot
 			A_PlaySound(snd, CHAN_6 | CHAN_NOSTOP, 0.0125, true, ATTN_STATIC);
 		}
 
-		double zoffset;
-		if (master) { zoffset = master.pos.z + master.height - pos.z; }
-
-		DoTrace(master, angle, 2048, pitch, TRF_THRUACTORS, zoffset, hittracer2);
-		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer2.Results, "LaserBeamBlue", damage:0, drawdecal:false);
-	}
-
-	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, BridgeFindHitPointTracer thistracer)
-	{
-		if (!thistracer) { return; }
-
-		if (!origin) { origin = self; }
-
-		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
-		thistracer.Trace(origin.pos + (0, 0, zoffset), origin.CurSector, tracedir, dist, 0);
+		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, "LaserBeamBlue", "", damage, 0, false, 0.75);
 	}
 }
 
@@ -633,7 +629,7 @@ class BridgeBeam : Actor
 			alpha = 0.8 + 0.1 * sin(3 * level.time - Distance3D(master));
 			if (light)
 			{
-				light.SetOrigin(pos, false);
+				light.SetXYZ(pos);
 				light.alpha = 0.5 + 0.4 * sin(3 * level.time - Distance3D(master));
 			}
 		}

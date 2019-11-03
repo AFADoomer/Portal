@@ -20,10 +20,12 @@ class BlockBase : SwitchableDecoration
 		+ACTLIKEBRIDGE
 		+DONTTHRUST
 		+INVISIBLE
+		+THRUSPECIES
 		Painchance 255;
 		Radius 1;
 		Height 1;
 		Scale 0.1;
+		Species "Block";
 	}
 	States
 	{
@@ -64,7 +66,7 @@ class BlockBase : SwitchableDecoration
 			inrange = InPlayerSightorRange(master, 128);
 		}
 
-		if (inrange) { Rotate(); }
+		if (inrange && !master.bNoInteraction) { Rotate(); }
 	}
 
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
@@ -148,5 +150,6 @@ class BlockBase : SwitchableDecoration
 
 class Block8x8 : BlockBase { Default { Radius 4; Height 8; } }
 class Block36x1 : BlockBase { Default { Radius 18; Height 1; } }
+class Block42x42 : BlockBase { Default { Radius 21; Height 42; } }
 class Step : BlockBase { Default { -SPECIAL; Radius 8; Height 1; } }
 class DoorBlock : BlockBase { Default { -SPECIAL; Radius 0; Height 64; } }

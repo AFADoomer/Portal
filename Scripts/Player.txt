@@ -79,7 +79,7 @@ class PortalPlayer : PlayerPawn
 
 	override void PostBeginPlay()
 	{
-		actortracer = new("USePointTracer");
+		actortracer = new("UsePointTracer");
 		carrytracer = new("CarryPointTracer");
 
 		Super.PostBeginPlay();
@@ -673,7 +673,7 @@ class PortalPlayer : PlayerPawn
 		{
 			if (!useheld)
 			{
-				if (AimActor) { AimActor.Used(self); }
+				if (AimActor && Distance3d(AimActor) < UseRange) { AimActor.Used(self); }
 
 				if (!DragTarget)
 				{
@@ -689,6 +689,7 @@ class PortalPlayer : PlayerPawn
 							DragTarget = AimActor;
 							DragTarget.master = self;
 							DragTarget.bNoGravity = true;
+							DragTarget.bInterpolateAngles = true;
 						}
 						else if (Inventory(AimActor))
 						{

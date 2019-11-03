@@ -39,6 +39,9 @@ class LadderBase : Actor
 	{
 		if (!climbradius) { climbradius = Radius; }
 
+		A_SetSize(radius * scale.x, height * scale.y);
+		climbradius *= scale.x;
+
 		Climbers.Clear();
 
 		DoStackCheck();
@@ -110,13 +113,13 @@ class LadderBase : Actor
 
 			double vel = abs(it.thing.vel.length());
 
-			if (soundtimeout <= 0 && vel >= 1.0 && it.thing.pos.z != floorz)
+			if (soundtimeout <= 0 && vel / friction >= 1.0 && it.thing.pos.z != floorz)
 			{
-				double vol = min(vel - 1.0, 1.0);
+				double vol = min(vel / friction - 1.0, 1.0);
 
 				it.thing.A_PlaySound("footsteps/ladder", CHAN_BODY, vol * 0.05);
 
-				soundtimeout = 15;
+				soundtimeout = int(15 / friction);
 			}
 		}
 
@@ -157,7 +160,7 @@ class ClimbableZone : LadderBase
 {
 	Default
 	{
-		//$Category Portal
+		//$Category Portal/Ladders
 		//$Title Climbable Zone
 		Alpha 0.5;
 		RenderStyle "Stencil";

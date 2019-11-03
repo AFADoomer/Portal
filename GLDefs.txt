@@ -1,3 +1,11 @@
+HardwareShader PostProcess scene
+{
+	Name "shakeshader"
+	Shader "shaders/shake.fp" 330
+	Uniform float timer
+	Uniform float speed
+}
+
 PointLight SparkLight
 {
 	color 1.0 1.0 1.0
@@ -684,7 +692,17 @@ Material Texture "Models/Crate_G.png"
 
 Material Texture "Textures/Gloss.png"
 {
-	specularlevel 4.0
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/Floor.png"
+	specularlevel 2.0
+}
+
+Material Texture "GLOSS"
+{
+	normal "Materials/NormalMaps/Auto/GLASS3.png"
+//	specular "Materials/Specular/Auto/Floor.png"
+	specular "Materials/Specular/Auto/Glass3.png"
+	specularlevel 2.0
 }
 
 Material Texture "Models/Diffuser.png"
@@ -759,4 +777,71 @@ Material Texture "Models/Diffuser.png"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/Diffuser.png"
 	specularlevel 0.25
+}
+
+Material Texture "Models/Switch.png"
+{
+	normal "Materials/NormalMaps/Switch.png"
+	specular "Materials/Specular/Switch.png"
+	specularlevel 0.65
+}
+
+Material Texture "Models/BigPipe.png"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/BigPipe.png"
+	normal "Materials/NormalMaps/BigPipe.png"
+	specular "Materials/Specular/BigPipe.png"
+	specularlevel 0.35
+}
+
+Material Texture "Models/BigPipe2.png"
+{
+//	shader "shaders/displacement.fp"
+//	texture displacement "materials/displacement/BigPipe.png"
+	normal "Materials/NormalMaps/BigPipe.png"
+	specular "Materials/Specular/BigPipe.png"
+	specularlevel 0.35
+}
+
+Material Texture "Wall_G1"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.5
+}
+
+Material Texture "Wall_G2"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.5
+}
+
+Material Texture "Wall_G3"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.5
+}
+
+Material Texture "Wall_W"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.5
+}
+
+Material Texture "Wall_B"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.5
+}
+
+Material Texture "Models/SlidingDoor.png"
+{
+	normal "Materials/NormalMaps/SlidingDoor.png"
+	specular "Materials/Specular/SlidingDoor.png"
+	specularlevel 0.65
 }

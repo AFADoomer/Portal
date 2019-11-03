@@ -74,7 +74,7 @@ class AlphaLight : DynamicLight
 			clr.b = AlphaLight(master).clr.b / 16;
 			alpha = master.alpha * 10.0;
 
-			args[LIGHT_INTENSITY] = min(32, AlphaLight(master).args[LIGHT_INTENSITY] * 1 / 4);
+			args[LIGHT_INTENSITY] = min(32, AlphaLight(master).args[LIGHT_INTENSITY] / 4);
 		}
 		else
 		{
@@ -260,7 +260,7 @@ class LightSpawner : Actor
 	{
 		Spawn:
 			UNKN A 1;
-			UNKN A 1;
+			UNKN A -1;
 			Stop;
 	}
 

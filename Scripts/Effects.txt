@@ -21,7 +21,7 @@ class SingleSpark : actor
 		Radius 0;
 		Speed 1;
 		Mass 1;
-		Scale 0.025;
+		Scale 0.02;
 		Gravity 0.1;
 		RenderStyle "AddStencil";
 		StencilColor "White";
@@ -251,14 +251,14 @@ class ExplosionFlare : Actor
 	States
 	{
 		Spawn:
-			EXPL A 0;
+			EXPL # 5 Bright;
 		FadeOut:
-			EXPL A 1 Bright;
-			EXPL A 0 {
+			EXPL # 1 Bright;
+			EXPL # 0 {
 				A_RemoveLight("ExplosionLight");
 
 				alpha = max(0, alpha - FRandom(0.1, 0.15));
-				A_AttachLight("ExplosionLight", DynamicLight.PointLight, 0xFF9900, int(96 * alpha * scale.x), int(160 * alpha * scale.x), DynamicLight.LF_ATTENUATE);
+				A_AttachLight("ExplosionLight", DynamicLight.PointLight, 0xFFBB00, int(128 * alpha * scale.x), int(192 * alpha * scale.x), DynamicLight.LF_ATTENUATE);
 
 				if (alpha > 0) { SetStateLabel("FadeOut"); }
 			}
@@ -270,8 +270,10 @@ class ExplosionFlare : Actor
 		scale.x *= FRandom(0.5, 0.8);
 		scale.y *= FRandom(0.5, 0.8);
 
-		A_AttachLight("ExplosionLight", DynamicLight.PointLight, 0xFF9900, int(96 * scale.x), int(160 * scale.x), DynamicLight.LF_ATTENUATE);
-		A_PlaySound("world/flareup", CHAN_AUTO, 0.75 * scale.x, false, ATTN_IDLE);
+		A_AttachLight("ExplosionLight", DynamicLight.PointLight, 0xFFBB00, int(128 * scale.x), int(192 * scale.x), DynamicLight.LF_ATTENUATE);
+		A_PlaySound("world/flareup", CHAN_AUTO, 1.0 * scale.x, false, ATTN_IDLE);
+
+		frame = Random(0, 3);
 	}
 }
 
@@ -316,11 +318,12 @@ class ExplosionSmokeGenerator : Actor
 	States
 	{
 		Spawn:
-			TNT1 A 0;
+			TNT1 A 15;
+		SpawnLoop:
 			TNT1 A 1 {
 				A_SpawnItemEx("ExplosionSmoke", 0, 0, 0, 0.0, FRandom(0.0, 2.5) * Scale.x, FRandom(-2.0, 2.0) * Scale.y, Random(0, 359), SXF_CLIENTSIDE | SXF_TRANSFERSCALE, 30);
 
-				if (reactiontime-- > 0) { SetStateLabel("Spawn"); }
+				if (reactiontime-- > 0) { SetStateLabel("SpawnLoop"); }
 			}
 			Stop;
 	}
@@ -474,6 +477,8 @@ class Debris : Actor
 		Mass 10;
 		BounceType "Doom";
 		BounceFactor 0.35;
+		BounceSound "debris/bounce";
+		WallBounceSound "debris/bounce";
 	}
 	States
 	{
@@ -517,11 +522,14 @@ class Debris : Actor
 
 	override void PostBeginPlay()
 	{
-		frame = Random(0, 3);
+		frame = Random(0, 2);
 
 		if (master) { Scale = Default.Scale * master.Radius / Random(8, 12); }
 
 		Scale *= FRandom(0.1, 0.5);
+
+		if (scale.x >= 3) { BounceSound = "debris/bounce/large"; WallBounceSound = "debris/bounce/large"; }
+		else if (scale.x >= 2) { BounceSound = "debris/bounce/medium"; WallBounceSound = "debris/bounce/medium"; }
 
 		Speed = Max(GetGravity() * Speed + Scale.X, 1);
 	}
@@ -530,6 +538,7 @@ class Debris : Actor
 	{
 		if (pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
 		{
+			ClearBounce();
 			scale *= 0.9;
 
 			if (Scale.X < 0.05) { Destroy(); return; }
@@ -597,7 +606,7 @@ class ExplosionSphere : Actor
 		+NOGRAVITY
 		+NOINTERACTION
 		RenderStyle "Add";
-		Alpha 0.05;
+		Alpha 0.04;
 	}
 
 	States
@@ -611,7 +620,7 @@ class ExplosionSphere : Actor
 	{
 		if (master)
 		{
-			SetOrigin(master.pos + (0, 0, master.height / 2), false);
+			SetXYZ(master.pos + (0, 0, master.height / 2));
 		}
 
 		A_AttachLight("ExplosionLight", DynamicLight.PointLight, 0xE6E64D, int(48 * alpha * scale.x), 0, DynamicLight.LF_ATTENUATE);
@@ -623,7 +632,7 @@ class ExplosionSphere : Actor
 		A_RemoveLight("ExplosionLight");
 
 		alpha = max(0, alpha - 0.003);
-		scale *= 1.25;
+		scale *= 1.5;
 
 		A_AttachLight("ExplosionLight", DynamicLight.PointLight, 0xE6E64D, int(48 * alpha * scale.x), 0, DynamicLight.LF_ATTENUATE);
 

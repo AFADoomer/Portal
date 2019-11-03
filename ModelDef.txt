@@ -1029,12 +1029,31 @@ Model PivotWhite
 	FrameIndex UNKN A 0 0
 }
 
+Model PivotChainLink
+{
+	Path "Models/"
+	Model 0 "door_chainlink.md3"
+
+	AngleOffset 90.0
+	Offset 16.0 2.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
 Model DoorFrame
 {
 	Path "Models/"
 	Model 0 "doorframe.md3"
 
 	Scale 1.0 1.0 0.9975
+
+	FrameIndex UNKN A 0 0
+}
+
+Model DoorFrameChainLink
+{
+	Path "Models/"
+	Model 0 "doorframe_chainlink.md3"
 
 	FrameIndex UNKN A 0 0
 }
@@ -1050,7 +1069,6 @@ Model SwingingDoor
 	Skin 0 "Door4_O.png"
 
 	FrameIndex UNKN B 0 0
-
 }
 
 Model SwingingDoorWhite
@@ -1063,6 +1081,15 @@ Model SwingingDoorWhite
 	FrameIndex UNKN A 0 0
 
 	Skin 0 "Door5_O.png"
+	FrameIndex UNKN B 0 0
+}
+
+Model SwingingDoorChainLink
+{
+	Path "Models/"
+	Model 0 "door_chainlink.md3"
+
+	FrameIndex UNKN A 0 0
 	FrameIndex UNKN B 0 0
 }
 
@@ -1216,3 +1243,85 @@ Model ExplosionSphere
 	FrameIndex UNKN A 0 0
 }
 
+Model TowerSegment
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "tower.md3"
+	Skin 0 "GRAYDIR2"
+
+	Scale 1.0 1.0 0.869
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallSwitch
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "switch.md3"
+
+//	Scale 0.75 0.625 0.75
+
+	FrameIndex UNKN A 0 0
+	FrameIndex UNKN B 0 2
+	FrameIndex UNKN C 0 4
+	FrameIndex UNKN D 0 6
+	FrameIndex UNKN E 0 8
+	FrameIndex UNKN F 0 10
+}
+
+Model BigPipe
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "bigpipe.md3"
+
+	AngleOffset 90.0
+	Scale 1.0 1.0 1.2
+
+	Skin 0 "BigPipe.png"
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "BigPipe2.png"
+	FrameIndex UNKN B 0 0
+}
+
+Model BigPipeBend
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "bigpipe_bend.md3"
+
+	AngleOffset 90.0
+	Scale 1.0 1.0 1.2
+
+	Skin 0 "BigPipe.png"
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "BigPipe2.png"
+	FrameIndex UNKN B 0 0
+}
+
+Model SlidingDoor
+{
+	Path "Models/"
+	Model 0 "slidingdoors.md3"
+
+	Scale 0.8 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+	FrameIndex UNKN B 0 2
+	FrameIndex UNKN C 0 4
+	FrameIndex UNKN D 0 6
+	FrameIndex UNKN E 0 8
+	FrameIndex UNKN F 0 9
+}

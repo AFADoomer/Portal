@@ -1,6 +1,7 @@
 class Pivot : Actor
 {
 	Class<SwingingDoor> doorclass;
+	Class<DoorFrame> doorframe;
 	SwingingDoor door;
 	BlockBase blockers[32];
 	Actor frame;
@@ -10,6 +11,7 @@ class Pivot : Actor
 	Line linedef;
 
 	Property DoorClass:doorclass;
+	Property FrameClass:doorframe;
 
 	Default
 	{
@@ -19,6 +21,7 @@ class Pivot : Actor
 		Height 0;
 		Radius 0;
 		Pivot.DoorClass "SwingingDoor";
+		Pivot.FrameClass "DoorFrame";
 	}
 
 	States
@@ -31,6 +34,7 @@ class Pivot : Actor
 	override void PostBeginPlay()
 	{
 		bInvisible = true;
+		bDormant = SpawnFlags & MTF_DORMANT;
 
 		spawnangle = angle;
 
@@ -38,9 +42,9 @@ class Pivot : Actor
 
 		targetangle = angle;
 
-		While (!frame)
+		While (doorframe && !frame)
 		{
-			frame = Spawn("DoorFrame", pos);
+			frame = Spawn(doorframe, pos);
 			if (frame)
 			{
 				frame.angle = spawnangle + 90;
@@ -50,7 +54,7 @@ class Pivot : Actor
 
 		While (!door)
 		{
-			door = SwingingDoor(Spawn(doorclass, (pos.xy + RotateVector((14, 0), angle), pos.z)));
+			door = SwingingDoor(Spawn(doorclass, (pos.xy + RotateVector((16, 0), angle), pos.z)));
 			if (door)
 			{
 				door.angle = angle - 90;
@@ -65,13 +69,19 @@ class Pivot : Actor
 			While (!blockers[i])
 			{
 				blockers[i] = BlockBase(Spawn("DoorBlock", (pos.xy + RotateVector((i, 0), angle), pos.z)));
-				if (blockers[i]) { blockers[i].master = self; }
+				if (blockers[i])
+				{
+					blockers[i].master = self;
+					blockers[i].A_SetSize(-1, door.height);
+				}
 			}
 		}
 	}
 
 	override void Tick()
 	{
+		if (bDormant) { return; }
+
 		Super.Tick();
 
 		for (int i = 2; i <= 30; i+=2)
@@ -88,10 +98,10 @@ class Pivot : Actor
 
 		if (targetangle == spawnangle && angle >= spawnangle - 5 && angle < spawnangle)
 		{
-			A_PlaySound("door2/close", CHAN_AUTO | CHAN_NOSTOP, 0.5);
+			A_PlaySound(door.close, CHAN_AUTO | CHAN_NOSTOP, 0.5);
 		}
 
-		door.SetOrigin((pos.xy + RotateVector((16, 0), angle), pos.z), true);
+		door.SetXYZ((pos.xy + RotateVector((16, 0), angle), pos.z));
 		door.angle = angle - 90;
 
 		if (linedef)
@@ -122,6 +132,16 @@ class PivotWhite : Pivot
 	}
 }
 
+class PivotChainLink : Pivot
+{
+	Default
+	{
+		//$Title Chain Link Door
+		Pivot.DoorClass "SwingingDoorChainLink";
+		Pivot.FrameClass "DoorFrameChainLink";
+	}
+}
+
 class DoorFrame : Actor
 {
 	Default
@@ -139,9 +159,16 @@ class DoorFrame : Actor
 	}	
 }
 
+class DoorFrameChainLink : DoorFrame {}
+
 class SwingingDoor : Actor
 {
 	int lastuse;
+	Sound open, close, locked;
+
+	Property OpenSound:open;
+	Property CloseSound:close;
+	Property LockedSound:locked;
 
 	Default
 	{
@@ -149,8 +176,12 @@ class SwingingDoor : Actor
 		+NOGRAVITY
 		-SOLID
 		+SPECIAL
+		+INTERPOLATEANGLES
 		Radius 16;
 		Height 64;
+		SwingingDoor.OpenSound "door2/open";
+		SwingingDoor.CloseSound "door2/close";
+		SwingingDoor.LockedSound "door2/locked";
 	}
 
 	States
@@ -194,7 +225,8 @@ class SwingingDoor : Actor
 
 		if (Pivot(master).angle == Pivot(master).spawnangle)
 		{
-			A_PlaySound("door2/open", CHAN_AUTO, 0.5);
+			if (master.bDormant) { A_PlaySound(locked, CHAN_AUTO, 0.5); }
+			else { A_PlaySound(open, CHAN_AUTO, 0.5); }
 			SetStateLabel("Open");
 		}
 
@@ -214,3 +246,187 @@ class SwingingDoor : Actor
 }
 
 class SwingingDoorWhite : SwingingDoor {}
+
+class SwingingDoorChainLink : SwingingDoor
+{
+	Default
+	{
+		Height 60;
+		SwingingDoor.OpenSound "doorchainlink/open";
+		SwingingDoor.CloseSound "doorchainlink/close";
+		SwingingDoor.LockedSound "doorchainlink/locked";
+	}
+}
+
+class SlidingDoor : Actor
+{
+	Array<Actor> Activators;
+	bool active, moving, blocked, closed, user_startopen;
+	int activationradius;
+	Line linedef;
+	Sound open, close;
+
+	Property ActivationRadius:activationradius;
+	Property OpenSound:open;
+	Property CloseSound:close;
+
+	Default
+	{
+		//$Category Portal/Doors
+		//$Title Sliding Door
+		+DONTTHRUST
+		Height 64;
+		Radius 20;
+		SlidingDoor.ActivationRadius 32;
+		SlidingDoor.OpenSound "elevator/door/open";
+		SlidingDoor.CloseSound "elevator/door/close";
+	}
+
+	States
+	{
+		Open:
+			UNKN A 8;
+			UNKN B 8 A_PlaySound(open, CHAN_AUTO, 0.5, false, ATTN_STATIC);
+			UNKN C 6;
+			UNKN DE 4;
+		Opened:
+			UNKN F -1 { moving = false; }
+			Stop;
+		Close:
+			UNKN FE 8;
+			UNKN D 4;
+			UNKN C 4 A_PlaySound(close, CHAN_AUTO, 0.5, false, ATTN_STATIC);
+			UNKN B 2;
+		Spawn:
+		Closed:
+			UNKN A -1 { moving = false; }
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		linedef = Utilities.GetCurrentLine(self);
+	
+		if (user_startopen) { active = true; SetStateLabel("Opened"); }
+		else if (linedef) { linedef.flags  |= (Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT); }
+
+		Super.PostBeginPlay();
+	}
+
+	override bool Used(Actor user)
+	{
+		SetPeerState(!active);
+
+		return true;
+	}
+
+	override void Activate(Actor activator)
+	{
+		if (!active) { SetPeerState(true); }
+	}
+
+	override void Deactivate(Actor activator)
+	{
+		if (active) { SetPeerState(false); }
+	}
+
+	override void Tick()
+	{
+		blocked = false;
+
+		GetActivators(ActivationRadius);
+
+		for (int i = 0; i < Activators.Size(); i++)
+		{
+			if (Activators[i])
+			{
+				let mo = Activators[i];
+				let p = mo.player;
+
+				if (mo.health <= 0 || !mo.bShootable) { Activators.Delete(i); continue; }
+
+				double dist = Utilities.DistanceFromLine(mo, linedef);
+
+				if (dist <= mo.radius) // It's open and you're in the doorway
+				{
+					blocked = true; // Don't move the door...
+				}
+			}
+		}
+
+		Super.Tick();
+	}
+
+	void SetPeerState(bool makeactive = true)
+	{
+		if (moving || blocked) { return; }
+
+		if (tid)
+		{ // If there's a TID, affect all actors with that TID
+			let it = level.CreateActorIterator(tid, "SlidingDoor");
+			SlidingDoor mo;
+
+			while (mo = SlidingDoor(it.Next()))
+			{
+				DoActivation(mo, makeactive);
+			}
+		}
+
+		DoActivation(self, makeactive);
+	}
+
+	void DoActivation(SlidingDoor mo, bool makeactive)
+	{
+		if (mo.blocked || mo.moving) { return; }
+
+		mo.active = makeactive;
+		mo.moving = true;
+
+		if (makeactive)
+		{
+			mo.SetStateLabel("Open");
+		}
+		else
+		{
+			mo.SetStateLabel("Close");
+		}
+
+		if (mo.linedef)
+		{
+			if (!makeactive)
+			{
+				mo.linedef.flags |= (Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
+			}
+			else
+			{
+				mo.linedef.flags &= ~(Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
+			}
+		}
+	}
+
+	void GetActivators(double range = 64, double doorheight = 96)
+	{
+		BlockThingsIterator it = BlockThingsIterator.Create(self, 1);
+
+		while (it.Next())
+		{
+			if (!it.thing.bIsMonster && !(it.thing is "PlayerPawn")) { continue; } // Ignore everything except players and monsters
+			if (
+				(Utilities.DistanceFromLine(it.thing, linedef) > range + it.thing.radius) || // Check if the actor can reach the door
+				(it.thing.pos.z + it.thing.height < pos.z) || // Z-height check (player below door)
+				(it.thing.pos.z > pos.z + doorheight) // Z-height check (player above door)
+			)
+			{
+				if (Activators.Find(it.thing) != Activators.Size()) // If the actor was already on the Activators list
+				{
+					Activators.Delete(Activators.Find(it.thing)); // ...delete it from the Activators list.  
+					Activators.ShrinkToFit(); // Re-shrink the array
+				}
+				continue;
+			}
+
+			if (Activators.Find(it.thing) == Activators.Size()) { Activators.Push(it.thing); } // Add the actor to the list of Activators if it's not already there
+		}
+	}
+
+}

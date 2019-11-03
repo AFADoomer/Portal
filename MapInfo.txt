@@ -19,7 +19,7 @@ gameinfo
 	PlayerClasses = "PortalPlayer"
 	StatusbarClass = "PortalStatusBar"
 
-	AddEventHandlers = "OverlayHandler"
+	AddEventHandlers = "OverlayHandler", "ShaderHandler"
 }
 
 clearskills
@@ -74,7 +74,6 @@ skill nightmare
 gamedefaults
 {
 	AirControl = 0.1
-	Gravity = 550
 	LightMode = 0
 	CheckSwitchRange
 	EvenLighting
@@ -181,11 +180,18 @@ DoomEdNums
 	30082 = Tile2x2
 	30083 = Tile4x4
 	30084 = Crusher
+	30085 = TowerSegment
+	30086 = WallSwitch
+	30087 = BigPipe
+	30088 = BigPipeBend
+	30089 = PlatformEndPoint
+	30090 = SlidingDoor
 	31000 = FlatText
 	31001 = ConfettiSpawner
 	31002 = ClimbableZone
 	31003 = Pivot
 	31004 = PivotWhite
+	31005 = PivotChainLink
 	32002 = LightSpawner
 	
 }

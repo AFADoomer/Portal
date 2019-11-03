@@ -1,6 +1,11 @@
 #library "PORTAL"
 #include "zcommon.acs"
 
+script "Startup" ENTER
+{
+	Thing_ChangeTID(0, 1000+PlayerNumber());
+}
+
 int doorstate[1024];
 int multitrigger[1024];
 int activated[1024];
@@ -219,7 +224,7 @@ Script "SpawnCube" (int spottid, int tid, int noreplace)
 	if (ThingCountName("Cube", tid))
 	{
 		SetActorProperty(tid, APROP_DamageFactor, 1.0);
-		Thing_Destroy(tid);
+		SetActorState(tid, "Fizzle");
 	}
 
 	While(activated[spottid])
@@ -411,4 +416,20 @@ Script "PulseLight" (int tid, int f)
 
 		Delay(1);
 	}
+}
+
+function int min (int a, int b)
+{
+	if (a < b)
+		return a;
+
+	return b;
+}
+
+function int max (int a, int b)
+{
+	if (a > b)
+		return a;
+
+	return b;
 }

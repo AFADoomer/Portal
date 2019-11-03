@@ -16,6 +16,9 @@ Sprite POR0A0, 32, 32 { Patch UNKNA0, 0, 0 }
 Sprite POR0B0, 32, 32 { Patch UNKNA0, 0, 0 }
 
 Sprite UNKNB0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite UNKNC0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite UNKND0, 32, 32 { Patch UNKNA0, 0, 0 }
+Sprite UNKNE0, 32, 32 { Patch UNKNA0, 0, 0 }
 
 // Silence parsing errors from default MENUDEF
 Graphic M_DOOM, 1, 1 { Patch BLACK, 0, 0 }
@@ -2049,6 +2052,30 @@ Sprite EXPLA0, 600, 600
 	Patch "Patches/Effects/ExplosionFlash.png", 0, 0
 }
 
+Sprite EXPLB0, 600, 600
+{
+	Offset 300, 300
+	XScale 1.75
+	YScale 1.75
+	Patch "Patches/Effects/ExplosionFlash.png", 0, 0 { Rotate 90 }
+}
+
+Sprite EXPLC0, 600, 600
+{
+	Offset 300, 300
+	XScale 1.75
+	YScale 1.75
+	Patch "Patches/Effects/ExplosionFlash.png", 0, 0 { Rotate 180 }
+}
+
+Sprite EXPLD0, 600, 600
+{
+	Offset 300, 300
+	XScale 1.75
+	YScale 1.75
+	Patch "Patches/Effects/ExplosionFlash.png", 0, 0 { Rotate 270 }
+}
+
 Texture SWITCH0, 32, 32
 {
 	Patch "SW3S0", 0, 0
@@ -2057,4 +2084,39 @@ Texture SWITCH0, 32, 32
 Texture SWITCH1, 32, 32
 {
 	Patch "SW3S1", 0, 0
+}
+
+Texture Wall_W, 492, 492
+{
+	XScale 3.0
+	YScale 3.0
+	Patch "Wall_W", 0, 0
+}
+
+Texture Wall_G1, 492, 492
+{
+	XScale 3.0
+	YScale 3.0
+	Patch "Wall_G1", 0, 0
+}
+
+Texture Wall_G2, 492, 492
+{
+	XScale 3.0
+	YScale 3.0
+	Patch "Wall_G2", 0, 0
+}
+
+Texture Wall_G3, 492, 492
+{
+	XScale 3.0
+	YScale 3.0
+	Patch "Wall_G3", 0, 0
+}
+
+Texture Wall_B, 492, 492
+{
+	XScale 3.0
+	YScale 3.0
+	Patch "Wall_B", 0, 0
 }

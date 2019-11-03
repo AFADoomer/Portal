@@ -399,3 +399,52 @@ class LaserTrigger : Actor
 		return 0;
 	}
 }
+
+class WallSwitch : Actor
+{
+	bool active, moving, inuse;
+
+	Default
+	{
+		//$Category Portal/Objects
+		//$Title Wall Switch
+		+SPECIAL
+		+NOGRAVITY
+		+NOLIFTDROP
+		-SOLID
+		+DONTTHRUST
+		Height 16;
+		Radius 8;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+		Active:
+			UNKN BCDE 3;
+			UNKN F -1 { moving = false; }
+			Stop;
+		Inactive:
+			UNKN EDCB 3;
+			UNKN A -1 { moving = false; }
+			Stop;
+	}
+
+	override bool Used(Actor user)
+	{
+		if (inuse || moving) { return false; }
+
+		moving = true;
+		active = !active;
+
+		Level.ExecuteSpecial(special, user, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
+		A_PlaySound(active ? "switch/on" : "switch/off", CHAN_AUTO, 0.25);
+
+		if (active) { SetStateLabel("Active"); }
+		else { SetStateLabel("Inactive"); }
+
+		return true;
+	}
+}

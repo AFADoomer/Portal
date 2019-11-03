@@ -62,6 +62,17 @@ door/unlock		d_unlock
 
 door2/open		d2_open
 door2/close		d2_close
+door2/locked		d2_latch
+
+doorchainlink/open	d3_open
+doorchainlink/close	d3_close
+doorchainlink/locked	d3_latch
+
+elevator/door/open	de_open
+elevator/door/close	de_close
+$limit elevator/door/open 1 1024
+$limit elevator/door/close 1 1024
+elevator/chime		e_chime
 
 platform/start		p_start
 platform/stop		p_stop
@@ -91,6 +102,33 @@ cube/bounce		p_cube
 barrel/bounce		p_barrel
 cone/bounce		p_cone
 chair/bounce		p_chair
+
+$random debris/bounce { debris/bounce1 debris/bounce2 debris/bounce3 debris/bounce4 debris/bounce5 }
+debris/bounce1		p_deb1
+debris/bounce2		p_deb2
+debris/bounce3		p_deb3
+debris/bounce4		p_deb4
+debris/bounce5		p_deb5
+$limit debris/bounce 1 512
+$volume debris/bounce 0.125
+
+$random debris/bounce/medium { debris/bounce6 debris/bounce7 debris/bounce8 debris/bounce9 debris/bounce10 }
+debris/bounce6		p_deb6
+debris/bounce7		p_deb7
+debris/bounce8		p_deb8
+debris/bounce9		p_deb9
+debris/bounce10		p_deb10
+$limit debris/bounce/medium 1 512
+$volume debris/bounce/medium 0.125
+
+$random debris/bounce/large { debris/bounce11 debris/bounce12 debris/bounce13 debris/bounce14 debris/bounce15 }
+debris/bounce11		p_deb11
+debris/bounce12		p_deb12
+debris/bounce13		p_deb13
+debris/bounce14		p_deb14
+debris/bounce15		p_deb15
+$limit debris/bounce/large 1 512
+$volume debris/bounce/large 0.125
 
 cone/bounce2		p_cone2
 chair/bounce2		p_chair2
