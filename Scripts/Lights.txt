@@ -160,8 +160,8 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 
 		if (!master)
 		{
-			pitch = 90;
-			maxradius *= 1.75;
+			//pitch = 90;
+			//maxradius *= 1.75;
 		}
 		else
 		{

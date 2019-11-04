@@ -403,6 +403,7 @@ class LaserTrigger : Actor
 class WallSwitch : Actor
 {
 	bool active, moving, inuse;
+	bool user_starton;
 
 	Default
 	{
@@ -424,12 +425,25 @@ class WallSwitch : Actor
 			Stop;
 		Active:
 			UNKN BCDE 3;
+		Activated:
 			UNKN F -1 { moving = false; }
 			Stop;
 		Inactive:
 			UNKN EDCB 3;
+		Inactivated:
 			UNKN A -1 { moving = false; }
 			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (user_starton)
+		{
+			SetStateLabel("Activated");
+			active = true;
+		}
+
+		Super.PostBeginPlay();
 	}
 
 	override bool Used(Actor user)

@@ -1034,8 +1034,8 @@ Model PivotChainLink
 	Path "Models/"
 	Model 0 "door_chainlink.md3"
 
-	AngleOffset 90.0
-	Offset 16.0 2.0 0.0
+	AngleOffset 270.0
+	Offset 16.0 0.0 0.0
 
 	FrameIndex UNKN A 0 0
 }
@@ -1324,4 +1324,14 @@ Model SlidingDoor
 	FrameIndex UNKN D 0 6
 	FrameIndex UNKN E 0 8
 	FrameIndex UNKN F 0 9
+}
+
+Model LightningTrailBeamArc
+{
+	Path "models/"
+	Model 0 "beam.md3"
+	Skin 0 "BeamE.png"
+	USEACTORPITCH
+
+	FrameIndex MDLA A 0 0
 }

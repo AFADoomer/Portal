@@ -8,10 +8,12 @@ class Pivot : Actor
 	double spawnangle;
 	double targetangle;
 	double user_startangle;
+	double maxangle;
 	Line linedef;
 
 	Property DoorClass:doorclass;
 	Property FrameClass:doorframe;
+	Property OpenAngle:maxangle;
 
 	Default
 	{
@@ -22,6 +24,7 @@ class Pivot : Actor
 		Radius 0;
 		Pivot.DoorClass "SwingingDoor";
 		Pivot.FrameClass "DoorFrame";
+		Pivot.OpenAngle 90;
 	}
 
 	States
@@ -139,6 +142,7 @@ class PivotChainLink : Pivot
 		//$Title Chain Link Door
 		Pivot.DoorClass "SwingingDoorChainLink";
 		Pivot.FrameClass "DoorFrameChainLink";
+		Pivot.OpenAngle 135;
 	}
 }
 
@@ -203,8 +207,8 @@ class SwingingDoor : Actor
 		double da = abs(deltaangle(toucher.angle, master.angle));
 		if (da < 45 || da > 135) { return; }
 
-		double minangle = Pivot(master).spawnangle - 90;
-		double maxangle = Pivot(master).spawnangle;
+		double maxangle = master.spawnangle;
+		double minangle = maxangle - Pivot(master).maxangle;
 
 		if (master.angle >= minangle && master.angle <= maxangle)
 		{
@@ -213,7 +217,7 @@ class SwingingDoor : Actor
 			Vector2 amt = toucher.vel.xy * clamp(dist, 1, 32) / 32;
 
 			double delta = toucher.vel.xy.length() * toucher.Speed * 4;
-			if (abs(deltaangle(toucher.angle, angle)) < 90) { delta *= -1; }
+			if (abs(deltaangle(toucher.angle, angle)) < Pivot(master).maxangle) { delta *= -1; }
 
 			Pivot(master).targetangle = clamp(Pivot(master).targetangle + delta, minangle, maxangle);
 		}
@@ -236,7 +240,7 @@ class SwingingDoor : Actor
 		}
 		else
 		{
-			Pivot(master).targetangle = Pivot(master).spawnangle - 90;
+			Pivot(master).targetangle = Pivot(master).spawnangle - Pivot(master).maxangle;
 		}
 
 		lastuse = level.time;

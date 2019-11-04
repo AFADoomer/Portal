@@ -16,3 +16,5 @@ CNTRLMNU_SWITCHTEXT2 = "Press new key to bind, or press ESCAPE to cancel.";
 JOYMNU_NOCON = "No controllers detected.";
 JOYMNU_DISABLED1 = "";
 JOYMNU_DISABLED2 = "Controller support must be enabled in order to detect a controller.";
+
+ELECTROCUTION = "%o got %hself electrocuted.";

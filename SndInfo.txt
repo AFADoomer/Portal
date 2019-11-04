@@ -130,6 +130,14 @@ debris/bounce15		p_deb15
 $limit debris/bounce/large 1 512
 $volume debris/bounce/large 0.125
 
+$random electrical/shock { electrical/shock1 electrical/shock2 electrical/shock3 electrical/shock4 }
+electrical/shock1		elec1
+electrical/shock2		elec2
+electrical/shock3		elec3
+electrical/shock4		elec4
+$limit electrical/shock 1 512
+$volume electrical/shock 0.125
+
 cone/bounce2		p_cone2
 chair/bounce2		p_chair2
 

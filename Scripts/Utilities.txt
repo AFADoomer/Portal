@@ -211,8 +211,37 @@ class Utilities : Actor
 	{
 		if (!mo.InStateSequence(mo.CurState, mo.FindState(fizzlestate)))
 		{
-			if (mo.waterlevel) { Utilities.DoFizzle(mo, fizzlestate);  return true; } // Needs to be smarter to detect if it's slime or normal water.  Can't check current 3D floor in ZScript right now, apparently?
-			if (mo.pos.z == mo.floorz && mo.floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any)) { Utilities.DoFizzle(mo, fizzlestate); return true; } 
+			if (mo.waterlevel)
+			{
+				F3DFloor w = mo.curSector.Get3dFloor(0);
+				if (
+					w &&
+					w.model.damagetype == "Slime"
+				)
+				{
+					Utilities.DoFizzle(mo, fizzlestate);
+					return true;
+				}
+
+				TerrainDef t = mo.GetFloorTerrain();
+				if (
+					t &&
+					t.DamageMOD == "Slime"
+				)
+				{
+					Utilities.DoFizzle(mo, fizzlestate);
+					return true;
+				}
+			}
+
+			if (
+				mo.pos.z == mo.floorz &&
+				mo.floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any)
+			)
+			{
+				Utilities.DoFizzle(mo, fizzlestate);
+				return true;
+			}
 
 			Line current = Utilities.GetCurrentLine(mo);
 			if (current)
@@ -372,5 +401,33 @@ class Utilities : Actor
 		Vector2 projection = v1 + t * delta;
 
 		return (point - projection).length();
+	}
+}
+
+class FloorOverlayAdjust : Actor
+{
+	Default
+	{
+		//$Title 3d Floor Overlay
+		//$Sprite AMRKA0
+		//$Arg0 "Tag of sector to overlay"
+	}
+
+	override void BeginPlay()
+	{
+		if (args[0])
+		{
+			SectorTagIterator it = level.CreateSectorTagIterator(args[0]);
+			int secnum = it.Next();
+
+			if (!secnum) { return; }
+
+			Sector cur = level.Sectors[secnum];
+			double dest = cur.CenterFloor() + 0.01;
+
+			if (ceilingz == dest) { return; }
+
+			curSector.MoveCeiling(16, dest, 0, (ceilingz < dest), false);
+		}
 	}
 }

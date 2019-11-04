@@ -20,6 +20,7 @@ version "4.2"
 #include "scripts/ladder.txt"
 #include "scripts/blocks.txt"
 #include "scripts/door.txt"
+#include "scripts/lightning.txt"
 
 #include "scripts/statusbar.txt"
 #include "scripts/handlers.txt"

@@ -1584,18 +1584,7 @@ class LightFixture : Actor
 
 		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
 
-		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4)));
-		if (light)
-		{
-			light.master = self;
-			light.angle = angle;
-			light.pitch = 0;
-			light.maxradius = 384.0;
-			light.clr = fillcolor;
-			light.alpha = bStandstill ? 0.0 : user_lightlevel;
-			light.scale.y = 1 / user_lightlevel;
-			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
-		}
+		InitializeLight();
 
 		panes = Spawn(paneclass, pos);
 		if (panes)
@@ -1623,9 +1612,9 @@ class LightFixture : Actor
 		{
 			let c = fillcolor;
 
-			int r = max(c.r, 8);
-			int g = max(c.g, 8);
-			int b = max(c.b, 8);
+			int r = int(max(c.r * alpha, 8));
+			int g = int(max(c.g * alpha, 8));
+			int b = int(max(c.b * alpha, 8));
 
 			c = color(r, g, b);
 
@@ -1639,6 +1628,22 @@ class LightFixture : Actor
 	{
 		if (light) { light.Destroy(); }
 		if (panes) { panes.Destroy(); }
+	}
+
+	virtual void InitializeLight()
+	{
+		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4)));
+		if (light)
+		{
+			light.master = self;
+			light.angle = angle;
+			light.pitch = 0;
+			light.maxradius = 384.0;
+			light.clr = fillcolor;
+			light.alpha = bStandstill ? 0.0 : user_lightlevel;
+			light.scale.y = 1 / user_lightlevel;
+			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
+		}
 	}
 }
 
@@ -1657,6 +1662,22 @@ class LightFixtureHallway : LightFixture
 
 		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
 
+		InitializeLight();
+
+		panes = Spawn(paneclass, pos);
+		if (panes)
+		{
+			panes.master = light;
+			panes.roll = roll;
+			panes.pitch = pitch;
+			panes.angle = angle;
+			panes.scale = scale;
+			panes.SetShade(fillcolor);
+		}
+	}
+
+	override void InitializeLight()
+	{
 		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (RotateVector((4 * sin(-pitch), 0), angle), 4 * cos(-pitch))));
 		if (light)
 		{
@@ -1668,17 +1689,6 @@ class LightFixtureHallway : LightFixture
 			light.alpha = bStandstill ? 0.0 : user_lightlevel;
 			light.scale.y = 1 / user_lightlevel;
 			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
-		}
-
-		panes = Spawn(paneclass, pos);
-		if (panes)
-		{
-			panes.master = light;
-			panes.roll = roll;
-			panes.pitch = pitch;
-			panes.angle = angle;
-			panes.scale = scale;
-			panes.SetShade(fillcolor);
 		}
 	}
 }
@@ -1731,7 +1741,7 @@ class LightFixturePanes : Actor
 	{
 		if (master)
 		{
-			bBright = master.alpha > 0;
+			bBright = (master.alpha > 0 && !master.bStandStill);
 		}
 
 		Super.Tick();
@@ -1761,6 +1771,8 @@ class LightFixtureBulb : Actor
 	{
 		if (master)
 		{
+			bBright = master.bBright;
+
 			let c = master.fillcolor;
 
 			int r = max(c.r, 8);
