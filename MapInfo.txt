@@ -19,7 +19,7 @@ gameinfo
 	PlayerClasses = "PortalPlayer"
 	StatusbarClass = "PortalStatusBar"
 
-	AddEventHandlers = "OverlayHandler", "ShaderHandler"
+	AddEventHandlers = "OverlayHandler", "ShaderHandler", "SectorDamageHandler"
 }
 
 clearskills
@@ -152,8 +152,6 @@ DoomEdNums
 	30054 = LaserTrigger
 	30055 = BridgeEmitter
 	30056 = PlatformMoving
-	30057 = SkyViewPointStatic
-	30058 = SkyViewpointAnchor
 	30059 = LightFixture
 	30060 = Silhouette
 	30061 = LightFixtureHallway
@@ -186,6 +184,7 @@ DoomEdNums
 	30088 = BigPipeBend
 	30089 = PlatformEndPoint
 	30090 = SlidingDoor
+	30500 = Turret
 	31000 = FlatText
 	31001 = ConfettiSpawner
 	31002 = ClimbableZone
@@ -195,4 +194,6 @@ DoomEdNums
 	32006 = ElectricalArc
 	32002 = LightSpawner
 	32003 = FloorOverlayAdjust
+	32004 = SkyViewPointStatic
+	32005 = SkyViewpointAnchor
 }

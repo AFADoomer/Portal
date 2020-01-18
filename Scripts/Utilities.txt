@@ -236,7 +236,7 @@ class Utilities : Actor
 
 			if (
 				mo.pos.z == mo.floorz &&
-				mo.floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any)
+				mo.floorpic == skyflatnum
 			)
 			{
 				Utilities.DoFizzle(mo, fizzlestate);
@@ -350,13 +350,27 @@ class Utilities : Actor
 			while (m.master && m is "LaserSpot") { m = m.master; }
 
 			traceresults.HitActor.DamageMobj(beam, m, damage, "LaserBeam");
-			if (!traceresults.HitActor.bNoBlood && drawdecal)
+
+			if (
+				!(traceresults.HitActor is "LaserTrigger") && 
+				!(traceresults.HitActor is "LaserCube") &&
+				!(traceresults.HitActor is "PlatformEndpoint")
+			)
 			{
-				puff = Spawn("SmokePuff", hitspot.pos, ALLOW_REPLACE);
-				if (puff)
+				hitspot.A_PlaySound("laser/hit", CHAN_6 | CHAN_NOSTOP, 0.25, true, ATTN_STATIC);
+
+				if (!traceresults.HitActor.bNoBlood && drawdecal)
 				{
-					puff.angle = puff.AngleTo(origin);
+					puff = Spawn("SmokePuff", hitspot.pos, ALLOW_REPLACE);
+					if (puff)
+					{
+						puff.angle = puff.AngleTo(origin);
+					}
 				}
+			}
+			else
+			{
+				hitspot.A_StopSound(CHAN_6);
 			}
 		}
 		else if (traceresults.HitType == TRACE_HitFloor || traceresults.HitType == TRACE_HitCeiling || traceresults.HitType == TRACE_HitWall)
@@ -368,6 +382,7 @@ class Utilities : Actor
 
 				if (puff)
 				{
+					hitspot.A_PlaySound("laser/hit", CHAN_6 | CHAN_NOSTOP, 0.25, true, ATTN_STATIC);
 					if (LaserHitMarker(hitspot) && LaserHitMarker(hitspot).moved)
 					{
 						puff.angle = origin.AngleTo(puff);
@@ -376,6 +391,10 @@ class Utilities : Actor
 					puff.angle = puff.AngleTo(origin);
 				}
 			}
+		}
+		else
+		{
+			hitspot.A_StopSound(CHAN_6);
 		}
 
 		return beam, hitspot;
@@ -401,6 +420,16 @@ class Utilities : Actor
 		Vector2 projection = v1 + t * delta;
 
 		return (point - projection).length();
+	}
+
+	static double PitchTo(Actor mo, Actor source, double sourcezoffset = 0, double targetzoffset = 0)
+	{
+		if (!mo || !source) { return 0; }
+
+		double distxy = max(source.Distance2D(mo), 1);
+		double distz = (source.pos.z + sourcezoffset) - (mo.pos.z + targetzoffset);
+
+		return -atan(distz / distxy);
 	}
 }
 

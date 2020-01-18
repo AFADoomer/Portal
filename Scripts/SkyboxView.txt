@@ -3,8 +3,8 @@ class SkyViewPointStatic : SkyViewPoint
 	Actor base, anchor;
 	AlphaLight light;
 	double scaling;
-	int xoffset, yoffset, zoffset, angleoffset;
-	bool user_lit, setpos;
+	int xoffset, yoffset, zoffset, angleoffset, oldangleoffset;
+	bool user_lit, setpos, primary;
 	Vector2 oldbaseoffset;
 
 	Default
@@ -48,12 +48,12 @@ class SkyViewPointStatic : SkyViewPoint
 			mo.anchor = it.Next();
 		}
 
-		mo.base = null;
-
 		if (baseid > 0)
 		{
+			mo.base = null;
+
 			it = level.CreateActorIterator(baseid, "Actor");
-			mo.anchor = it.Next();
+			mo.base = it.Next();
 		}
 
 		if (!mo.base)
@@ -86,6 +86,7 @@ class SkyViewPointStatic : SkyViewPoint
 		{
 			level.sectorPortals[0].mSkybox = mo;
 			level.sectorPortals[0].mDestination = mo.CurSector;
+			mo.primary = true;
 		}
 	}
 
@@ -119,13 +120,11 @@ class SkyViewPointStatic : SkyViewPoint
 
 		if (base && base.player && SpawnPoint != (0, 0, 0))
 		{
-			Vector2 offset;
-
-			offset = (base.pos.xy - anchor.pos.xy) / scaling;
-			offset = RotateVector(offset, angle);
+			Vector2 offset = (base.pos.xy - anchor.pos.xy) / scaling;
+			offset = RotateVector(offset, angle + angleoffset);
 
 			Vector2 baseoffset = (xoffset, yoffset) / scaling;
-			baseoffset = RotateVector(baseoffset, -angleoffset);
+			baseoffset = RotateVector(baseoffset, angle + angleoffset);
 
 			// Set the viewpoint's height location
 			double heightdelta = (base.player.viewz - anchor.pos.z) / scaling + zoffset;
@@ -133,11 +132,12 @@ class SkyViewPointStatic : SkyViewPoint
 			Vector3 dest = (SpawnPoint.xy + offset - baseoffset, SpawnPoint.z + heightdelta);
 			double dist = (dest.xy - pos.xy).length();
 
-			if (baseoffset!= oldbaseoffset || setpos || base.bTeleport || dist <= 12.0 / scaling)
+			if (primary || setpos || base.bTeleport || baseoffset!= oldbaseoffset || angleoffset != oldangleoffset || dist <= 12.0 / scaling)
 			{
 				SetXYZ(dest);
 				setpos = false;
 				oldbaseoffset = baseoffset;
+				oldangleoffset = angleoffset;
 			}
 		}
 

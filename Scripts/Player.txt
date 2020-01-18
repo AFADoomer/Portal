@@ -874,6 +874,7 @@ class PortalPlayer : PlayerPawn
 			case 'LITB2x2':
 			case 'LITBW1x1':
 			case 'LITBW2x1':
+			case 'FLOOR':		
 				return "footsteps/blacktile";
 				break;
 			case 'PORT1x1':
@@ -886,6 +887,8 @@ class PortalPlayer : PlayerPawn
 			case 'LITW2x2':
 			case 'LITWW1x1':
 			case 'LITWW2x1':
+			case 'CARPET':
+			case 'CARPET2':
 				return "footsteps/whitetile";
 				break;
 			case 'GRATE':

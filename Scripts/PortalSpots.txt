@@ -169,7 +169,7 @@ class PortalSpot : Actor
 
 			for (int i = 0; i < Activators.Size(); i++)
 			{
-				if (Activators[i] && Activators[i] is "LaserHitMarker" && Activators[i].damage > 0)
+				if (Activators[i] && (Activators[i] is "LaserHitMarker" && Activators[i].damage > 0) || Activators[i] is "BridgeHitMarker")
 				{
 					if (Distance3D(Activators[i]) > 32.0)
 					{

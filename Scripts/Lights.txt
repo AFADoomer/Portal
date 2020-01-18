@@ -58,7 +58,7 @@ class AlphaLight : DynamicLight
 
 		CVar debug = Cvar.FindCVar("g_debuglights");
 
-		if (debug && debug.GetBool()) { FlatText.SpawnString(self, String.Format("%i", maxradius), (master is "AttenuatedAlphaLight") ? 0x555500 : 0x550055); }
+		if (debug && debug.GetBool()) { FlatText.SpawnString(self, String.Format("%i", maxradius), (master is "AttenuatedAlphaLight") ? 0x555500 : clr); }
 	}
 
 	override void Tick()
@@ -72,6 +72,7 @@ class AlphaLight : DynamicLight
 			clr.r = AlphaLight(master).clr.r / 16;
 			clr.g = AlphaLight(master).clr.g / 16;
 			clr.b = AlphaLight(master).clr.b / 16;
+
 			alpha = master.alpha * 10.0;
 
 			args[LIGHT_INTENSITY] = min(32, AlphaLight(master).args[LIGHT_INTENSITY] / 4);
@@ -163,7 +164,7 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 			//pitch = 90;
 			//maxradius *= 1.75;
 		}
-		else
+		else if (master is "LightSpawner")
 		{
 			base = AlphaLight(Spawn("AlphaLight", pos));
 			if (base) { base.master = self; }

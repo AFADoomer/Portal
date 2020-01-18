@@ -21,6 +21,7 @@ version "4.2"
 #include "scripts/blocks.txt"
 #include "scripts/door.txt"
 #include "scripts/lightning.txt"
+#include "scripts/turrets.txt"
 
 #include "scripts/statusbar.txt"
 #include "scripts/handlers.txt"

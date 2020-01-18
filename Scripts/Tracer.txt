@@ -19,7 +19,7 @@ Class PortalFindHitPointTracer : LineTracer
 				if (Results.HitActor is "BlockBase" && Results.HitActor.Master) { Results.HitActor = Results.HitActor.Master; }
 //				if (!Results.HitActor.bPushable) { return TRACE_STOP; }
 
-				return TRACE_Continue; // Fall through, but remember the actor that you hit
+//				return TRACE_Continue; // Fall through, but remember the actor that you hit
 			}
 
 			return TRACE_Skip;

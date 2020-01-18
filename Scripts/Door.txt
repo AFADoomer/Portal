@@ -22,6 +22,7 @@ class Pivot : Actor
 		+NOINTERACTION
 		Height 0;
 		Radius 0;
+		Speed 6;
 		Pivot.DoorClass "SwingingDoor";
 		Pivot.FrameClass "DoorFrame";
 		Pivot.OpenAngle 90;
@@ -96,10 +97,10 @@ class Pivot : Actor
 			}
 		}		
 
-		if (angle > targetangle) { angle = max(angle - 3, targetangle); }
-		else if (angle < targetangle) { angle = min(angle + 3, targetangle); }
+		if (angle > targetangle) { angle = max(angle - Speed, targetangle); }
+		else if (angle < targetangle) { angle = min(angle + Speed, targetangle); }
 
-		if (targetangle == spawnangle && angle >= spawnangle - 5 && angle < spawnangle)
+		if (targetangle == spawnangle && angle >= spawnangle - Speed && angle < spawnangle)
 		{
 			A_PlaySound(door.close, CHAN_AUTO | CHAN_NOSTOP, 0.5);
 		}
@@ -319,6 +320,8 @@ class SlidingDoor : Actor
 
 	override bool Used(Actor user)
 	{
+		if (bStandStill) { return false; }
+
 		SetPeerState(!active);
 
 		return true;

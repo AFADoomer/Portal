@@ -1554,8 +1554,9 @@ class LightFixture : Actor
 	AlphaLight light;
 	Class<Actor> paneclass;
 	Actor panes;
-	double user_lightlevel;
+	double user_lightlevel, user_flicker;
 	double OuterAngle;
+	bool active;
 
 	Property PaneClass:paneclass;
 	Property LightOuterAngle:outerangle;
@@ -1602,23 +1603,32 @@ class LightFixture : Actor
 	{
 		If (IsFrozen()) { return; }
 
-		if (light)
+		if (active)
 		{
-			light.alpha = (bStandStill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_lightlevel;
-			light.clr = fillcolor;
+			if (user_flicker && level.time % Random(1, int(max(1, 15 - user_flicker))) == 0) { alpha = FRandom(0, user_lightlevel * 1.25); }
+
+			if (light)
+			{
+				light.alpha = (bStandstill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_flicker ? alpha * user_lightlevel : user_lightlevel;
+				light.clr = fillcolor;
+			}
+
+			if (panes)
+			{
+				let c = fillcolor;
+
+				int r = int(max(c.r * alpha * 1.15, 8));
+				int g = int(max(c.g * alpha * 1.15, 8));
+				int b = int(max(c.b * alpha * 1.15, 8));
+
+				c = color(r, g, b);
+
+				panes.SetShade(C);
+			}
 		}
-
-		if (panes)
+		else
 		{
-			let c = fillcolor;
-
-			int r = int(max(c.r * alpha, 8));
-			int g = int(max(c.g * alpha, 8));
-			int b = int(max(c.b * alpha, 8));
-
-			c = color(r, g, b);
-
-			panes.SetShade(C);
+			if (light) { light.alpha = 0.0; }
 		}
 
 		Super.Tick();
@@ -1632,7 +1642,8 @@ class LightFixture : Actor
 
 	virtual void InitializeLight()
 	{
-		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4)));
+		if (!light) { light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4))); }
+
 		if (light)
 		{
 			light.master = self;
@@ -1640,10 +1651,24 @@ class LightFixture : Actor
 			light.pitch = 0;
 			light.maxradius = 384.0;
 			light.clr = fillcolor;
-			light.alpha = bStandstill ? 0.0 : user_lightlevel;
+			light.alpha = bStandStill ? 0.0 : user_lightlevel;
 			light.scale.y = 1 / user_lightlevel;
 			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
 		}
+
+		active = true;
+	}
+
+	override void Activate(Actor activator)
+	{
+		active = true;
+		Super.Activate(activator);
+	}
+
+	override void Deactivate(Actor activator)
+	{
+		active = false;
+		Super.Deactivate(activator);
 	}
 }
 
@@ -1678,18 +1703,20 @@ class LightFixtureHallway : LightFixture
 
 	override void InitializeLight()
 	{
-		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (RotateVector((4 * sin(-pitch), 0), angle), 4 * cos(-pitch))));
+		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (RotateVector((1 * sin(-pitch), 0), angle), 1 * cos(-pitch))));
 		if (light)
 		{
 			light.master = self;
 			light.angle = angle;
 			light.pitch = pitch - 90;
-			light.maxradius = user_radius ? user_radius : (ceilingz - floorz) * 0.75;
+			light.maxradius = user_radius ? user_radius : ceilingz - floorz * 0.75;
 			light.clr = fillcolor;
 			light.alpha = bStandstill ? 0.0 : user_lightlevel;
 			light.scale.y = 1 / user_lightlevel;
 			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
 		}
+
+		active = true;
 	}
 }
 
@@ -1741,7 +1768,7 @@ class LightFixturePanes : Actor
 	{
 		if (master)
 		{
-			bBright = (master.alpha > 0 && !master.bStandStill);
+			bBright = (master.alpha > 0 && !master.bStandStill && (!LightFixture(master) || LightFixture(master).active));
 		}
 
 		Super.Tick();

@@ -211,6 +211,15 @@ class LaserBeamBlue : LaserBeam
 	}
 }
 
+class LaserBeamSight : LaserBeam
+{
+	Default
+	{
+		Alpha 0.25;
+		Scale 0.25;
+	}
+}
+
 class LaserLight : Actor
 {
 	Default
@@ -509,6 +518,8 @@ class BridgeSpot : Actor
 
 		int steps = int(traceresults.Distance / sparsity);
 
+		double radiusoffset = traceresults.HitActor ? traceresults.HitActor.radius : 0;
+
 		Actor mo;
 		Vector3 position = pos;
 
@@ -540,7 +551,7 @@ class BridgeSpot : Actor
 			if (mo is "BridgeBeam") { BridgeBeam(mo).delay = level.time + steps + 1; }
 		}
 
-		if (!hitspot) { hitspot = Spawn("BridgeHitMarker", traceresults.HitPos, ALLOW_REPLACE); }
+		if (!hitspot) { hitspot = Spawn("BridgeHitMarker", traceresults.HitPos - traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
 		if (hitspot)
 		{
 			hitspot.master = self;

@@ -380,7 +380,8 @@ class LaserTrigger : Actor
 			frame = 0;
 			bBright = false;
 			timeout = -1;
-			A_PlaySound("button/up", CHAN_AUTO, 0.5);
+			A_PlaySound("laser/target/off", CHAN_AUTO, 0.5);
+			A_StopSound(CHAN_7);
 		}
 	}
 
@@ -391,7 +392,8 @@ class LaserTrigger : Actor
 			Level.ExecuteSpecial(special, null, null, false, args[0], args[1], !args[2], args[3], args[4]);
 			frame = 1;
 			bBright = true;
-			A_PlaySound("button/down", CHAN_AUTO, 0.5);
+			A_PlaySound("laser/target/on", CHAN_AUTO, 0.5);
+			A_PlaySound("laser/target/loop", CHAN_7, 0.25, true);
 		}
 
 		timeout = 5;
@@ -404,6 +406,8 @@ class WallSwitch : Actor
 {
 	bool active, moving, inuse;
 	bool user_starton;
+	int activationtimeout;
+	Actor activator;
 
 	Default
 	{
@@ -437,6 +441,8 @@ class WallSwitch : Actor
 
 	override void PostBeginPlay()
 	{
+		activationtimeout = 1;
+
 		if (user_starton)
 		{
 			SetStateLabel("Activated");
@@ -453,12 +459,25 @@ class WallSwitch : Actor
 		moving = true;
 		active = !active;
 
-		Level.ExecuteSpecial(special, user, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
-		A_PlaySound(active ? "switch/on" : "switch/off", CHAN_AUTO, 0.25);
-
 		if (active) { SetStateLabel("Active"); }
 		else { SetStateLabel("Inactive"); }
 
+		activator = user;
+
 		return true;
+	}
+
+	override void Tick()
+	{
+		// Delay actual script call until after the switch stops moving
+		if (activator && !moving)
+		{
+			Level.ExecuteSpecial(special, activator, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
+			A_PlaySound(active ? "switch/on" : "switch/off", CHAN_AUTO, 0.25);
+
+			activator = null;
+		}
+
+		Super.Tick();
 	}
 }

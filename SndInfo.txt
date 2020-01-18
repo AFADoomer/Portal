@@ -70,8 +70,6 @@ doorchainlink/locked	d3_latch
 
 elevator/door/open	de_open
 elevator/door/close	de_close
-$limit elevator/door/open 1 1024
-$limit elevator/door/close 1 1024
 elevator/chime		e_chime
 
 platform/start		p_start
@@ -89,6 +87,10 @@ fizzler/loop		f_loop
 
 laser/loop		l_loop
 laser/hit		l_hit
+laser/burn		l_burn
+laser/target/on		l2_on
+laser/target/loop	l2_loop
+laser/target/off	l2_off
 
 bridge/loop		b_loop
 bridge/start		b_start

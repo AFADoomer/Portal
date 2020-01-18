@@ -68,6 +68,7 @@ class SingleSpark : actor
 		else { vel *= 0; bNoInteraction = true; }
 
 		if (fade) { A_FadeOut(fadeamt); }
+		if (waterlevel) { fadeamt *= 2; }
 	}
 }
 
@@ -536,9 +537,11 @@ class Debris : Actor
 
 	override void Tick()
 	{
-		if (pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
+		if (pos.z == floorz && floorpic == skyflatnum)
 		{
 			ClearBounce();
+			BounceSound = "";
+			WallBounceSound = "";
 			scale *= 0.9;
 
 			if (Scale.X < 0.05) { Destroy(); return; }

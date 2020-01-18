@@ -56,7 +56,6 @@ class OverlayHandler : EventHandler
 		}
 	}
 
-
 	static void Add(Actor thing, String iconName = "", int actorTID = 0, color clr = 0xDE1B15, double alpha = 1.0, int type = 0)
 	{
 		if (iconName == "") { return; }
@@ -112,7 +111,6 @@ class OverlayHandler : EventHandler
 			if (!mo) continue;
 
 			double dist = p.mo.Distance3D(mo);
-//			if (OverlayItems[i].type == 1 && dist < 256) { continue; }
 
 			Vector3 worldpos = e.viewpos + level.Vec3Diff(e.viewpos, mo.pos); // World position of object, offset from viewpoint
 			Vector3 screenpos = PortalCoordUtil.WorldToScreen(worldpos, e.viewpos, e.viewpitch, e.viewangle, e.viewroll, p.fov); // Translate that to the screen, using the viewpoint's info
@@ -137,7 +135,6 @@ class OverlayHandler : EventHandler
 			}
 
 			color clr = OverlayItems[i].clr;
-//			double alpha = max(1.0 - (dist - 256) / 256, 0);
 			double alpha = OverlayItems[i].alpha;
 
 			screen.DrawTexture (image, false, drawpos.x, drawpos.y, DTA_DestWidthF, dimensions.x, DTA_DestHeightF, dimensions.y, DTA_AlphaChannel, true, DTA_FillColor, clr & 0xFFFFFF, DTA_Alpha, alpha, DTA_CenterOffset, true);
@@ -209,5 +206,87 @@ class ScreenShake : ShaderControl
 	override void SetUniforms(PlayerInfo p, RenderEvent e)
 	{
 		Shader.SetUniform1f(p, ShaderToControl, "speed", amount / 4.0);
+	}
+}
+
+class SectorDamageItem
+{
+	Sector sec;
+	int damageamount, olddamageamount, damageinterval, olddamageinterval, end;
+	Name damagetype, olddamagetype;
+}
+
+// Setting sector damage type and amount with a fixed duration
+class SectorDamageHandler : EventHandler
+{
+	Array<SectorDamageItem> SectorDamageItems;
+
+	static void SetDamage(Sector sec, int damageamount, Name damagetype = 'None', int damageinterval = 1, int duration = 35)
+	{
+		SectorDamageHandler handler = SectorDamageHandler(EventHandler.Find("SectorDamageHandler"));
+		if (!handler) { return; } // If no handler was found (somehow), silently fail
+
+		handler.AddItem(sec, damageamount, damagetype, damageinterval, duration);
+	}
+
+	uint FindItem(Sector sec) // Helper function to find a thing in a child class since the target item is nested in a wrapper object (that shoud be a struct... but, ZScript limitations)
+	{
+		for (int i = 0; i < SectorDamageItems.Size(); i++)
+		{
+			if (SectorDamageItems[i] && SectorDamageItems[i].sec == sec) { return i; }
+		}
+		return SectorDamageItems.Size();
+	}
+
+	void AddItem(Sector sec, int damageamount, Name damagetype = 'None', int damageinterval = 1, int duration = 35)
+	{
+		if (!sec) { return; }
+
+		int i = FindItem(sec);
+		if (i < SectorDamageItems.Size()) // If it's already there, just update the properties
+		{
+			SectorDamageItems[i].damageamount = damageamount;
+			SectorDamageItems[i].damageinterval = damageinterval;
+			SectorDamageItems[i].damagetype = damagetype;
+			SectorDamageItems[i].end = level.time + duration;
+		}
+		else
+		{
+			SectorDamageItem item = New("SectorDamageItem");
+			item.sec = sec;
+
+			item.olddamageamount = sec.damageamount;
+			item.olddamageinterval = sec.damageinterval;
+			item.olddamagetype = sec.damagetype;
+
+			item.damageamount = damageamount;
+			item.damageinterval = damageinterval;
+			item.damagetype = damagetype;
+
+			item.end = level.time + duration;
+
+			SectorDamageItems.Push(item);
+		}
+	}
+
+	override void WorldTick()
+	{
+		for (int i = 0; i < SectorDamageItems.Size(); i++)
+		{
+			if (SectorDamageItems[i] && level.time > SectorDamageItems[i].end)
+			{
+				SectorDamageItems[i].sec.damageamount = SectorDamageItems[i].olddamageamount;
+				SectorDamageItems[i].sec.damageinterval = SectorDamageItems[i].olddamageinterval;
+				SectorDamageItems[i].sec.damagetype = SectorDamageItems[i].olddamagetype;
+
+				SectorDamageItems.Delete(i);
+			}
+			else
+			{
+				SectorDamageItems[i].sec.damageamount = SectorDamageItems[i].damageamount;
+				SectorDamageItems[i].sec.damageinterval = SectorDamageItems[i].damageinterval;
+				SectorDamageItems[i].sec.damagetype = SectorDamageItems[i].damagetype;
+			}
+		}
 	}
 }

@@ -23,3 +23,29 @@ DecalGroup LaserBeamScorch
 	LaserBeamScorch1 1
 	LaserBeamScorch2 1
 }
+
+decal LightningScorch1
+{
+	pic CBALSCR1
+	shade "22 22 22"
+	x-scale 0.02
+	y-scale 0.02
+	randomflipx
+	randomflipy
+}
+
+decal LightningScorch2
+{
+	pic CBALSCR2
+	shade "22 22 22"
+	x-scale 0.02
+	y-scale 0.02
+	randomflipx
+	randomflipy
+}
+
+DecalGroup LightningScorch
+{
+	LightningScorch1 1
+	LightningScorch2 1
+}

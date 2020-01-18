@@ -430,8 +430,6 @@ Material Texture "WALF4x4"
 
 Material Texture "PORTWALL"
 {
-//	shader "shaders/displacement.fp"
-//	texture displacement "materials/displacement/CWALL.png"
 	normal "CWALLN"
 	specular "CWALLS"
 	specularlevel 0.1
@@ -439,8 +437,6 @@ Material Texture "PORTWALL"
 
 Material Texture "PORTWAL2"
 {
-//	shader "shaders/displacement.fp"
-//	texture displacement "materials/displacement/CWALL.png"
 	normal "CWALLN"
 	specular "CWALLS"
 	specularlevel 0.1
@@ -448,10 +444,78 @@ Material Texture "PORTWAL2"
 
 Material Texture "PORTWAL3"
 {
-//	shader "shaders/displacement.fp"
-//	texture displacement "materials/displacement/CWALL.png"
 	normal "CWALLN"
 	specular "CWALLS"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL4"
+{
+	normal "CWALLN"
+	specular "CWALLS"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL5"
+{
+	normal "CWALL2N"
+	specular "CWALL2S"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL6"
+{
+	normal "CWALL2N"
+	specular "CWALL2S"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL7"
+{
+	normal "CWALL2N"
+	specular "CWALL2S"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL8"
+{
+	normal "CINDERN"
+	specular "CWALL2S"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL9"
+{
+	normal "CINDERN"
+	specular "CWALL2S"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWAL0"
+{
+	normal "CWALLN2"
+	specular "CWALLS2"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWALA"
+{
+	normal "CWALLN2"
+	specular "CWALLS2"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWALF"
+{
+	normal "CWALLN"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWALG"
+{
+	normal "CWALL2N"
+	specular "CWALL2S"
 	specularlevel 0.1
 }
 
@@ -481,6 +545,13 @@ Material Texture "GRAYDIR2"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL1x1.png"
 	normal "Materials/NormalMaps/Auto/Floor.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.25
+}
+
+Material Texture "DUCT"
+{
+	normal "Materials/NormalMaps/Duct.png"
 	specular "Materials/Specular/Barrel.png"
 	specularlevel 0.25
 }
@@ -567,6 +638,15 @@ Material Texture "GIRDER"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/Girder.png"
+	specularlevel 0.25
+}
+
+Material Texture "GIRDER2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/Girder.png"
+	normal "Materials/NormalMaps/Auto/Girder.png"
+	specular "Materials/Specular/Auto/Girder.png"
 	specularlevel 0.25
 }
 
@@ -844,4 +924,34 @@ Material Texture "Models/SlidingDoor.png"
 	normal "Materials/NormalMaps/SlidingDoor.png"
 	specular "Materials/Specular/SlidingDoor.png"
 	specularlevel 0.65
+}
+
+Material Texture "FloorDm"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/FloorDm.png"
+}
+
+Material Texture "FloorDm2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/FloorDm.png"
+	normal "Materials/NormalMaps/Auto/FloorDm.png"
+	specular "Materials/Specular/Auto/FloorDm.png"
+
+}
+
+Material Texture "FloorDm3"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/FloorDm.png"
+	normal "Materials/NormalMaps/Auto/FloorDm.png"
+	specular "Materials/Specular/Auto/FloorDm.png"
+
+}
+
+Material Texture "CAUTIONS"
+{
+	normal "Materials/NormalMaps/Auto/Floor.png"
+	specular "Materials/Specular/Auto/Floor.png"
 }

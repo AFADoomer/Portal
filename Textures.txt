@@ -41,42 +41,85 @@ Texture FWATER2, 256, 256 { Patch WATER, 0, 0 }
 Texture FWATER3, 256, 256 { Patch WATER, 0, 0 }
 Texture FWATER4, 256, 256 { Patch WATER, 0, 0 }
 
-Texture PORTWALL, 341, 256
+Texture PORTWALL, 384, 512
 {
-	XScale 2.66
+	XScale 2.0
 	YScale 2.0
-	Patch "Patches/CWALL.png", -4, 0
-	Patch "Patches/CWALL.png", 337, 0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/ConcreteJoints.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteJoints.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
+	Patch "Patches/WallTrim2.png", 0, 44 { Style Overlay }
 }
 
-Texture PORTWAL2, 341, 256
+Texture PORTWAL2, 384, 512
 {
-	XScale 2.66
+	XScale 2.0
 	YScale 2.0
-	Patch "Patches/CWALL2.png", -4, 0
-	Patch "Patches/CWALL2.png", 337, 0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/ConcreteJoints.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteJoints.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
 }
 
-Texture PORTWAL3, 341, 256
+Texture PORTWAL3, 384, 512
 {
-	XScale 2.66
+	XScale 2.0
 	YScale 2.0
-	Patch "Patches/CWALL3.png", -4, 0
-	Patch "Patches/CWALL3.png", 337, 0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/ConcreteJoints.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteJoints.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
+	Patch "Patches/WallTrim.png", 0, 200 { Style Overlay }
 }
 
-Texture CWALLN, 341, 256
+Texture PORTWAL4, 384, 512
 {
-	XScale 2.66
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/ConcreteJoints.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteJoints.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
+	Patch "Patches/WallTrim3.png", 0, 44 { Style Overlay }
+}
+
+Texture PORTWALF, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/ConcreteJoints.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteJoints.png", 0, 256 { Style Overlay }
+}
+
+Texture CWALLN, 384, 512
+{
+	XScale 2.0
 	YScale 2.0
 	Patch "Materials/NormalMaps/CWALL.png", 0, 0
+	Patch "Materials/NormalMaps/CWALL.png", 0, 256
 }
 
-Texture CWALLS, 341, 256
+Texture CWALLS, 384, 512
 {
-	XScale 2.66
+	XScale 2.0
 	YScale 2.0
 	Patch "Materials/Specular/CWALL.png", 0, 0
+	Patch "Materials/Specular/CWALL.png", 0, 256
+}
+
+Texture CINDERN, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/CinderBlock.png", 0, 0
+	Patch "Materials/NormalMaps/CinderBlock.png", 0, 256
 }
 
 Texture FLOOR, 128, 128
@@ -93,6 +136,13 @@ Texture CEILING, 128, 128
 	Patch "Patches/CEILING.png", 0, 0
 }
 
+Texture CEILINGT, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CEILINGT.png", 0, 0
+}
+
 Texture GRAYDIRT, 128, 128
 {
 	XScale 2.0
@@ -105,6 +155,13 @@ Texture GRAYDIR2, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/GRAYDIR2.png", 0, 0
+}
+
+Texture DUCT, 128, 128
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/DUCT.png", 0, 0
 }
 
 Texture GRAYWATR, 128, 128
@@ -921,7 +978,7 @@ Texture WALLDOOR, 64, 256
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Patches/CWALL.png", -4, 0
+	Patch "PORTWAL2", -4, 0
 	Patch "Patches/Door3.png", 0, 84
 }
 
@@ -929,7 +986,7 @@ Texture WAL2DOOR, 64, 256
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Patches/CWALL2.png", -4, 0
+	Patch "PORTWALL", -4, 0
 	Patch "Patches/Door3.png", 0, 84
 }
 
@@ -1918,6 +1975,13 @@ Texture GIRDER, 128, 256
 	Patch "Patches/Girder.png", 0, 0
 }
 
+Texture GIRDER2, 128, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Girder2.png", 0, 0
+}
+
 Texture FLOORMET, 128, 128
 {
 	XScale 4.0
@@ -2119,4 +2183,183 @@ Texture Wall_B, 492, 492
 	XScale 3.0
 	YScale 3.0
 	Patch "Wall_B", 0, 0
+}
+
+Texture FLOORDM, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/FLOORDM.png", 0, 0
+}
+
+Texture FLOORDM2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/FLOORDM2.png", 0, 0
+}
+
+Texture FLOORDM3, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/FLOORDM3.png", 0, 0
+}
+
+Texture CAUTIONS, 256, 64
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/GRAYDIRT.png", 0, 0 { Style Overlay }
+	Patch "Patches/GRAYDIRT.png", 128, 0 { Style Overlay }
+	Patch "Patches/CautionStrip.png", 0, 0
+}
+
+Texture PORTWAL5, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 0
+	Patch "Patches/CWalBase.png", 0, 256
+	Patch "Patches/ConcreteWoodForm.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteWoodForm.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
+	Patch "Patches/WallTrim2.png", 0, 44 { Style Overlay }
+}
+
+Texture PORTWAL6, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 0
+	Patch "Patches/CWalBase.png", 0, 256
+	Patch "Patches/ConcreteWoodForm.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteWoodForm.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
+}
+
+Texture PORTWAL7, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 0
+	Patch "Patches/CWalBase.png", 0, 256
+	Patch "Patches/ConcreteWoodForm.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteWoodForm.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
+	Patch "Patches/WallTrim3.png", 0, 44 { Style Overlay }
+}
+
+Texture PORTWALG, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 0
+	Patch "Patches/CWalBase.png", 0, 256
+	Patch "Patches/ConcreteWoodForm.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteWoodForm.png", 0, 256 { Style Overlay }
+}
+
+Texture PORTWALH, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 0
+	Patch "Patches/CWalBase.png", 0, 256
+	Patch "Patches/ConcreteLighten.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteLighten.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallTrim4.png", 0, 200 { Style Overlay }
+	Patch "Patches/WallTrim.png", 0, 200 { Style Overlay }
+}
+
+Texture CWALL2N, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/CWALL2.png", 0, 0
+	Patch "Materials/NormalMaps/CWALL2.png", 0, 256
+}
+
+Texture CWALL2S, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Specular/CWALL2.png", 0, 0
+	Patch "Materials/Specular/CWALL2.png", 0, 256
+}
+
+Texture CARPET, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet.png", 0, 0
+}
+
+Texture CARPET2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet2.png", 0, 0
+}
+
+Texture PORTWAL8, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/CINDER.png", 0, 0 { Style Overlay }
+	Patch "Patches/CINDER.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallTrim4.png", 0, 56 { Style Overlay }
+	Patch "Patches/WallTrim.png", 0, 200 { Style Overlay }
+}
+
+Texture PORTWAL9, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/CINDER.png", 0, 0 { Style Overlay }
+	Patch "Patches/CINDER.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallTrim3.png", 0, 96 { Style Overlay }
+	Patch "Patches/WallTrim.png", 0, 200 { Style Overlay }
+}
+
+Texture PORTWAL0, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/ConcreteJoints.png", 0, 0 { Style Overlay }
+	Patch "Patches/CINDER.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallScuff.png", 0, 160 { Style Overlay }
+	Patch "Patches/WallTrim3.png", 0, 96 { Style Overlay }
+}
+
+Texture PORTWALA, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWALBASE.png", 0, 0
+	Patch "Patches/CWALBASE.png", 0, 256
+	Patch "Patches/ConcreteJoints.png", 0, 0 { Style Overlay }
+	Patch "Patches/CINDER.png", 0, 256 { Style Overlay }
+}
+
+Texture CWALLN2, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/CWALL.png", 0, 0
+	Patch "Materials/NormalMaps/CinderBlock.png", 0, 256
+}
+
+Texture CWALLS2, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Specular/CWALL.png", 0, 0
+	Patch "Materials/Specular/CinderBlock.png", 0, 256
 }

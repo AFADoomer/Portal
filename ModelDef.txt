@@ -651,6 +651,22 @@ Model LaserBeamBlue
 	FrameIndex UNKN A 0 0
 }
 
+Model LaserBeamSight
+{
+	Path "Models/"
+	Model 0 "laser_beam.md3"
+	Skin 0 "beam.png"
+
+	USEACTORPITCH
+
+	PitchOffset 90.0
+	AngleOffset 90.0
+
+	Scale 0.3 0.3 0.15
+
+	FrameIndex UNKN A 0 0
+}
+
 Model Skybox
 {
 	Path "Models/"
@@ -771,6 +787,8 @@ Model LightFixture
 	Path "Models/"
 	Model 0 "light.md3"
 
+	Scale 1.23 1.39 1.2
+
 	AngleOffset 90
 	Offset 0.0 0.0 -1.0
 
@@ -784,6 +802,8 @@ Model LightFixtureHallway
 
 	Path "Models/"
 	Model 0 "light.md3"
+
+	Scale 1.23 1.39 1.2
 
 	AngleOffset 90
 	Offset 0.0 0.0 -1.0
@@ -799,6 +819,8 @@ Model LightFixturePanes
 	Path "Models/"
 	Model 0 "light_panes.md3"
 
+	Scale 1.23 1.39 1.2
+
 	AngleOffset 90
 	Offset 0.0 0.0 -1.0
 
@@ -812,6 +834,8 @@ Model LightFixtureBulb
 
 	Path "Models/"
 	Model 0 "light_bulb.md3"
+
+	Scale 1.23 1.39 1.2
 
 	AngleOffset 90
 	Offset 0.0 0.0 -1.0

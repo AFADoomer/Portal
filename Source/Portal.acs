@@ -421,8 +421,6 @@ Script "PulseLight" (int tid, int f)
 
 Script "FlickerLight" (int tid)
 {
-	if (!tid) { Terminate; }
-
 	int r, g, b, p, i, c;
 
 	c = GetActorProperty(tid, APROP_StencilColor);
@@ -447,7 +445,7 @@ Script "FlickerLight" (int tid)
 
 		SetActorProperty(tid, APROP_StencilColor, i);
 
-		Delay(Random(1, 5));
+		Delay(Random(1, 25));
 	}
 }
 
