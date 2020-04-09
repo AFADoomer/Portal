@@ -141,8 +141,10 @@ class PortalSpot : Actor
 					Portal_Quaternion orientation = Portal_Quaternion.createFromAngles(
 						players[consoleplayer].mo.angleTo(self, true), 
 						PitchTo(self, players[consoleplayer].mo, 32.0 * players[consoleplayer].crouchfactor), 
-						players[consoleplayer].mo.roll
+						players[consoleplayer].mo.roll - roll
 						);
+					orientation = orientation.unit();
+
 					Portal_Quaternion relative = outportal.multiplyQuat(inportal.inverse());
 					Portal_Quaternion results = orientation.multiplyQuat(relative);
 					Portal_Quaternion reverse = new("Portal_Quaternion").initFromAxisAngle((0, 0, 1), 180);

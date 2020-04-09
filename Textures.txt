@@ -978,7 +978,7 @@ Texture WALLDOOR, 64, 256
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "PORTWAL2", -4, 0
+	Patch "PORTWALL", 0, 0
 	Patch "Patches/Door3.png", 0, 84
 }
 

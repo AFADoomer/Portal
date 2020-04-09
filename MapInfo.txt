@@ -6,6 +6,7 @@ gameinfo
 	borderflat = "WALL2x2S"
 	titlemusic = "AS_Mel"
 	creditpage = ""
+	fullscreenautoaspect = 3
 
 	menufontcolor_title = "PortalGreen"
 	menufontcolor_label = "Gray"

@@ -231,11 +231,13 @@ Script "SpawnCube" (int spottid, int tid, int noreplace)
 	{
 		if (!ThingCountName("Cube", tid))
 		{
-				SpawnSpot("Cube", spottid, tid, Random(0, 256));
-				ThrustThing(Random(0, 255), 1, 0, tid);
-				SetActorRoll(tid, Random(-15, 15));
+			SpawnSpot("Cube", spottid, tid, Random(0, 256));
+			ThrustThing(Random(0, 255), 1, 0, tid);
+			SetActorRoll(tid, Random(-15, 15));
+
+			if (noreplace) { activated[spottid] = FALSE; }
 		}
-		if (noreplace) { activated[spottid] = FALSE; }
+
 		Delay(35);
 	}
 }
@@ -254,11 +256,13 @@ Script "SpawnLaserCube" (int spottid, int tid, int noreplace)
 	{
 		if (!ThingCountName("LaserCube", tid))
 		{
-				SpawnSpot("LaserCube", spottid, tid, Random(0, 256));
-				ThrustThing(Random(0, 255), 1, 0, tid);
-				SetActorRoll(tid, Random(-15, 15));
+			SpawnSpot("LaserCube", spottid, tid, Random(0, 256));
+			ThrustThing(Random(0, 255), 1, 0, tid);
+			SetActorRoll(tid, Random(-15, 15));
+
+			if (noreplace) { activated[spottid] = FALSE; }
 		}
-		if (noreplace) { activated[spottid] = FALSE; }
+
 		Delay(35);
 	}
 }
