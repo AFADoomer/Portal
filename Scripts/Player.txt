@@ -134,14 +134,14 @@ class PortalPlayer : PlayerPawn
 
 								if (current.flags & Line.ML_DONTPEGBOTTOM) // Lower unpegged
 								{
-									if (pos.z > floorz + yoffset - 24.0 && pos.z + height < floorz + yoffset + size.y + 24.0)
+									if (pos.z > curSector.floorplane.ZAtPoint(pos.xy) + yoffset - 24.0 && pos.z + height < curSector.floorplane.ZAtPoint(pos.xy) + yoffset + size.y + 24.0)
 									{
 										ClearPortals();
 									}
 								}
 								else
 								{
-									if (pos.z > ceilingz + yoffset + 24.0 && pos.z + height < ceilingz + yoffset - size.y - 24.0)
+									if (pos.z > curSector.ceilingplane.ZAtPoint(pos.xy) + yoffset + 24.0 && pos.z + height < curSector.ceilingplane.ZAtPoint(pos.xy) + yoffset - size.y - 24.0)
 									{
 										ClearPortals();
 									}
@@ -158,14 +158,14 @@ class PortalPlayer : PlayerPawn
 
 								if (current.flags & Line.ML_DONTPEGBOTTOM) // Lower unpegged
 								{
-									if (pos.z > floorz + yoffset - 24.0 && pos.z + height < floorz + yoffset + size.y + 24.0)
+									if (pos.z > curSector.floorplane.ZAtPoint(pos.xy) + yoffset - 24.0 && pos.z + height < curSector.floorplane.ZAtPoint(pos.xy) + yoffset + size.y + 24.0)
 									{
 										DamageMobj(null, null, player.health, "Death Grille");
 									}
 								}
 								else
 								{
-									if (pos.z > ceilingz + yoffset + 24.0 && pos.z + height < ceilingz + yoffset - size.y - 24.0)
+									if (pos.z > curSector.ceilingplane.ZAtPoint(pos.xy) + yoffset + 24.0 && pos.z + height < curSector.ceilingplane.ZAtPoint(pos.xy) + yoffset - size.y - 24.0)
 									{
 										DamageMobj(null, null, player.health, "Death Grille");
 									}

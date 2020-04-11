@@ -960,6 +960,16 @@ Texture GRATE2, 64, 64
 	Patch "Patches/GRATE2.png", 0, 0
 }
 
+Texture GRATETAL, 64,256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GRATE.png", 0, 0
+	Patch "Patches/GRATE.png", 0, 64
+	Patch "Patches/GRATE.png", 0, 128
+	Patch "Patches/GRATE.png", 0, 192
+}
+
 Texture PILLAR, 64, 64
 {
 	XScale 2.0

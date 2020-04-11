@@ -33,16 +33,18 @@ Class PortalFindHitPointTracer : LineTracer
 			if (Results.HitLine.flags & (Line.ML_BLOCKING | Line.ML_BLOCKEVERYTHING)) { return TRACE_Stop; }
 			if (Results.HitTexture)
 			{
-				if (Texman.GetName(Results.HitTexture) ~== "WATERLIN" || Texman.GetName(Results.HitTexture) ~== "KILLGRIL")
+				String tex = Texman.GetName(Results.HitTexture);
+
+				if (tex ~== "WATERLIN" || tex ~== "KILLGRIL")
 				{
 					return TRACE_Skip;
 				}
-				else if (Texman.GetName(Results.HitTexture) ~== "GRATE" || Texman.GetName(Results.HitTexture) ~== "CHAINLNK")
+				else if (tex.Left(5) ~== "GRATE" || tex ~== "CHAINLNK")
 				{
 					if (nogrates) { return TRACE_Stop; }
 					return TRACE_Skip;
 				}
-				else if (Texman.GetName(Results.HitTexture) ~== "EMANGRIL")
+				else if (tex ~== "EMANGRIL")
 				{
 					if (!Results.HitLine.alpha) { return TRACE_Skip; }
 
@@ -111,7 +113,7 @@ Class LaserFindHitPointTracer : LineTracer
 		{
 			String tex = Texman.GetName(Results.HitTexture);
 
-			if (tex.Left(5) ~== "GLASS" || tex.Left(4) ~== "GRATE" || tex ~== "EMANGRIL" || tex ~== "WATERLIN" || tex ~== "KILLGRIL" || tex ~== "CHAINLNK")
+			if (tex.Left(5) ~== "GLASS" || tex.Left(5) ~== "GRATE" || tex ~== "EMANGRIL" || tex ~== "WATERLIN" || tex ~== "KILLGRIL" || tex ~== "CHAINLNK")
 			{
 				return TRACE_Skip;
 			}
@@ -150,7 +152,7 @@ Class BridgeFindHitPointTracer : LineTracer
 		{
 			String tex = Texman.GetName(Results.HitTexture);
 
-			if (tex.Left(5) ~== "GLASS" || tex.Left(4) ~== "GRATE" || tex ~== "EMANGRIL" || tex ~== "WATERLIN" || tex ~== "KILLGRIL" || tex ~== "CHAINLNK")
+			if (tex.Left(5) ~== "GLASS" || tex.Left(5) ~== "GRATE" || tex ~== "EMANGRIL" || tex ~== "WATERLIN" || tex ~== "KILLGRIL" || tex ~== "CHAINLNK")
 			{
 				return TRACE_Skip;
 			}
@@ -185,7 +187,7 @@ Class CarryPointTracer : LineTracer
 		{
 			String tex = Texman.GetName(Results.HitTexture);
 
-			if (tex.Left(5) ~== "GLASS" || tex.Left(4) ~== "GRATE" || tex ~== "KILLGRIL" || tex ~== "CHAINLNK")
+			if (tex.Left(5) ~== "GLASS" || tex.Left(5) ~== "GRATE" || tex ~== "KILLGRIL" || tex ~== "CHAINLNK")
 			{
 				return TRACE_Stop;
 			}

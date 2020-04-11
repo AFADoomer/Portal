@@ -265,14 +265,14 @@ class Utilities : Actor
 
 								if (current.flags & Line.ML_DONTPEGBOTTOM) // Lower unpegged
 								{
-									if (mo.pos.z > mo.floorz + yoffset - 24.0 && mo.pos.z + mo.height < mo.floorz + yoffset + size.y + 24.0)
+									if (mo.pos.z > mo.curSector.floorplane.ZAtPoint(mo.pos.xy) + yoffset - 24.0 && mo.pos.z + mo.height < mo.curSector.floorplane.ZAtPoint(mo.pos.xy) + yoffset + size.y + 24.0)
 									{
 										Utilities.DoFizzle(mo, fizzlestate); return true; 
 									}
 								}
 								else
 								{
-									if (mo.pos.z > mo.ceilingz + yoffset + 24.0 && mo.pos.z + mo.height < mo.ceilingz + yoffset - size.y - 24.0)
+									if (mo.pos.z > mo.curSector.ceilingplane.ZAtPoint(mo.pos.xy) + yoffset + 24.0 && mo.pos.z + mo.height < mo.curSector.ceilingplane.ZAtPoint(mo.pos.xy) + yoffset - size.y - 24.0)
 									{
 										Utilities.DoFizzle(mo, fizzlestate); return true; 
 									}
