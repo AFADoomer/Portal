@@ -955,3 +955,17 @@ Material Texture "CAUTIONS"
 	normal "Materials/NormalMaps/Auto/Floor.png"
 	specular "Materials/Specular/Auto/Floor.png"
 }
+
+Material Texture "MetlWall"
+{
+	normal "Materials/NormalMaps/Auto/MetlWall.png"
+	specular "Materials/Specular/Auto/MetlWall.png"
+	specularlevel 0.5
+}
+
+Material Texture "MetlWal2"
+{
+	normal "Materials/NormalMaps/Auto/MetlWall.png"
+	specular "Materials/Specular/Auto/MetlWal2.png"
+	specularlevel 0.5
+}

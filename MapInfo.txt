@@ -192,9 +192,10 @@ DoomEdNums
 	31003 = Pivot
 	31004 = PivotWhite
 	31005 = PivotChainLink
-	32006 = ElectricalArc
 	32002 = LightSpawner
 	32003 = FloorOverlayAdjust
 	32004 = SkyViewPointStatic
 	32005 = SkyViewpointAnchor
+	32006 = ElectricalArc
+	32007 = SkyboxGrid
 }

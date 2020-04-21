@@ -2792,3 +2792,22 @@ class BigPipeBend : ActorVariant
 		Super.PostBeginPlay();
 	}
 }
+
+class SkyboxGrid : Actor
+{
+	Default
+	{
+		+NOINTERACTION
+		+MOVEWITHSECTOR
+		Height 26;
+		Radius 0;
+		RenderRadius 256.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}

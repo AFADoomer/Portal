@@ -1359,3 +1359,11 @@ Model LightningTrailBeamArc
 
 	FrameIndex MDLA A 0 0
 }
+
+Model SkyboxGrid
+{
+	Path "models/"
+	Model 0 "skybox_grid.md3"
+
+	FrameIndex UNKN A 0 0
+}

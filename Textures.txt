@@ -2150,16 +2150,6 @@ Sprite EXPLD0, 600, 600
 	Patch "Patches/Effects/ExplosionFlash.png", 0, 0 { Rotate 270 }
 }
 
-Texture SWITCH0, 32, 32
-{
-	Patch "SW3S0", 0, 0
-}
-
-Texture SWITCH1, 32, 32
-{
-	Patch "SW3S1", 0, 0
-}
-
 Texture Wall_W, 492, 492
 {
 	XScale 3.0
@@ -2372,4 +2362,18 @@ Texture CWALLS2, 384, 512
 	YScale 2.0
 	Patch "Materials/Specular/CWALL.png", 0, 0
 	Patch "Materials/Specular/CinderBlock.png", 0, 256
+}
+
+Texture METLWALL, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/MetlWall.png", 0, 0
+}
+
+Texture METLWAL2, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/MetlWal2.png", 0, 0
 }
