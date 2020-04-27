@@ -198,4 +198,8 @@ DoomEdNums
 	32005 = SkyViewpointAnchor
 	32006 = ElectricalArc
 	32007 = SkyboxGrid
+	32008 = SignTag1
+	32009 = SignTag2
+	32010 = SignTag3
+	32011 = SignTag4
 }

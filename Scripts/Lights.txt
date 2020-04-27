@@ -154,21 +154,23 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 
 	override void PostBeginPlay()
 	{
-		if (!user_lightlevel) { user_lightlevel = 5.0; }
-
 		bSpot = true;
 		SpotInnerAngle = 1;
 
 		if (!master)
 		{
-			//pitch = 90;
-			//maxradius *= 1.75;
+			if (!user_lightlevel) { user_lightlevel = 10.0; }
+
+			base = AlphaLight(Spawn("AlphaLight", pos));
+			if (base) { base.master = self; }
 		}
 		else if (master is "LightSpawner")
 		{
 			base = AlphaLight(Spawn("AlphaLight", pos));
 			if (base) { base.master = self; }
 		}
+
+		if (!user_lightlevel) { user_lightlevel = 5.0; }
 
 		Super.PostBeginPlay();
 
@@ -202,8 +204,8 @@ class AttenuatedAlphaLight : AlphaLight replaces PointLightAttenuated
 
 		if (!master && pitch == 90)
 		{
-			// Change ceiling brightness directly instead of light spawning
-			curSector.SetPlaneLight(Sector.ceiling, args[LIGHT_INTENSITY]);
+			// Change ceiling brightness directly
+//			curSector.SetPlaneLight(Sector.ceiling, args[LIGHT_INTENSITY]);
 		}
 	}
 
@@ -334,16 +336,16 @@ class LightSpawner : Actor
 		return linedef;
 	}
 
-	void DoLights(TextureID tex, double bottom = 0, double top = 0)
+	void DoLights(TextureID tex, double bottom = -0x7FFFFFFF, double top = 0x7FFFFFFF)
 	{
 		if (!tex) { return; }
-		if (!bottom) { bottom = floorz; }
-		if (!top) { top = ceilingz; }
+		if (bottom == -0x7FFFFFFF) { bottom = floorz; }
+		if (top == 0x7FFFFFFF) { top = ceilingz; }
 
 		if (bottom == top)
 		{
 			if (bottom > pos.z) { bottom = floorz; }
-			else if (top < pos.z) { top = ceilingz; }
+			else if (top < pos.z) { top = ceilingz; } 
 		}
 
 		String texname = TexMan.GetName(tex);

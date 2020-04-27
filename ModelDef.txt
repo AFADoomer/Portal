@@ -1362,8 +1362,91 @@ Model LightningTrailBeamArc
 
 Model SkyboxGrid
 {
+	USEACTORPITCH
+	USEACTORROLL
+
 	Path "models/"
 	Model 0 "skybox_grid.md3"
 
 	FrameIndex UNKN A 0 0
+}
+
+Model DebrisWall
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "plane.md3"
+
+	Scale 1.0 1.0 1.2
+
+	Path "patches/"
+	Skin 0 "gridwal1.png"
+
+	FrameIndex DEBR A 0 0
+}
+
+Model DebrisWall2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "plane.md3"
+
+	Scale 1.0 1.0 1.2
+
+	Path "patches/"
+	Skin 0 "holewals.png"
+
+	FrameIndex DEBR B 0 0
+}
+
+Model DebrisWall3
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "plane.md3"
+
+	Scale 1.0 1.0 1.2
+
+	Path "patches/"
+	Skin 0 "gridwal2.png"
+
+	FrameIndex DEBR C 0 0
+}
+
+Model DebrisWall4
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "plane.md3"
+
+	Scale 1.0 1.0 1.2
+
+	Path "patches/"
+	Skin 0 "holewalm.png"
+
+	FrameIndex DEBR D 0 0
+}
+
+Model DebrisWall5
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "plane.md3"
+
+	Scale 1.0 1.0 1.2
+
+	Path "patches/"
+	Skin 0 "holewalt.png"
+
+	FrameIndex DEBR E 0 0
 }

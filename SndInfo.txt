@@ -1,8 +1,8 @@
 $ambient 100 ambient/sludgeloop point continuous 0.25
 $ambient 101 ambient/waterloop point continuous 0.25
-$ambient 102 ambient/indoor/open1 continuous 0.0125
-$ambient 103 ambient/indoor/open2 continuous 0.0125
-$ambient 104 ambient/indoor/closed continuous 0.0125
+$ambient 102 ambient/indoor/open1 continuous 0.125
+$ambient 103 ambient/indoor/open2 continuous 0.125
+$ambient 104 ambient/indoor/closed continuous 0.125
 $ambient 105 ambient/machinery continuous 0.125
 
 menu/activate			m_next		// Activate a new menu
