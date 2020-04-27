@@ -20,7 +20,7 @@ class CubeTrigger : Actor
 		Height 1;
 		Radius 8;
 		CubeTrigger.ActivationRadius 32;
-		CubeTrigger.timeout -1;
+		CubeTrigger.timeout 5;
 	}
 
 	States
@@ -243,7 +243,7 @@ class SwitchTrigger : Actor
 				curSector.MoveFloor(16.0, curSector.floorplane.d + 1, 0, 1, false);
 			}
 
-			Level.ExecuteSpecial(special, null, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
+			Level.ExecuteSpecial(special, self, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
 
 			move = false;
 			buttonstate = max(movetimeout - 5, 5);

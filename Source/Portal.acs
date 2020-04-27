@@ -9,6 +9,8 @@ script "Startup" ENTER
 int doorstate[1024];
 int multitrigger[1024];
 int activated[1024];
+int start[1024];
+int current[1024];
 
 // The first argument is passed automatically from the trigger actors - it's basically an on/off boolean
 
@@ -17,33 +19,67 @@ Script "MoveLift" (int dir, int piston, int lift)
 	int speed = 4;
 	int i;
 
-	if (doorstate[lift] == 0)
+	if (doorstate[lift] != 0)
 	{
-		if (dir > 0) { doorstate[lift] = 1; }
-		else { doorstate[lift] = -1; }
+		if ((dir > 0 && doorstate[lift] == 1) || (dir <= 0 && doorstate[lift] == -1)) { Terminate; }
 
-		if (!dir)
-		{
-			Floor_LowerByValue(piston, speed, 64);
-			Generic_Floor(lift, speed, 64, 0, 16);
-			Generic_Ceiling(lift, speed, 64, 0, 16);
-		}
-		else
-		{
-			Generic_Ceiling(lift, speed, 64, 0, 16 | 8);
-			Generic_Floor(lift, speed, 64, 0, 16 | 8);
-			Floor_RaiseByValue(piston, speed, 64);
-		}
-
-		Delay(5 * 35);
-
-		doorstate[lift] = 0;
-	}
-	else
-	{
 		While(doorstate[lift] != 0) { Delay(1); }
 		Restart;
 	}
+
+	if (dir > 0) { doorstate[lift] = 1; }
+	else { doorstate[lift] = -1; }
+
+	if (!start[lift]) { start[lift] = GetSectorCeilingZ(lift, 0, 0); }
+
+	PlaySound(lift, "platform/start", CHAN_7, 1.0);
+	PlaySound(lift, "platform/loop", CHAN_6, 1.0, true);
+
+	if (dir)
+	{
+		While (current[lift] < 64.0)
+		{
+			Generic_Ceiling(lift, speed, speed, 0, 16 | 8);
+			Generic_Floor(lift, speed, speed, 0, 16 | 8);
+			Floor_RaiseByValue(piston, speed, speed);
+
+			current[lift] = GetSectorCeilingZ(lift, 0, 0) - start[lift];
+
+			Delay(1);
+
+			if (IsTrigger(ActivatorTID()) && GetUserVariable(ActivatorTID(), "active") == !dir) { break; }
+		}
+
+		StopSound(lift, CHAN_6);
+		PlaySound(lift, "platform/stop", 1.0, CHAN_7);
+	}
+	else
+	{
+		While (current[lift] > 0.0)
+		{
+			Floor_LowerByValue(piston, speed, speed);
+			Generic_Floor(lift, speed, speed, 0, 16);
+			Generic_Ceiling(lift, speed, speed, 0, 16);
+
+			current[lift] = GetSectorCeilingZ(lift, 0, 0) - start[lift];
+
+			Delay(1);
+
+			if (IsTrigger(ActivatorTID()) && GetUserVariable(ActivatorTID(), "active") == !dir) { break; }
+		}
+	}
+
+	StopSound(lift, CHAN_6);
+	PlaySound(lift, "platform/stop", CHAN_7, 1.0);
+
+	for (i = 0; i < 5 * 35; i++)
+	{
+		Delay(1);
+
+		if (GetUserVariable(ActivatorTID(), "active") == !dir) { break; }
+	}
+
+	doorstate[lift] = 0;
 }
 
 Script "RaiseLiftOnce" (int dir, int piston, int lift)
@@ -92,12 +128,15 @@ Script "TriggerDoor" (int close, int tag, int threshold)
 	}
 }
 
-Script "TriggerGrille" (int OnOff, int tag)
+Script "TriggerGrille" (int OnOff, int tag, int reverse)
 {
 	int i;
+	bool halt;
 
 	if (activated[tag] != 0)
 	{
+		if ((OnOff > 0 && activated[tag] == 1) || (OnOff <= 0 && activated[tag] == -1)) { Terminate; }
+
 		While(activated[tag] != 0) { Delay(1); }
 		Restart;
 	}
@@ -107,30 +146,63 @@ Script "TriggerGrille" (int OnOff, int tag)
 
 	if (OnOff)
 	{
+		if (reverse) { OnOff = !OnOff; }
+
 		SoundSequenceOnActor(tag, "FizzlerUp");
 
-		for (i = 0; i < 255; i += 7)
+		for (i = current[tag]; i <= 255; i += 7)
 		{
 			TranslucentLine(tag, i, 0);
+			current[tag] = i;
+
 			Delay(1);
+
+			if (IsTrigger(ActivatorTID()) && GetUserVariable(ActivatorTID(), "active") == OnOff) { halt = true; break; }
 		}
 
-		TranslucentLine(tag, 255, 0);
+		if (!halt)
+		{
+			TranslucentLine(tag, 255, 0);
+			current[tag] = 255;
+		}
 	}
 	else
 	{
+		if (reverse) { OnOff = !OnOff; }
+
 		SoundSequenceOnActor(tag, "FizzlerDown");
 
-		for (i = 255; i > 0; i -= 7)
+		for (i = current[tag]; i >= 0; i -= 7)
 		{
 			TranslucentLine(tag, i, 0);
+			current[tag] = i;
+
 			Delay(1);
+
+			if (IsTrigger(ActivatorTID()) && GetUserVariable(ActivatorTID(), "active") == OnOff) { halt = true; break; }
 		}
 
-		TranslucentLine(tag, 0, 0);
+		if (!halt)
+		{
+			TranslucentLine(tag, 0, 0);
+			current[tag] = 0;
+		}
 	}
 
 	activated[tag] = 0;
+}
+
+Function bool IsTrigger(int tag)
+{
+	if (
+		CheckActorClass(tag, "CubeTrigger") ||
+		CheckActorClass(tag, "SwitchTrigger") ||
+		CheckActorClass(tag, "PelletTrigger") ||
+		CheckActorClass(tag, "LaserTrigger") ||
+		CheckActorClass(tag, "WallSwitch")
+	) { return true; }
+
+	return false;
 }
 
 Script "TriggerBridge" (int OnOff, int tag)
@@ -139,6 +211,8 @@ Script "TriggerBridge" (int OnOff, int tag)
 
 	if (activated[tag] != 0)
 	{
+		if ((OnOff > 0 && activated[tag] == 1) || (OnOff <= 0 && activated[tag] == -1)) { Terminate; }
+
 		While(activated[tag] != 0) { Delay(1); }
 		Restart;
 	}
@@ -148,12 +222,12 @@ Script "TriggerBridge" (int OnOff, int tag)
 
 	if (OnOff)
 	{
-		SoundSequenceOnActor(tag, "FizzlerUp");
+		SoundSequenceOnActor(tag, "BridgeUp");
 		SetActorState(tag, "Active");
 	}
 	else
 	{
-		SoundSequenceOnActor(tag, "FizzlerDown");
+		SoundSequenceOnActor(tag, "BridgeDown");
 		SetActorState(tag, "Inactive");
 	}
 
@@ -162,48 +236,23 @@ Script "TriggerBridge" (int OnOff, int tag)
 
 Script "TriggerLift" (int piston, int lift, int wait)
 {
-	int speed = 4;
-	int i;
 	int dir = -1;
 
-	doorstate[piston] = TRUE;
+	doorstate[piston] = true;
 
 	While(doorstate[piston])
 	{
-		if (doorstate[lift] == 0)
-		{
-			if (dir > 0) { doorstate[lift] = 1; }
-			else { doorstate[lift] = -1; }
-
-			if (dir <= 0)
-			{
-				Floor_LowerByValue(piston, speed, 64);
-				Generic_Floor(lift, speed, 64, 0, 16);
-				Generic_Ceiling(lift, speed, 64, 0, 16);
-			}
-			else
-			{
-				Generic_Ceiling(lift, speed, 64, 0, 16 | 8);
-				Generic_Floor(lift, speed, 64, 0, 16 | 8);
-				Floor_RaiseByValue(piston, speed, 64);
-			}
-
-			Delay(5 * 35);
-
-			doorstate[lift] = 0;
-		}
-		else
-		{
-			While(doorstate[lift] != 0) { Delay(1); }
-			Restart;
-		}
+		ACS_NamedExecute("MoveLift", 0, dir, piston, lift);
 
 		if (wait)
 		{
 			Delay(wait);
 			dir *= -1;
 		}
-		else { Terminate; }
+		else
+		{
+			doorstate[piston] = false;
+		}
 	}
 }
 
