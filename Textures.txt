@@ -2014,6 +2014,20 @@ Texture WALLGR, 512, 512
 	Patch "Patches/WALLGR.png", 0, 0
 }
 
+Texture WALLGR2, 512, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALLGR2.png", 0, 0
+}
+
+Texture WALLGR3, 512, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALLGR3.png", 0, 0
+}
+
 Texture GIRDER, 128, 256
 {
 	XScale 2.0

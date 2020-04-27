@@ -75,7 +75,7 @@ class LadderBase : Actor
 	{
 		Super.Tick();
 
-		if (passive) { return; }
+		if (passive || bStandStill) { return; }
 
 		BlockThingsIterator it = BlockThingsIterator.Create(self, climbradius + 16);
 

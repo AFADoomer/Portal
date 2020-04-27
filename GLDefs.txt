@@ -634,6 +634,18 @@ Material Texture "WALLGR"
 	texture displacement "materials/displacement/WALLGR.png"
 }
 
+Material Texture "WALLGR2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALLGR.png"
+}
+
+Material Texture "WALLGR3"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALLGR.png"
+}
+
 Material Texture "GIRDER"
 {
 	shader "shaders/displacement.fp"
