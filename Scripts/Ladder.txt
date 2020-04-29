@@ -37,14 +37,21 @@ class LadderBase : Actor
 
 	override void PostBeginPlay()
 	{
-		if (!climbradius) { climbradius = Radius; }
+		if (!bStandStill)
+		{
+			if (!climbradius) { climbradius = Radius; }
 
-		A_SetSize(radius * scale.x, height * scale.y);
-		climbradius *= scale.x;
+			A_SetSize(radius * scale.x, height * scale.y);
+			climbradius *= scale.x;
 
-		Climbers.Clear();
+			Climbers.Clear();
 
-		DoStackCheck();
+			DoStackCheck();
+		}
+		else
+		{
+			A_SetSize(Radius, height / 3); // Minimal height if passive scenery, but enough to walk on, still
+		}
 
 		Super.PostBeginPlay();
 	}

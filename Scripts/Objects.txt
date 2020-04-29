@@ -975,7 +975,7 @@ class Grid : Actor
 		+NOGRAVITY
 		+DONTTHRUST
 		Height 1;
-		Radius 64;
+		Radius 40;
 		Species "Block";
 	}
 
@@ -989,6 +989,12 @@ class Grid : Actor
 	override void PostBeginPlay()
 	{
 		bSolid = !bStandStill;
+
+		if (!bSolid)
+		{
+			bNoInteraction = true;
+			A_SetSize(0, 0);
+		}
 
 		Super.PostBeginPlay();
 	}
