@@ -196,15 +196,17 @@ class PortalGun : Weapon
 			}
 			else
 			{
-				invoker.PortalSetup(PortalSpot(portal), 0);
-
 				ThinkerIterator it = ThinkerIterator.Create("StaticPortalSpot", Thinker.STAT_USER + 1);
 				PortalSpot mo;
 
 				if (mo = PortalSpot(it.Next(true)))
 				{
+					PortalSpot(portal).pair = mo;
+
 					invoker.PortalSetup(mo, 1, false);
 				}
+
+				invoker.PortalSetup(PortalSpot(portal), 0);
 			}
 
 			if (portal.waterlevel) { PortalSpot(portal).pair = portal; }

@@ -521,10 +521,12 @@ class BridgeSpot : Actor
 		double radiusoffset = traceresults.HitActor ? traceresults.HitActor.radius : 0;
 
 		Actor mo;
-		Vector3 position = pos;
+		Vector3 position;
 
 		for (int i = steps; i >= 0; i--)
 		{
+			position = pos + traceresults.HitVector * sparsity * i;
+
 			mo = Spawn(spawnclass, position, ALLOW_REPLACE);
 			if (mo)
 			{
@@ -534,8 +536,6 @@ class BridgeSpot : Actor
 
 				if (mo is "BridgeBeam") { BridgeBeam(mo).delay = level.time + i; }
 			}
-
-			position = pos + traceresults.HitVector * sparsity * i;
 		}
 
 		// Last one is decorative only and embedded in wall so the bridge always looks complete

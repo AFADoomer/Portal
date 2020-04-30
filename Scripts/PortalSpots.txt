@@ -195,13 +195,14 @@ class PortalSpot : Actor
 						offset = RotateVector3(offset, -angle, pitch, -roll);
 						offset = RotateVector3(offset, 180);
 						offset = RotateVector3(offset, pair.angle, -pair.pitch, pair.roll);
-						offset.z *= -1;
 
 						DoMove(Activators[i].Alternative, offset, false);
 
 						Activators[i].Alternative.angle = Activators[i].angle + (pair.angle - angle) + 180;
 						Activators[i].Alternative.pitch = Activators[i].pitch + (pair.pitch - pitch);
 						Activators[i].Alternative.roll = Activators[i].roll + pair.roll - roll;
+
+						if (pair.pitch == 90 || pair.pitch == -90) { Activators[i].Alternative.pitch += 180; }
 					}
 				}
 				else if (Activators[i] && !Activators[i].bNoInteraction && !Activators[i].bNoClip)
@@ -441,7 +442,11 @@ class PortalSpot : Actor
 				{
 					if (gun.portalA) { PortalSpot(gun.portalA).DoDestroy(); }
 					gun.portalA = self;
-					PortalSpot(gun.portalA).pair = gun.portalB;
+
+					if (!PortalSpot(gun.portalA).pair || !(PortalSpot(gun.portalA).pair is "StaticPortalSpot"))
+					{
+						PortalSpot(gun.portalA).pair = gun.portalB;
+					}
 
 					if (gun.portalB)
 					{
@@ -782,6 +787,18 @@ class StaticPortalSpot : PortalSpot
 
 		frame = 1;
 	}
+
+	void PortalSetup(PortalSpot portal, int frame, bool destroyold = true)
+	{
+		portal.frame = frame;
+
+		portal.camtex = "PORTAL0" .. (frame ? "A" : "B");
+
+		SpriteID spr = GetSpriteIndex("POR0");
+		if (spr) { portal.sprite = spr; }
+
+		if (portal.pair) { PortalSpot(portal.pair).pair = portal; }
+	}
 }
 
 class StaticPortalSpotBlue : StaticPortalSpot
@@ -812,18 +829,6 @@ class StaticPortalSpotBlue : StaticPortalSpot
 			PortalSetup(mo, 1, false);
 			PortalSetup(self, 0, false);
 		}
-	}
-
-	void PortalSetup(PortalSpot portal, int frame, bool destroyold = true)
-	{
-		portal.frame = frame;
-
-		portal.camtex = "PORTAL0" .. (frame ? "A" : "B");
-
-		SpriteID spr = GetSpriteIndex("POR0");
-		if (spr) { portal.sprite = spr; }
-
-		if (portal.pair) { PortalSpot(portal.pair).pair = portal; }
 	}
 }
 

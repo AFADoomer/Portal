@@ -160,14 +160,14 @@ class PortalPlayer : PlayerPawn
 								{
 									if (pos.z > curSector.floorplane.ZAtPoint(pos.xy) + yoffset - 24.0 && pos.z + height < curSector.floorplane.ZAtPoint(pos.xy) + yoffset + size.y + 24.0)
 									{
-										DamageMobj(null, null, player.health, "Death Grille");
+										DamageMobj(null, null, player.health + 25, "Death Grille");
 									}
 								}
 								else
 								{
 									if (pos.z > curSector.ceilingplane.ZAtPoint(pos.xy) + yoffset + 24.0 && pos.z + height < curSector.ceilingplane.ZAtPoint(pos.xy) + yoffset - size.y - 24.0)
 									{
-										DamageMobj(null, null, player.health, "Death Grille");
+										DamageMobj(null, null, player.health + 25, "Death Grille");
 									}
 								}
 							}
