@@ -119,7 +119,7 @@ Model StaticPortalSpot
 	Skin 0 "PORTAL0B" 
 	FrameIndex POR0 B 0 0
 
-	Skin 0 "PORTAL1A" // Throws an error for unsupported format in GZDB, but works in the game...
+	Skin 0 "PORTAL1A"
 	FrameIndex POR1 A 0 0
 
 	Skin 0 "PORTAL1B" 
@@ -1328,10 +1328,10 @@ Model BigPipeBend
 	AngleOffset 90.0
 	Scale 1.0 1.0 1.2
 
-	Skin 0 "BigPipe.png"
+	SurfaceSkin 0 0 "BigPipe.png"
 	FrameIndex UNKN A 0 0
 
-	Skin 0 "BigPipe2.png"
+	SurfaceSkin 0 0 "BigPipe2.png"
 	FrameIndex UNKN B 0 0
 }
 

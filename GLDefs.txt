@@ -662,6 +662,20 @@ Material Texture "GIRDER2"
 	specularlevel 0.25
 }
 
+Material Texture "GIRDER3"
+{
+	normal "Materials/NormalMaps/Auto/Girder3.png"
+	specular "Materials/Specular/Auto/Girder3.png"
+	specularlevel 0.25
+}
+
+Material Texture "patches/girder3.png"
+{
+	normal "Materials/NormalMaps/Auto/Girder3.png"
+	specular "Materials/Specular/Auto/Girder3.png"
+	specularlevel 0.25
+}
+
 Material Texture "FLOORMET"
 {
 	shader "shaders/displacement.fp"
@@ -880,8 +894,6 @@ Material Texture "Models/Switch.png"
 
 Material Texture "Models/BigPipe.png"
 {
-	shader "shaders/displacement.fp"
-	texture displacement "materials/displacement/BigPipe.png"
 	normal "Materials/NormalMaps/BigPipe.png"
 	specular "Materials/Specular/BigPipe.png"
 	specularlevel 0.35
@@ -889,8 +901,6 @@ Material Texture "Models/BigPipe.png"
 
 Material Texture "Models/BigPipe2.png"
 {
-//	shader "shaders/displacement.fp"
-//	texture displacement "materials/displacement/BigPipe.png"
 	normal "Materials/NormalMaps/BigPipe.png"
 	specular "Materials/Specular/BigPipe.png"
 	specularlevel 0.35
