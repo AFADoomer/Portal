@@ -218,72 +218,92 @@ Material Texture "COMPTAL1"
 {
 	normal "Materials/NormalMaps/Auto/WALL2x2.png"
 	specular "Materials/Specular/Auto/WALL2x2.png"
+	specularlevel 0.1
 }
 
 Material Texture "COMPTAL2"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "COMPTAL3"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "COMPTAL4"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "COMPTAL5"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "COMPTAL6"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "COMPTAL7"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "COMPTAL8"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL1x1S"
 {
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1S.png"
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	specularlevel 1.0
 }
 
 Material Texture "WALL2x1S"
 {
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x1S.png"
 	normal "Materials/NormalMaps/Auto/WALL2x1.png"
 	specular "Materials/Specular/Auto/WALL2x1.png"
+	specularlevel 1.0
 }
 
 Material Texture "WALL2x2S"
 {
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL2x2S.png"
 	normal "Materials/NormalMaps/Auto/WALL2x2.png"
 	specular "Materials/Specular/Auto/WALL2x2.png"
+	specularlevel 1.0
 }
 
 Material Texture "WALL4x4S"
 {
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL4x4S.png"
 	normal "Materials/NormalMaps/Auto/WALL4x4.png"
 	specular "Materials/Specular/Auto/WALL4x4.png"
+	specularlevel 1.0
 }
 
 Material Texture "WALLTX1"
@@ -292,6 +312,7 @@ Material Texture "WALLTX1"
 	texture displacement "WALLTX1D"
 	normal "WALLTX1N"
 	specular "WALLTX1S"
+	specularlevel 0.1
 }
 
 Material Texture "WALLTX2"
@@ -300,6 +321,7 @@ Material Texture "WALLTX2"
 	texture displacement "WALLTX2D"
 	normal "WALLTX2N"
 	specular "WALLTX2S"
+	specularlevel 0.1
 }
 
 Material Texture "PORT2x1"
@@ -336,96 +358,93 @@ Material Texture "WALL1x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL1x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL1x1D"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL1x1D.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL2x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x1.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL2x1D"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x1D.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL2x2"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x2.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL2x2D"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x2D.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL4x4"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL4x4.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALL4x4D"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL4x4D.png"
-}
-
-Material Texture "WALL1x1S"
-{
-	shader "shaders/displacement.fp"
-	texture displacement "materials/displacement/WALL1x1S.png"
-}
-
-Material Texture "WALL2x1S"
-{
-	shader "shaders/displacement.fp"
-	texture displacement "materials/displacement/WALL2x1S.png"
-}
-
-Material Texture "WALL2x2S"
-{
-	shader "shaders/displacement.fp"
-	texture displacement "materials/displacement/WALL2x2S.png"
-}
-
-Material Texture "WALL4x4S"
-{
-	shader "shaders/displacement.fp"
-	texture displacement "materials/displacement/WALL4x4S.png"
+	specularlevel 0.1
 }
 
 Material Texture "WALF1x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "WALF1x1D"
+	normal "WALF1x1N"
+	specular "WALF1x1S"
+	specularlevel 0.1
 }
 
 Material Texture "WALF2x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "WALF2x1D"
+	normal "WALF2x1N"
+	specular "WALF2x1S"
+	specularlevel 0.1
 }
 
 Material Texture "WALF2x2"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "WALF2x2D"
+	normal "WALF2x2N"
+	specular "WALF2x2S"
+	specularlevel 0.1
 }
 
 Material Texture "WALF4x4"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "WALF4x4D"
+	normal "WALF4x4N"
+	specular "WALF4x4S"
+
+	specularlevel 0.1
 }
 
 Material Texture "PORTWALL"

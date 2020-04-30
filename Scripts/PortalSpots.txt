@@ -195,6 +195,7 @@ class PortalSpot : Actor
 						offset = RotateVector3(offset, -angle, pitch, -roll);
 						offset = RotateVector3(offset, 180);
 						offset = RotateVector3(offset, pair.angle, -pair.pitch, pair.roll);
+						offset.z *= -1; // Fix offset for light bridges?
 
 						DoMove(Activators[i].Alternative, offset, false);
 

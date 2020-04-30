@@ -555,6 +555,118 @@ Texture WALF4x4D, 256, 640
 	Patch "Materials/Displacement/WALL4x4.png", 128, 512
 }
 
+Texture WALF1x1N, 256, 640
+{
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 384
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 0, 512
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/WALL1x1.png", 128, 512
+}
+
+Texture WALF2x1N, 256, 640
+{
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 0, 384
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 0, 512
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/WALL2x1.png", 128, 512
+}
+
+Texture WALF2x2N, 256, 640
+{
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 384
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 0, 512
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/WALL2x2.png", 128, 512
+}
+
+Texture WALF4x4N, 256, 640
+{
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 384
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 0, 512
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/WALL4x4.png", 128, 512
+}
+
+Texture WALF1x1S, 256, 640
+{
+	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 0
+	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 128
+	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 256
+	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 384
+	Patch "Materials/Specular/Auto/WALL1x1.png", 0, 512
+	Patch "Materials/Specular/Auto/WALL1x1.png", 128, 0
+	Patch "Materials/Specular/Auto/WALL1x1.png", 128, 128
+	Patch "Materials/Specular/Auto/WALL1x1.png", 128, 256
+	Patch "Materials/Specular/Auto/WALL1x1.png", 128, 384
+	Patch "Materials/Specular/Auto/WALL1x1.png", 128, 512
+}
+
+Texture WALF2x1S, 256, 640
+{
+	Patch "Materials/Specular/Auto/WALL2x1.png", 0, 0
+	Patch "Materials/Specular/Auto/WALL2x1.png", 0, 128
+	Patch "Materials/Specular/Auto/WALL2x1.png", 0, 256
+	Patch "Materials/Specular/Auto/WALL2x1.png", 0, 384
+	Patch "Materials/Specular/Auto/WALL2x1.png", 0, 512
+	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 0
+	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 128
+	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 256
+	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 384
+	Patch "Materials/Specular/Auto/WALL2x1.png", 128, 512
+}
+
+Texture WALF2x2S, 256, 640
+{
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 0
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 128
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 256
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 384
+	Patch "Materials/Specular/Auto/WALL2x2.png", 0, 512
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 0
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 128
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 256
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 384
+	Patch "Materials/Specular/Auto/WALL2x2.png", 128, 512
+}
+
+Texture WALF4x4S, 256, 640
+{
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 0
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 128
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 256
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 384
+	Patch "Materials/Specular/Auto/WALL4x4.png", 0, 512
+	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 0
+	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 128
+	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 256
+	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 384
+	Patch "Materials/Specular/Auto/WALL4x4.png", 128, 512
+}
+
 Texture WALF1x1, 512, 640
 {
 	XScale 2.0
