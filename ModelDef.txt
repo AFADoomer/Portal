@@ -1450,3 +1450,174 @@ Model DebrisWall5
 
 	FrameIndex DEBR E 0 0
 }
+
+Model SupportArm
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "arm.md3"
+
+	Scale 1.1 1.1 1.1
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SupportArm2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "arm2.md3"
+
+	Scale 1.1 1.1 1.1
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SupportArmGroup
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "armg.md3"
+
+	Scale 1.1 1.1 1.1
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegment
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentOpenSide
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway4.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentOpenSide2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway2.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentOpenSides
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway5.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentOpenSides2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway3.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentEnd
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway7.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentOpenEnd
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway6.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentCorner
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway8.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentTee
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway9.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WalkwaySegmentIntersection
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "walkway10.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallPanel1
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallpan1.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallPanel2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallpan2.md3"
+
+	FrameIndex UNKN A 0 0
+}

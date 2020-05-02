@@ -49,9 +49,6 @@ Script "MoveLift" (int dir, int piston, int lift)
 
 			if (IsTrigger(ActivatorTID()) && GetUserVariable(ActivatorTID(), "active") == !dir) { break; }
 		}
-
-		StopSound(lift, CHAN_6);
-		PlaySound(lift, "platform/stop", 1.0, CHAN_7);
 	}
 	else
 	{
@@ -72,6 +69,7 @@ Script "MoveLift" (int dir, int piston, int lift)
 	StopSound(lift, CHAN_6);
 	PlaySound(lift, "platform/stop", CHAN_7, 1.0);
 
+	// Stop for at least 5 seconds, unless deactivated
 	for (i = 0; i < 5 * 35; i++)
 	{
 		Delay(1);
@@ -84,9 +82,9 @@ Script "MoveLift" (int dir, int piston, int lift)
 
 Script "RaiseLiftOnce" (int dir, int piston, int lift)
 {
-	ACS_NamedExecute("MoveLift", 0, 1, piston, lift);
-	Delay(350);
-	ACS_NamedExecute("MoveLift", 0, 0, piston, lift);
+	ACS_NamedExecuteAlways("MoveLift", 0, 1, piston, lift);
+	Delay(5 * 35);
+	ACS_NamedExecuteAlways("MoveLift", 0, 0, piston, lift);
 }
 
 Script "OpenDoor" (int close, int tag)
@@ -196,7 +194,6 @@ Function bool IsTrigger(int tag)
 {
 	if (
 		CheckActorClass(tag, "CubeTrigger") ||
-		CheckActorClass(tag, "SwitchTrigger") ||
 		CheckActorClass(tag, "PelletTrigger") ||
 		CheckActorClass(tag, "LaserTrigger") ||
 		CheckActorClass(tag, "WallSwitch")

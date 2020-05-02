@@ -847,6 +847,16 @@ class PortalPlayer : PlayerPawn
 						return "footsteps/ladder";
 					case 'OilBarrel':
 					case 'Stairway':
+					case 'WalkwaySegment':
+					case 'WalkwaySegmentOpenSide':
+					case 'WalkwaySegmentOpenSide2':
+					case 'WalkwaySegmentOpenSides':
+					case 'WalkwaySegmentOpenSides2':
+					case 'WalkwaySegmentEnd':
+					case 'WalkwaySegmentOpenEnd':
+					case 'WalkwaySegmentCorner':
+					case 'WalkwaySegmentTee':
+					case 'WalkwaySegmentIntersection':
 						return "footsteps/grate";
 					default:
 						return "footsteps/default";
@@ -875,6 +885,7 @@ class PortalPlayer : PlayerPawn
 			case 'LITBW1x1':
 			case 'LITBW2x1':
 			case 'FLOOR':		
+			case 'FLOORCON':
 				return "footsteps/blacktile";
 				break;
 			case 'PORT1x1':

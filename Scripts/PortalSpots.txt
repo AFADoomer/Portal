@@ -9,9 +9,11 @@ class PortalSpot : Actor
 	bool open, forcelocation;
 	double spawnfloor, spawnceiling, slopeangle, spawnangle, movedist, lineangle;
 	PortalFindHitPointTracer hittracer;
+	CarryPointTracer blocktracer;
 	Line linedef;
 	Portal_Quaternion inportal, outportal;
 	int offset;
+	bool blocked, noplayers;
 
 	Default
 	{
@@ -63,6 +65,7 @@ class PortalSpot : Actor
 	override void PostBeginPlay()
 	{
 		hittracer = new("PortalFindHitPointTracer");
+		blocktracer = new("CarryPointTracer");
 
 		movedist = 13.0;
 
@@ -93,6 +96,15 @@ class PortalSpot : Actor
 		spawnangle = angle;
 
 		CheckSpawn();
+
+		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
+		blocktracer.Trace(pos + (0, 0,height / 2), CurSector, tracedir, 16.0, 0 );
+
+		if (blocktracer.Results.HitType)
+		{
+			blocked = true;
+			noplayers = true;
+		}
 
 		Super.PostBeginPlay();
 	}
@@ -252,6 +264,9 @@ class PortalSpot : Actor
 					}
 				}
 			}
+
+			if (PortalSpot(pair) && PortalSpot(pair).blocked) { noplayers = true; }
+			else if (!blocked) { noplayers = false; }
 		}
 		else
 		{
@@ -280,6 +295,8 @@ class PortalSpot : Actor
 
 	override void Touch(Actor toucher)
 	{
+		if (noplayers) { return; }
+
 		if (Activators.Find(toucher) == Activators.Size()) { Activators.Push(toucher); }
 	}
 
@@ -705,6 +722,7 @@ class PortalSpot : Actor
 				Activators.Find(mo) == Activators.Size()
 			)
 			{
+				if (noplayers && !(mo is "LaserHitMarker") && noplayers) { continue; }
 /*
 				if (
 					!(mo is "Cube") ||

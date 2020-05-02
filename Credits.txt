@@ -5,6 +5,7 @@ I had honestly forgotten about CutmanMike's ZPortal mod when I started this as a
 All sounds are from Portal 2 by Valve Software.
 
 High-resolution COMPTALL texture used as a base for a few textures is from the Doom Neural Upscale - again, haven't asked about using it - may end up just redrawing things myself. (https://www.doomworld.com/forum/topic/99021-doom-neural-upscale-2x-v-0-95minorspritefixsmoothweapons/)
+Brightmap for the same texture from https://forum.zdoom.org/viewtopic.php?f=46&t=64299
 
 Water/Slime texture derived from one used in Blade of Agony, since that's what my water shader was originally written for - No idea where they got it from right now.
 

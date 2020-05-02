@@ -202,4 +202,21 @@ DoomEdNums
 	32009 = SignTag2
 	32010 = SignTag3
 	32011 = SignTag4
+	32012 = SupportArm
+	32013 = SupportArm2
+	32014 = SupportArmGroup
+	32015 = SignCrusher
+	32016 = SignCatapult
+	32017 = WalkwaySegment
+	32018 = WalkwaySegmentOpenSide
+	32019 = WalkwaySegmentOpenSides
+	32020 = WalkwaySegmentEnd
+	32021 = WalkwaySegmentOpenEnd
+	32022 = WalkwaySegmentOpenSide2
+	32023 = WalkwaySegmentOpenSides2
+	32024 = WalkwaySegmentCorner
+	32025 = WalkwaySegmentTee
+	32026 = WalkwaySegmentIntersection
+	32027 = WallPanel1
+	32028 = WallPanel2
 }

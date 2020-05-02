@@ -129,6 +129,13 @@ Texture FLOOR, 128, 128
 	Patch "Patches/FLOOR.png", 0, 0
 }
 
+Texture FLOORCON, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/FLOORCON.png", 0, 0
+}
+
 Texture CEILING, 128, 128
 {
 	XScale 2.0
@@ -1335,6 +1342,24 @@ Sprite "SIGN]0", 128, 128
 	Patch "Patches/Signs/UACW.png", 0, 0
 }
 
+Sprite "SIGOA0", 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Crusher.png", 0, 0 {Style Overlay}
+}
+
+Sprite "SIGOB0", 128, 128
+{
+	XScale 8.0
+	YScale 8.0
+	Offset 64, 64
+	Patch "Patches/Signs/Back.png", 0, 0
+	Patch "Patches/Signs/Catapult.png", 0, 0 {Style Overlay}
+}
+
 Sprite "STAGA0", 128, 128
 {
 	XScale 8.0
@@ -2104,6 +2129,20 @@ Texture COMPTAL7, 128, 128
 	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
+Texture COMPT7B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/comptall.png", -256, -128
+}
+
+Texture COMPT8B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/comptall.png", -384, -128
+}
+
 Texture COMPTAL8, 128, 128
 {
 	XScale 2.0
@@ -2173,6 +2212,13 @@ Texture GRIDWAL2, 256, 256
 	XScale 4.0
 	YScale 4.0
 	Patch "Patches/GridWal2.png", 0, 0
+}
+
+Texture GRIDWAL3, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GridWal3.png", 0, 0
 }
 
 Sprite DEBRC0, 256, 256

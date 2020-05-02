@@ -139,6 +139,8 @@ Material Texture "Models/PortalGun.png"
 {
 	normal "Materials/NormalMaps/PortalGun.png"
 	specular "Materials/Specular/PortalGun.png"
+	brightmap "Materials/Brightmaps/PortalGun.png"
+	specularlevel 0.1
 }
 
 Material Texture "Models/glass2.png"
@@ -260,6 +262,7 @@ Material Texture "COMPTAL7"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	brightmap "COMPT7B"
 	specularlevel 0.1
 }
 
@@ -267,6 +270,7 @@ Material Texture "COMPTAL8"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	brightmap "COMPT8B"
 	specularlevel 0.1
 }
 
@@ -568,6 +572,24 @@ Material Texture "GRAYDIR2"
 	specularlevel 0.25
 }
 
+Material Texture "patches/graydir2.png"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/WALL1x1.png"
+	normal "Materials/NormalMaps/Auto/Floor.png"
+	specular "Materials/Specular/Barrel.png"
+	specularlevel 0.25
+}
+
+Material Texture "FLOORCON"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/Wall2x2.png"
+	normal "Materials/NormalMaps/Auto/WallCon.png"
+	specular "Materials/Specular/Auto/WallCon.png"
+	specularlevel 0.1
+}
+
 Material Texture "DUCT"
 {
 	normal "Materials/NormalMaps/Duct.png"
@@ -709,6 +731,12 @@ Material Texture "GRIDWAL1"
 }
 
 Material Texture "GRIDWAL2"
+{
+	normal "Materials/NormalMaps/GridWall.png"
+	specular "Materials/Specular/GridWall.png"
+}
+
+Material Texture "GRIDWAL3"
 {
 	normal "Materials/NormalMaps/GridWall.png"
 	specular "Materials/Specular/GridWall.png"

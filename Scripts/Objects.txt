@@ -967,6 +967,27 @@ class SignTag4 : SignBase
 	States { Spawn: STAG D -1; Stop; }
 }
 
+class SignCrusher : SignBase
+{
+	Default
+	{
+		//$Title Sign - Hazard (Crusher)
+	}
+
+	States { Spawn: SIGO A -1; Stop; }
+}
+
+
+class SignCatapult : SignBase
+{
+	Default
+	{
+		//$Title Sign - Catapult
+	}
+
+	States { Spawn: SIGO B -1; Stop; }
+}
+
 class Grid : Actor
 {
 	Default
@@ -2555,14 +2576,14 @@ class Stairway : Actor
 		double f = 2.5 / 1.5;
 
 		// Frame the railings and supports
-		A_SpawnItemEx ("BlockBase", 0.0, 26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 0.0, -26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -15.0, 26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -15.0, -26.0, 34.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -40.0, 26.0, 8.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -40.0, -26.0, 8.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -65.0, 26.0, -23.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -65.0, -26.0, -23.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, -26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -15.0, 26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -15.0, -26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -40.0, 26.0, -16.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -40.0, -26.0, -16.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -65.0, 26.0, -47.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -65.0, -26.0, -47.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx ("BlockBase", -90.0, 26.0, -48.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx ("BlockBase", -90.0, -26.0, -48.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
 
@@ -2884,5 +2905,340 @@ class SkyboxGrid : Actor
 		Spawn:
 			UNKN A -1;
 			Stop;
+	}
+}
+
+class SupportArm : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Support Arm (Platform)
+		+NOINTERACTION
+		+MOVEWITHSECTOR
+		Height 0;
+		Radius 0;
+		RenderRadius 256.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class SupportArm2 : SupportArm
+{
+	Default
+	{
+		//$Title Support Arm (Panel Back)
+	}
+}
+
+class SupportArmGroup : SupportArm
+{
+	Default
+	{
+		//$Title Support Arm (Panel Back, 2x3 group)
+	}
+}
+
+class WalkwaySegment : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Walkway
+		+SOLID
+		+NOGRAVITY
+		+SHOOTABLE
+		+NOBLOOD
+		+INVULNERABLE
+		+NODAMAGE
+		+DONTTHRUST
+		+NOTAUTOAIMED
+		Height 1;
+		Radius 28;
+		RenderRadius 256.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (bStandStill)
+		{
+			bSolid = false;
+			bNoInteraction = true;
+		}
+		else { SpawnBlocks(); }
+
+		Super.PostBeginPlay();
+	}
+
+	virtual void SpawnBlocks()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", -24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 12.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentOpenSide : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway (Open on one side)
+	}
+
+	override void SpawnBlocks()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", -24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentOpenSide2 : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway (Open on one side - no rail)
+	}
+
+	override void SpawnBlocks()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentOpenSides : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway (Open on both sides)
+	}
+
+	override void SpawnBlocks()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", -24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentOpenSides2 : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway (Open on both sides - no rail)
+	}
+
+	override void SpawnBlocks() {}
+}
+
+class WalkwaySegmentEnd : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway End (Closed with railing)
+		-SOLID
+	}
+
+	override void SpawnBlocks()
+	{
+		// Add walkable blocks
+		A_SpawnItemEx ("Block32x1", -16.0, -16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", -16.0, 16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", -24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", 4.0, -24.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 4.0, -12.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 4.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 4.0, 12.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 4.0, 24.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentOpenEnd : WalkwaySegmentEnd
+{
+	Default
+	{
+		//$Title Walkway End (Open)
+	}
+
+	override void SpawnBlocks()
+	{
+		// Add walkable blocks
+		A_SpawnItemEx ("Block32x1", -16.0, -16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", -16.0, 16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", -24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentCorner : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway Corner
+	}
+
+	override void SpawnBlocks()
+	{
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -12.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 12.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 24.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", 36.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 36.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", -36.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, -24.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, -12.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 12.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 24.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentTee : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway Tee
+	}
+
+	override void SpawnBlocks()
+	{
+		// Add walkable blocks
+		A_SpawnItemEx ("Block32x1", 48.0, -8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", 48.0, 8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", -8.0, -48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", 8.0, -48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", -8.0, 48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", 8.0, 48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", 36.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 36.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx ("RailBlock", -36.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, -24.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, -12.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 12.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 24.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WalkwaySegmentIntersection : WalkwaySegment
+{
+	Default
+	{
+		//$Title Walkway Intersection
+	}
+
+	override void SpawnBlocks()
+	{
+		// Add walkable blocks
+		A_SpawnItemEx ("Block32x1", -48.0, -8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", -48.0, 8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", 48.0, -8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", 48.0, 8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", -8.0, -48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", 8.0, -48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", -8.0, 48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block32x1", 8.0, 48.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		// Frame the railings
+		A_SpawnItemEx ("RailBlock", -36.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 48.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", -36.0, 60.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 36.0, -60.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 36.0, -48.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 36.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 36.0, 36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class WallPanel1 : Actor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Wall Panel (Corridor) 1
+		+SOLID
+		+NOGRAVITY
+		+MOVEWITHSECTOR
+		Height 56;
+		Radius 8;
+		RenderRadius 256.0;
+	}
+
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+}
+
+class WallPanel2 : WallPanel1
+{
+	Default
+	{
+		//$Title Wall Panel (Corridor) 2
 	}
 }

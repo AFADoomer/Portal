@@ -467,6 +467,8 @@ class BridgeSpot : Actor
 		Spawn:
 		Inactive:
 			UNKN A 1 A_RemoveChildren(true, RMVF_EVERYTHING);
+		Idle:
+			UNKN A 1;
 			Loop;
 		Active:
 			UNKN A 1;
