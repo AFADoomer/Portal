@@ -484,6 +484,23 @@ Model Grid
 	Model 0 "grid.md3"
 
 	FrameIndex UNKN A 0 0
+
+	Skin 0 "grid2.png"
+	FrameIndex UNKN B 0 0
+}
+
+Model GridComplete
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "grid2.md3"
+
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "grid2.png"
+	FrameIndex UNKN B 0 0
 }
 
 Model PlatformLift
@@ -1029,6 +1046,20 @@ Model Stairway
 	FrameIndex UNKN A 0 0
 }
 
+Model Stairway2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "stairway2.md3"
+	SurfaceSkin 0 0 "GRAYDIR2"
+
+	ZOffset -4.0
+
+	FrameIndex UNKN A 0 0
+}
+
 Model Pivot
 {
 	Path "Models/"
@@ -1185,6 +1216,7 @@ Model Tile2x2
 
 	Path "Models/"
 	Model 0 "tile.md3"
+	SurfaceSkin 0 1 "WALLBAS2"
 
 	Scale 1.0 1.0 1.2
 
@@ -1205,6 +1237,7 @@ Model Tile4x4
 	Path "Models/"
 	Model 0 "tile.md3"
 	SurfaceSkin 0 0 "WALL4x4"
+	SurfaceSkin 0 1 "WALLBAS2"
 
 	Scale 1.0 0.5 0.6
 
@@ -1315,6 +1348,9 @@ Model BigPipe
 
 	Skin 0 "BigPipe2.png"
 	FrameIndex UNKN B 0 0
+
+	Skin 0 "BigPipe3.png"
+	FrameIndex UNKN C 0 0
 }
 
 Model BigPipeBend
@@ -1333,6 +1369,9 @@ Model BigPipeBend
 
 	SurfaceSkin 0 0 "BigPipe2.png"
 	FrameIndex UNKN B 0 0
+
+	Skin 0 "BigPipe3.png"
+	FrameIndex UNKN C 0 0
 }
 
 Model SlidingDoor
@@ -1367,6 +1406,44 @@ Model SkyboxGrid
 
 	Path "models/"
 	Model 0 "skybox_grid.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SkyboxGridLarge
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "skybox_grid.md3"
+
+	Scale 14.22 14.22 14.22
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SkyboxGrid2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "skybox_grid2.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+
+Model SkyboxGrid2Large
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "skybox_grid2.md3"
+
+	Scale 14.22 14.22 14.22
 
 	FrameIndex UNKN A 0 0
 }
@@ -1472,7 +1549,7 @@ Model SupportArm2
 	Path "models/"
 	Model 0 "arm2.md3"
 
-	Scale 1.1 1.1 1.1
+	Scale 2.2 2.2 2.2
 
 	FrameIndex UNKN A 0 0
 }
@@ -1483,11 +1560,15 @@ Model SupportArmGroup
 	USEACTORROLL
 
 	Path "models/"
-	Model 0 "armg.md3"
+	Model 0 "armg1.md3"
+	Model 1 "armg2.md3"
+	Model 2 "armg3.md3"
 
 	Scale 1.1 1.1 1.1
 
 	FrameIndex UNKN A 0 0
+	FrameIndex UNKN A 1 0
+	FrameIndex UNKN A 2 0
 }
 
 Model WalkwaySegment
@@ -1621,3 +1702,19 @@ Model WallPanel2
 
 	FrameIndex UNKN A 0 0
 }
+
+Model BlockBase
+{
+	Path "Models/"
+	Model 0 "1x1.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Block8x8 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block32x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block36x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block42x42 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model RailBlock { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Step { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model DoorBlock { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }

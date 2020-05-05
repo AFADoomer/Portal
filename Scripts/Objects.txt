@@ -10,6 +10,7 @@ class CarryActor : Actor
 	bool crushed;
 	bool initialized;
 	int waterstate;
+	double zoffset;
 
 	Property SlideSound:slidesound;
 	Property Fizzle:fizzle;
@@ -141,6 +142,8 @@ class CarryActor : Actor
 			initialized = true;
 		}
 
+		if (!bNoGravity && !master || !(master is "PlayerPawn")) { zoffset = Utilities.SetPitchRoll(self); }
+
 		if (!fizzle && pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
 		{
 			ClearBounce();
@@ -224,6 +227,21 @@ class CarryActor : Actor
 				else if (touchers[i].pos.z < pos.z + height) { touchers[i].DamageMobj(self, self, int(max(Speed, 0.5) * vel.length()), "Crush"); }
 			}
 		}
+/*
+		if (zoffset)
+		{
+			if (pos.z <= floorz + zoffset)
+			{
+				vel *= 0;
+				bNoGravity = true;
+				SetOrigin((pos.xy, floorz + zoffset), false);
+			}
+			else
+			{
+				bNoGravity = Default.bNoGravity;
+			}
+		}
+*/
 
 		angle = oldangle;
 
@@ -231,7 +249,7 @@ class CarryActor : Actor
 
 		double volume = 0.0;
 
-		if (health > 0 && (pos.z == floorz) && !waterlevel) { volume = vel.xy.length() / 25; }
+		if (health > 0 && (pos.z <= floorz + zoffset) && !waterlevel) { volume = vel.xy.length() / 25; }
 
 		if (volume)
 		{
@@ -254,26 +272,12 @@ class CarryActor : Actor
 
 	void CheckTouchers()
 	{
-		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		BlockThingsIterator it = BlockThingsIterator.Create(self, Radius);
 		Actor mo;
 
-		while (mo = Actor(it.Next(false)))
+		while (it.Next() && (mo = it.thing))
 		{
-			if (mo.bSolid && !mo.bNoInteraction && mo.bPushable) { Touch(mo); }
-		}
-
-		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
-
-		while (mo = Actor(it.Next(false)))
-		{
-			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
-		}
-
-		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
-
-		while (mo = Actor(it.Next(false)))
-		{
-			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
+			if (mo.bSolid && !mo.bNoInteraction && (mo.bPushable || mo is "CarryActor" || mo.player)) { Touch(mo); }
 		}
 	}
 
@@ -313,6 +317,29 @@ class ActorVariant : Actor
 		frame = user_variant;
 
 		Super.PostBeginPlay();
+	}
+
+	void OffsetRelative(Actor mo, double xoffset = 0, double yoffset = 0, double zoffset = 0)
+	{
+		if (!mo) { return; }
+
+		Vector2 temp;
+		Vector3 offset;
+
+		temp = RotateVector((yoffset, zoffset), roll);
+		offset = (xoffset, temp.x, temp.y);
+
+		temp = RotateVector((offset.x, offset.z), -pitch);
+		offset = (temp.x, offset.y, temp.y);
+
+		temp = RotateVector((offset.x, offset.y), angle);
+		offset = (temp.x, temp.y, offset.z);
+
+		offset.x *= scale.x;
+		offset.y *= scale.x;
+		offset.z *= scale.y;
+
+		mo.SetOrigin(pos + offset, true);
 	}
 }
 
@@ -988,7 +1015,7 @@ class SignCatapult : SignBase
 	States { Spawn: SIGO B -1; Stop; }
 }
 
-class Grid : Actor
+class Grid : ActorVariant
 {
 	Default
 	{
@@ -1018,6 +1045,14 @@ class Grid : Actor
 		}
 
 		Super.PostBeginPlay();
+	}
+}
+
+class GridComplete : Grid
+{
+	Default
+	{
+		//$Title Grid (Complete edge)
 	}
 }
 
@@ -1221,30 +1256,10 @@ class PlatformMoving : Platform
 
 	void CheckTouchers()
 	{
-		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		BlockThingsIterator it = BlockThingsIterator.Create(self, Radius);
 		Actor mo;
 
-		while (mo = Actor(it.Next(false)))
-		{
-			if (Distance2D(mo) <= Radius + mo.Radius)
-			{
-				Touch(mo);
-			}
-		}
-
-		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
-
-		while (mo = Actor(it.Next(false)))
-		{
-			if (Distance2D(mo) <= Radius + mo.Radius)
-			{
-				Touch(mo);
-			}
-		}
-
-		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
-
-		while (mo = Actor(it.Next(false)))
+		while (it.Next() && (mo = it.thing))
 		{
 			if (Distance2D(mo) <= Radius + mo.Radius)
 			{
@@ -1568,12 +1583,12 @@ class Launcher : Actor
 
 	void CheckActivators()
 	{
-		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
+		BlockThingsIterator it = BlockThingsIterator.Create(self, Radius);
 		Actor mo;
 
-		while (mo = Actor(it.Next(false)))
+		while (it.Next() && (mo = it.thing))
 		{
-			if (mo != self && mo.bPushable && Distance3D(mo) - mo.radius <= Radius) { Touch(mo); }
+			if (Distance3D(mo) - mo.radius <= Radius && mo.bSolid && !mo.bNoInteraction && (mo.bPushable || mo is "CarryActor" || mo.player)) { Touch(mo); }
 		}
 	}
 
@@ -2601,6 +2616,31 @@ class Stairway : Actor
 	}
 }
 
+class Stairway2 : Stairway
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Stairway (Short)
+	}
+
+	override void PostBeginPlay()
+	{
+		double f = 2.5 / 1.5;
+
+		// Thing-based steps
+		double y = 12.0;
+		double z = -14.0;
+		for (double x = -10.0; x >= -32.0; x -= 10.5)
+		{
+			A_SpawnItemEx ("Step", x, y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
+			A_SpawnItemEx ("Step", x, -y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
+
+			z -= 12.0;
+		}
+	}
+}
+
 class Rail : Actor
 {
 	Default
@@ -2743,8 +2783,6 @@ class Tile2x2 : CarryActor
 
 	override void Tick()
 	{
-		Super.Tick();
-
 		if (bDormant) { frame = 1; return; }
 
 		if (level.time > 5 && !moved && vel.length() && !(master && (master is "PlayerPawn")))
@@ -2760,6 +2798,8 @@ class Tile2x2 : CarryActor
 				pushfactor = double(100) / mass;
 			}
 		}
+
+		Super.Tick();
 	}
 }
 
@@ -2798,6 +2838,7 @@ class BigPipe : ActorVariant
 		//$Category Portal/Decorations
 		//$Title Industrial Pipe
 		+NOGRAVITY
+		+NOINTERACTION
 		+DONTTHRUST
 		Height 0;
 		Radius 0;
@@ -2813,31 +2854,15 @@ class BigPipe : ActorVariant
 
 	override void PostBeginPlay()
 	{
-		if (pitch == 0)
+		if (pitch == 270)
 		{
-			bNoInteraction = true;
+			bNoInteraction = false;
 
-			Actor mo;
-			for (double x = 21.0; x <= 235.0; x += 42.0)
-			{
-				Vector3 newpos = pos + (RotateVector((x * scale.x, 0.0), angle), -21.0 * scale.y);
-
-				mo = Spawn("Block42x42", newpos);
-				if (mo)
-				{
-					if (mo.TryMove(newpos.xy, true)) { mo.master = self; }
-				}
-			}
-		}
-		else if (pitch == 270)
-		{
 			A_SetSize(16 * scale.y, 256 * scale.x);
 			bSolid = true;
 		}
 		else if (pitch == 90)
 		{
-			bNoInteraction = true;
-
 			double zheight = max(floorz, pos.z - 256 * scale.x);
 
 			Actor mo = Spawn("BlockBase", (pos.xy, zheight));
@@ -2845,6 +2870,35 @@ class BigPipe : ActorVariant
 			{
 				mo.master = self;
 				mo.A_SetSize(16 * scale.y, 256 * scale.x);
+			}
+		}
+		else
+		{
+			FLineTraceData trace;
+			double dist = 235.0 * scale.x;
+
+			LineTrace(angle, dist, pitch, TRF_THRUACTORS | TRF_THRUBLOCK | TRF_THRUHITSCAN, 0, 1.0, 0, trace);
+
+			if (trace.Distance)
+			{
+				dist = min(dist, trace.Distance);
+
+				Vector3 step = (42.0 * scale.x) * trace.HitDir;
+
+				Vector3 newpos = pos + (0, 0, -21.0 * scale.y) + (step / 2);
+
+				for (double x = 22.0 * scale.x; x < dist; x += 42.0 * scale.x)
+				{
+					Actor mo = Spawn("Block42x42", newpos);
+					mo.master = self;
+
+					newpos += step;
+				}
+
+				// Make sure the end is covered
+				newpos = pos + (0, 0, -21.0 * scale.y) + trace.HitDir * (trace.Distance - 21.0 * scale.x);
+				Actor mo = Spawn("Block42x42", newpos);
+				mo.master = self;
 			}
 		}
 
@@ -2859,7 +2913,6 @@ class BigPipeBend : ActorVariant
 		//$Category Portal/Decorations
 		//$Title Industrial Pipe (90 Degree Bend)
 		+NOGRAVITY
-		+NOINTERACTION
 		+DONTTHRUST
 		Height 0;
 		Radius 0;
@@ -2875,15 +2928,21 @@ class BigPipeBend : ActorVariant
 
 	override void PostBeginPlay()
 	{
-		Vector3 newpos;
+		Actor mo;
 
-		newpos = pos + (RotateVector((-21.0 * scale.x, 0.0), angle), -21.0 * scale.y);
-		Actor mo = Spawn("Block42x42", newpos);
-		if (mo) { mo.master = self; }
+		mo = Spawn("Block42x42");
+		if (mo)
+		{
+			mo.master = self;
+			OffsetRelative(mo, -21.0, 0, -21.0);
+		}
 
-		newpos = pos + (RotateVector((-38.0 * scale.x, 0.0), angle), -42.0 * scale.y);
-		Actor mo2 = Spawn("Block42x42", newpos);
-		if (mo2) { mo2.master = self; }
+		mo = Spawn("Block42x42");
+		if (mo)
+		{
+			mo.master = self;
+			OffsetRelative(mo, -38.0, 0, -42.0);
+		}
 
 		Super.PostBeginPlay();
 	}
@@ -2893,8 +2952,9 @@ class SkyboxGrid : Actor
 {
 	Default
 	{
+		//$Category Portal/Decorations
+		//$Title Skybox Grid (with uprights)
 		+NOINTERACTION
-		+MOVEWITHSECTOR
 		Height 0;
 		Radius 0;
 		RenderRadius 256.0;
@@ -2905,6 +2965,33 @@ class SkyboxGrid : Actor
 		Spawn:
 			UNKN A -1;
 			Stop;
+	}
+}
+
+class SkyboxGridLarge : SkyboxGrid
+{
+	Default
+	{
+		//$Title Skybox Grid (Full-sized, with uprights)
+		RenderRadius 2048.0;
+	}
+}
+
+class SkyboxGrid2 : SkyboxGrid
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Skybox Grid
+	}
+}
+
+class SkyboxGrid2Large : SkyboxGrid
+{
+	Default
+	{
+		//$Title Skybox Grid (Full-sized)
+		RenderRadius 2048.0;
 	}
 }
 
@@ -3078,8 +3165,8 @@ class WalkwaySegmentEnd : WalkwaySegment
 	override void SpawnBlocks()
 	{
 		// Add walkable blocks
-		A_SpawnItemEx ("Block32x1", -16.0, -16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("Block32x1", -16.0, 16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block36x1", -18.0, -18.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block36x1", -18.0, 18.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
 
 		// Frame the railings
 		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
@@ -3108,8 +3195,8 @@ class WalkwaySegmentOpenEnd : WalkwaySegmentEnd
 	override void SpawnBlocks()
 	{
 		// Add walkable blocks
-		A_SpawnItemEx ("Block32x1", -16.0, -16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("Block32x1", -16.0, 16.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block36x1", -18.0, -18.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("Block36x1", -18.0, 18.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
 
 		// Frame the railings
 		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
