@@ -241,6 +241,7 @@ Material Texture "COMPTAL4"
 {
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
+	brightmap "COMPT4B"
 	specularlevel 0.1
 }
 
@@ -590,6 +591,15 @@ Material Texture "FLOORCON"
 	specularlevel 0.1
 }
 
+Material Texture "FLOORCO2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/Wall2x2.png"
+	normal "Materials/NormalMaps/Auto/WallCon.png"
+	specular "Materials/Specular/Auto/WallCon.png"
+	specularlevel 0.2
+}
+
 Material Texture "DUCT"
 {
 	normal "Materials/NormalMaps/Duct.png"
@@ -607,6 +617,15 @@ Material Texture "WALLBASE"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT4x4.png"
+}
+
+Material Texture "WALLBAS2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/wallbas2.png"
+	normal "Materials/NormalMaps/Auto/WallBas2.png"
+	specular "Materials/Specular/Auto/WallBas2.png"
+	specularlevel 0.25
 }
 
 Material Texture "LITB1x1"
@@ -694,7 +713,25 @@ Material Texture "GIRDER"
 	specularlevel 0.25
 }
 
+Material Texture "patches/girder.png"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/Girder.png"
+	normal "Materials/NormalMaps/Auto/Girder.png"
+	specular "Materials/Specular/Auto/Girder.png"
+	specularlevel 0.25
+}
+
 Material Texture "GIRDER2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "materials/displacement/Girder.png"
+	normal "Materials/NormalMaps/Auto/Girder.png"
+	specular "Materials/Specular/Auto/Girder.png"
+	specularlevel 0.25
+}
+
+Material Texture "patches/girder2.png"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/Girder.png"

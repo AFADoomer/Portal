@@ -136,6 +136,13 @@ Texture FLOORCON, 128, 128
 	Patch "Patches/FLOORCON.png", 0, 0
 }
 
+Texture FLOORCO2, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/FLOORCO2.png", 0, 0
+}
+
 Texture CEILING, 128, 128
 {
 	XScale 2.0
@@ -184,6 +191,13 @@ Texture WALLBASE, 256, 256
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/WALLBASE.png", 0, 0
+}
+
+Texture WALLBAS2, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/WALLBAS2.png", 0, 0
 }
 
 Texture BEAMGRID, 256, 256
@@ -374,6 +388,82 @@ Texture WALLTX1D, 256, 512
 	Patch "Materials/Displacement/WALL1x1.png", 0, 384
 }
 
+Texture PORTTX1, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch PORT2x2, 0, 64
+	Patch PORT2x2, 128, 0
+	Patch PORT2x2, 192, 0
+	Patch PORT4x4, 128, 64
+	Patch PORT2x1, 0, 0
+	Patch PORT4x4, 0, 128
+	Patch PORT4x4, 0, 256
+	Patch PORT2x2, 128, 128
+	Patch PORT2x2, 0, 192
+	Patch PORT2x1, 64, 128
+	Patch PORT2x1, 128, 256
+	Patch PORT2x1, 128, 384
+	Patch PORT2x1, 0, 384
+}
+
+Texture PORTTX1N, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 0, 64
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 192, 0
+	Patch "Materials/NormalMaps/Auto/PORT4x4.png", 128, 64
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/PORT4x4.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/PORT4x4.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 0, 192
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 64, 128
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 0, 384
+}
+
+Texture PORTTX1S, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Specular/Auto/PORT2x2.png", 0, 64
+	Patch "Materials/Specular/Auto/PORT2x2.png", 128, 0
+	Patch "Materials/Specular/Auto/PORT2x2.png", 192, 0
+	Patch "Materials/Specular/Auto/PORT4x4.png", 128, 64
+	Patch "Materials/Specular/Auto/PORT2x1.png", 0, 0
+	Patch "Materials/Specular/Auto/PORT4x4.png", 0, 128
+	Patch "Materials/Specular/Auto/PORT4x4.png", 0, 256
+	Patch "Materials/Specular/Auto/PORT2x2.png", 128, 128
+	Patch "Materials/Specular/Auto/PORT2x2.png", 0, 192
+	Patch "Materials/Specular/Auto/PORT2x1.png", 64, 128
+	Patch "Materials/Specular/Auto/PORT2x1.png", 128, 256
+	Patch "Materials/Specular/Auto/PORT2x1.png", 128, 384
+	Patch "Materials/Specular/Auto/PORT2x1.png", 0, 384
+}
+
+Texture PORTTX1D, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Displacement/PORT2x2.png", 0, 64
+	Patch "Materials/Displacement/PORT2x2.png", 128, 0
+	Patch "Materials/Displacement/PORT2x2.png", 192, 0
+	Patch "Materials/Displacement/PORT4x4.png", 128, 64
+	Patch "Materials/Displacement/PORT2x1.png", 0, 0
+	Patch "Materials/Displacement/PORT4x4.png", 0, 128
+	Patch "Materials/Displacement/PORT4x4.png", 0, 256
+	Patch "Materials/Displacement/PORT2x2.png", 128, 128
+	Patch "Materials/Displacement/PORT2x2.png", 0, 192
+	Patch "Materials/Displacement/PORT2x1.png", 64, 128
+	Patch "Materials/Displacement/PORT2x1.png", 128, 256
+	Patch "Materials/Displacement/PORT2x1.png", 128, 384
+	Patch "Materials/Displacement/PORT2x1.png", 0, 384
+}
+
 Texture WALLTX2, 256, 512
 {
 	XScale 2.0
@@ -448,6 +538,82 @@ Texture WALLTX2D, 256, 512
 	Patch "Materials/Displacement/WALL2x2.png", 128, 256
 	Patch "Materials/Displacement/WALL4x4.png", 128, 384
 	Patch "Materials/Displacement/WALL1x1D.png", 0, 384
+}
+
+Texture PORTTX2, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch PORT2x1, 0, 64
+	Patch PORT2x2, 128, 0
+	Patch PORT4x4, 192, 0
+	Patch PORT2x2, 128, 64
+	Patch PORT2x2, 0, 0
+	Patch PORT4x4, 0, 128
+	Patch PORT2x2, 0, 256
+	Patch PORT2x2, 128, 128
+	Patch PORT4x4, 0, 192
+	Patch PORT2x1, 64, 128
+	Patch PORT2x2, 128, 256
+	Patch PORT4x4, 128, 384
+	Patch PORT2x1, 0, 384
+}
+
+Texture PORTTX2N, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 0, 64
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 128, 0
+	Patch "Materials/NormalMaps/Auto/PORT4x4.png", 192, 0
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 128, 64
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 0, 0
+	Patch "Materials/NormalMaps/Auto/PORT4x4.png", 0, 128
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 0, 256
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 128, 128
+	Patch "Materials/NormalMaps/Auto/PORT4x4.png", 0, 192
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 64, 128
+	Patch "Materials/NormalMaps/Auto/PORT2x2.png", 128, 256
+	Patch "Materials/NormalMaps/Auto/PORT4x4.png", 128, 384
+	Patch "Materials/NormalMaps/Auto/PORT2x1.png", 0, 384
+}
+
+Texture PORTTX2S, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Specular/Auto/PORT2x1.png", 0, 64
+	Patch "Materials/Specular/Auto/PORT2x2.png", 128, 0
+	Patch "Materials/Specular/Auto/PORT4x4.png", 192, 0
+	Patch "Materials/Specular/Auto/PORT2x2.png", 128, 64
+	Patch "Materials/Specular/Auto/PORT2x2.png", 0, 0
+	Patch "Materials/Specular/Auto/PORT4x4.png", 0, 128
+	Patch "Materials/Specular/Auto/PORT2x2.png", 0, 256
+	Patch "Materials/Specular/Auto/PORT2x2.png", 128, 128
+	Patch "Materials/Specular/Auto/PORT4x4.png", 0, 192
+	Patch "Materials/Specular/Auto/PORT2x1.png", 64, 128
+	Patch "Materials/Specular/Auto/PORT2x2.png", 128, 256
+	Patch "Materials/Specular/Auto/PORT4x4.png", 128, 384
+	Patch "Materials/Specular/Auto/PORT2x1.png", 0, 384
+}
+
+Texture PORTTX2D, 256, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Displacement/PORT2x1.png", 0, 64
+	Patch "Materials/Displacement/PORT2x2.png", 128, 0
+	Patch "Materials/Displacement/PORT4x4.png", 192, 0
+	Patch "Materials/Displacement/PORT2x2.png", 128, 64
+	Patch "Materials/Displacement/PORT2x2.png", 0, 0
+	Patch "Materials/Displacement/PORT4x4.png", 0, 128
+	Patch "Materials/Displacement/PORT2x2.png", 0, 256
+	Patch "Materials/Displacement/PORT2x2.png", 128, 128
+	Patch "Materials/Displacement/PORT4x4.png", 0, 192
+	Patch "Materials/Displacement/PORT2x1.png", 64, 128
+	Patch "Materials/Displacement/PORT2x2.png", 128, 256
+	Patch "Materials/Displacement/PORT4x4.png", 128, 384
+	Patch "Materials/Displacement/PORT2x1.png", 0, 384
 }
 
 Texture WALF1x1_, 256, 640
@@ -2105,6 +2271,13 @@ Texture COMPTAL4, 128, 128
 	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
+Texture COMPT4B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/comptall.png", -384, 0
+}
+
 Texture COMPTAL5, 128, 128
 {
 	XScale 2.0
@@ -2191,6 +2364,13 @@ Texture GIRDER2, 128, 256
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/Girder2.png", 0, 0
+}
+
+Texture GIRDER3, 128, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Girder3.png", 0, 0
 }
 
 Texture FLOORMET, 128, 128
