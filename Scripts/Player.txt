@@ -13,6 +13,7 @@ class PortalPlayer : PlayerPawn
 	Actor climbing;
 	double AirSpeed;
 	Array<Actor> touchers;
+	bool step;
 
 	Default
 	{
@@ -390,9 +391,20 @@ class PortalPlayer : PlayerPawn
 		CheckPitch();
 		HandleMovement();
 
-		if (level.time > 35 && !waslanded && player.onground && airspeed > 12)
+		if (level.time > 35 && !waslanded && player.onground && waterlevel < 3)
 		{
-			A_PlaySound("player/land", CHAN_AUTO, 0.125);
+			String snd = GetFlatSound(TextureName(floorpic));
+			double volume = clamp(airspeed / 40, 0, 4.0);
+
+			stepdelay = 15;
+			step = !step;
+
+			if (snd != "") { A_StartSound(snd, step ? 40 : 41, CHANF_OVERLAP, volume, ATTN_STATIC, FRandom(0.95, 1.05)); }
+
+			if (airspeed > 12)
+			{
+				A_PlaySound("player/land", CHAN_AUTO, airspeed / 96.0);
+			}
 		}
 
 		airspeed = vel.length();
@@ -578,24 +590,10 @@ class PortalPlayer : PlayerPawn
 
 	void CheckTouchers()
 	{
-		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		BlockThingsIterator it = BlockThingsIterator.Create(self, 128);
 		Actor mo;
 
-		while (mo = Actor(it.Next(false)))
-		{
-			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
-		}
-
-		it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
-
-		while (mo = Actor(it.Next(false)))
-		{
-			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
-		}
-
-		it = ThinkerIterator.Create("Actor", Thinker.STAT_PLAYER);
-
-		while (mo = Actor(it.Next(false)))
+		while (it.Next() && (mo = it.thing))
 		{
 			if (mo.bSolid && !mo.bNoInteraction) { Touch(mo); }
 		}
@@ -603,7 +601,7 @@ class PortalPlayer : PlayerPawn
 
 	override void Touch(Actor toucher)
 	{
-		if (Distance2D(toucher) > Radius + toucher.Radius) { return; }
+		if (Distance2D(toucher) > (Radius + toucher.Radius) * 1.4) { return; }
 		if (toucher == self || toucher == toucher.master) { return; }
 		if (toucher.pos.z > pos.z + height + 32.0 || toucher.pos.z <= pos.z) { return; }
 		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
@@ -619,7 +617,7 @@ class PortalPlayer : PlayerPawn
 		}
 */
 
-		if (!DragTarget.TryMove(DragTarget.pos.xy, false))
+		if (!DragTarget.TryMove(DragTarget.pos.xy, true))
 		{
 			A_PlaySound("*usefail", CHAN_AUTO);
 			return;
@@ -752,9 +750,11 @@ class PortalPlayer : PlayerPawn
 
 	void DoFootSteps()
 	{
-		double speedxy = abs(vel.xy.length());
+		double speedxy = vel.xy.length();
 
-		if ((!bOnMobj && !waterlevel && pos.z > floorz) || waterlevel >= 3) { stepdelay = 0; }
+		double floorheight = max(floorz, curSector.NextLowestFloorAt(pos.x, pos.y, pos.z));
+
+		if ((!bOnMobj && !waterlevel && pos.z > floorheight) || waterlevel >= 3) { stepdelay = 0; }
 		else if (stepdelay > 0)
 		{
 			int currentdelay = int(clamp(35.0 - (3 * speedxy), 15, 35));
@@ -764,19 +764,21 @@ class PortalPlayer : PlayerPawn
 		}
 		else
 		{
-			double lookspeed = abs((player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90)).length()) / 300;
-			double measure = int(speedxy) ? int(speedxy) : int(lookspeed);
+			double lookspeed = abs((player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90)).length()) / 1000;
+			double measure = int(speedxy) ? speedxy : lookspeed;
 
-			if (measure && (bOnMobj || pos.z <= floorz || (waterlevel > 0 && waterlevel < 3)))
+			if (measure && (bOnMobj || pos.z <= floorheight || (waterlevel > 0 && waterlevel < 3)))
 			{
 				String snd = GetFlatSound(TextureName(floorpic));
 
-				double volume = clamp(speedxy / 80, 0, 4.0);
+				double volume = clamp(measure / 80, 0, 4.0);
 
 				if (int(oldvel.xy.length()) == 0) { stepdelay = 15; }
-				else { stepdelay = int(clamp(35.0 - (3 * speedxy), 15, 35)); }
+				else { stepdelay = int(clamp(35.0 - (3 * measure), 15, 35)); }
 
-				if (snd != "") { A_PlaySound(snd, CHAN_AUTO, volume); }
+				step = !step;
+
+				if (snd != "") { A_StartSound(snd, step ? 40 : 41, CHANF_OVERLAP, volume, ATTN_STATIC, FRandom(0.95, 1.05)); }
 			}
 		}
 
@@ -847,6 +849,7 @@ class PortalPlayer : PlayerPawn
 						return "footsteps/ladder";
 					case 'OilBarrel':
 					case 'Stairway':
+					case 'Stairway2':
 					case 'WalkwaySegment':
 					case 'WalkwaySegmentOpenSide':
 					case 'WalkwaySegmentOpenSide2':

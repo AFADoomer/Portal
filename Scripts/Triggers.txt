@@ -5,6 +5,12 @@ class CubeTrigger : Actor
 	int activationradius, timeout, movetimeout;
 	Vector3 activatorpos;
 
+	TextureID tex;
+
+	Sector current;
+	double h;
+	transient F3DFloor current3d;
+
 	Property ActivationRadius:activationradius;
 	Property Timeout:timeout;
 
@@ -34,6 +40,8 @@ class CubeTrigger : Actor
 	{
 		A_SetSize(activationradius);
 		SpawnPoint = (pos.xy, max(pos.z, floorz));
+
+		[h, current, current3d] = curSector.NextLowestFloorAt(pos.x, pos.y, pos.z + 4);
 		
 		Super.PostBeginPlay();
 	}
@@ -70,14 +78,6 @@ class CubeTrigger : Actor
 			}
 		}
 
-		TextureID tex;
-
-		Sector current;
-		double h;
-		F3DFloor current3d;
-
-		[h, current, current3d] = curSector.NextLowestFloorAt(pos.x, pos.y, pos.z + 4);
-
 		if (!active)
 		{
 			if (Activators.Size())
@@ -97,6 +97,8 @@ class CubeTrigger : Actor
 				active = true;
 				ActivatePeers(true);
 				A_PlaySound("button/down", CHAN_AUTO, 0.5);
+
+				SetOrigin(SpawnPoint, false);
 			}
 		}
 		else
@@ -120,18 +122,18 @@ class CubeTrigger : Actor
 				active = false;
 				ActivatePeers(false);
 				A_PlaySound("button/up", CHAN_AUTO, 0.5);
+
+				SetOrigin(SpawnPoint, false);
 			}
 		}
-
-		SetOrigin(SpawnPoint, false);
 	}
 
 	void CheckActivators()
 	{
-		ThinkerIterator it = ThinkerIterator.Create("Cube", Thinker.STAT_USER);
+		BlockThingsIterator it = BlockThingsIterator.Create(self, Radius);
 		Cube mo;
 
-		while (mo = Cube(it.Next(false)))
+		while (it.Next() && (mo = Cube(it.thing)))
 		{
 			if (
 				Activators.Find(mo) == Activators.Size() &&

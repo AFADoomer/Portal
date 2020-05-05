@@ -351,8 +351,8 @@ class LaserHitMarker : Actor
 	{
 		Radius 1;
 		Height 1;
-		+NOGRAVITY
 		+NOINTERACTION
+		+NOGRAVITY
 		+INVISIBLE
 		+INTERPOLATEANGLES
 	}

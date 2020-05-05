@@ -88,41 +88,44 @@ class Pivot : Actor
 
 		Super.Tick();
 
-		for (int i = 2; i <= 30; i+=2)
+		if (angle != targetangle)
 		{
-			if (!blockers[i].CheckPosition(pos.xy + RotateVector((i, 0), angle)))
+			for (int i = 2; i <= 30; i+=2)
 			{
-				targetangle = angle;
-				return;
-			}
-		}		
+				if (!blockers[i].CheckPosition(pos.xy + RotateVector((i, 0), angle)))
+				{
+					targetangle = angle;
+					return;
+				}
+			}		
 
-		if (angle > targetangle) { angle = max(angle - Speed, targetangle); }
-		else if (angle < targetangle) { angle = min(angle + Speed, targetangle); }
+			if (angle > targetangle) { angle = max(angle - Speed, targetangle); }
+			else if (angle < targetangle) { angle = min(angle + Speed, targetangle); }
 
-		if (targetangle == spawnangle && angle >= spawnangle - Speed && angle < spawnangle)
-		{
-			A_PlaySound(door.close, CHAN_AUTO | CHAN_NOSTOP, 0.5);
-		}
-
-		door.SetXYZ((pos.xy + RotateVector((16, 0), angle), pos.z));
-		door.angle = angle - 90;
-
-		if (linedef)
-		{
-			if (angle >= spawnangle - 35)
+			if (targetangle == spawnangle && angle >= spawnangle - Speed && angle < spawnangle)
 			{
-				linedef.flags |= (Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
+				A_PlaySound(door.close, CHAN_AUTO | CHAN_NOSTOP, 0.5);
 			}
-			else
-			{
-				linedef.flags &= ~(Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
-			}
-		}
 
-		for (int i = 2; i <= 30; i+=2)
-		{
-			blockers[i].SetOrigin((pos.xy + RotateVector((i, 0), angle), pos.z), true);
+			door.SetXYZ((pos.xy + RotateVector((16, 0), angle), pos.z));
+			door.angle = angle - 90;
+
+			if (linedef)
+			{
+				if (angle >= spawnangle - 35)
+				{
+					linedef.flags |= (Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
+				}
+				else
+				{
+					linedef.flags &= ~(Line.ML_BLOCKEVERYTHING | Line.ML_BLOCKSIGHT);
+				}
+			}
+
+			for (int i = 2; i <= 30; i+=2)
+			{
+				blockers[i].SetOrigin((pos.xy + RotateVector((i, 0), angle), pos.z), true);
+			}
 		}
 	}
 }

@@ -3,7 +3,7 @@ class Turret : CarryActor
 	LaserFindHitPointTracer hittracer;
 	LaserBeam beam;
 	Actor hitspot;
-	double spawnangle, spawnpitch, zoffset;
+	double spawnangle, spawnpitch, laserzoffset;
 	LookExParams params;
 
 	Default
@@ -75,7 +75,7 @@ class Turret : CarryActor
 
 		spawnangle = Normalize180(angle);
 		spawnpitch = Normalize180(pitch);
-		zoffset = height * 3 / 4;
+		laserzoffset = height * 3 / 4;
 
 		params.fov = 45.0;
 		params.mindist = 0;
@@ -102,15 +102,15 @@ class Turret : CarryActor
 		}
 		else if (target && abs(deltaangle(AngleTo(target), spawnangle)) < params.fov)
 		{
-			FaceTo(AngleTo(target), -Utilities.PitchTo(target, self, zoffset, target.height / 2));
+			FaceTo(AngleTo(target), -Utilities.PitchTo(target, self, laserzoffset, target.height / 2));
 		}
 		else
 		{
 			target = null;
 		}
 
-		DoTrace(master, angle, 2048, pitch, 0, zoffset, hittracer);
-		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, "LaserBeamSight", "", 0, zoffset, false, 0.75);
+		DoTrace(master, angle, 2048, pitch, 0, laserzoffset, hittracer);
+		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, "LaserBeamSight", "", 0, laserzoffset, false, 0.75);
 
 		if (SpawnTime + 35 < level.time && !master && health > 0 && vel.length() > 8.0 && !InStateSequence(CurState, FindState("Death")))
 		{

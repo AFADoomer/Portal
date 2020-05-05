@@ -722,18 +722,11 @@ class PortalSpot : Actor
 				Activators.Find(mo) == Activators.Size()
 			)
 			{
-				if (noplayers && !(mo is "LaserHitMarker") && noplayers) { continue; }
-/*
-				if (
-					!(mo is "Cube") ||
-					(
-						mo.pos.z - Cube(mo).zoffset <= pos.z + 32.0 &&
-						mo.pos.z - Cube(mo).zoffset >= pos.z - 32.0
-					)
-				)
-*/
-				{ Activators.Push(mo); }
+				if (noplayers && !(mo is "LaserHitMarker")) { continue; }
+
+				Activators.Push(mo);
 			}
+
 		}
 	}
 
@@ -820,7 +813,7 @@ class StaticPortalSpot : PortalSpot
 	}
 }
 
-class StaticPortalSpotBlue : StaticPortalSpot
+class StaticPortalSpotBlue : StaticPortalSpot // Assumes an orange static portal is already present...
 {
 	Default
 	{
@@ -832,11 +825,6 @@ class StaticPortalSpotBlue : StaticPortalSpot
 		Super.PostBeginPlay();
 
 		frame = 0;
-	}
-
-	override void Tick()
-	{
-		Super.Tick();
 
 		ThinkerIterator it = ThinkerIterator.Create("StaticPortalSpot", Thinker.STAT_USER + 1);
 		PortalSpot mo;
