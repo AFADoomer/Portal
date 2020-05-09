@@ -1,4 +1,4 @@
-class SingleSpark : actor
+class SingleSpark : Actor
 {
 	Actor colorsetter;
 	double fadeamt;
@@ -83,6 +83,8 @@ class SparkSpawner : Actor
 
 	Default
 	{
+		//$Category Portal/Effects
+		//$Title Spark Spawner
 		+INVISIBLE
 		+NOBLOCKMAP
 		+NOGRAVITY
@@ -113,7 +115,7 @@ class SparkSpawner : Actor
 
 		Super.Tick();
 
-		if (!silent) { A_PlaySound("world/spark", CHAN_AUTO, FRandom(0.1, 0.2)); }
+		if (!silent) { A_StartSound("world/spark", CHAN_AUTO, 0, FRandom(0.1, 0.2)); }
 
 		int sparkangle;
 
@@ -137,6 +139,7 @@ class ConfettiSpawner : SparkSpawner
 
 	Default
 	{
+		//$Title Confetti Spawner
 		SparkSpawner.SparkActor "Confetti";
 		SparkSpawner.Colorize True;
 		SparkSpawner.Silent True;
@@ -272,7 +275,7 @@ class ExplosionFlare : Actor
 		scale.y *= FRandom(0.5, 0.8);
 
 		A_AttachLight("ExplosionLight", DynamicLight.PointLight, 0xFFBB00, int(128 * scale.x), int(192 * scale.x), DynamicLight.LF_ATTENUATE);
-		A_PlaySound("world/flareup", CHAN_AUTO, 1.0 * scale.x, false, ATTN_IDLE);
+		A_StartSound("world/flareup", CHAN_AUTO, 0, 1.0 * scale.x, ATTN_IDLE);
 
 		frame = Random(0, 3);
 	}
@@ -415,7 +418,7 @@ class Explosion : SwitchableDecoration
 
 	override void Activate(Actor activator)
 	{
-		A_PlaySound("world/explosion", CHAN_AUTO, 0.75 * scale.x, false, ATTN_IDLE);
+		A_StartSound("world/explosion", CHAN_AUTO, 0, 0.75 * scale.x, ATTN_IDLE);
 		A_Quake(int(4 * scale.x), int(10 * scale.x), 0, int(512 * scale.x), "");
 		A_Explode(100, int(192 * scale.x));
 

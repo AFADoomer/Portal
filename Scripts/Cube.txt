@@ -6,7 +6,7 @@ class Cube : CarryActor
 
 	Default
 	{
-		//$Category Portal/Objects
+		//$Category Portal/Cubes
 		//$Sprite "UNKNB0"
 		+SOLID
 		+NOBLOOD
@@ -135,7 +135,6 @@ class LaserCube : Cube
 
 	Default
 	{
-		//$Category Portal/Objects
 		//$Title Laser Cube
 	}
 

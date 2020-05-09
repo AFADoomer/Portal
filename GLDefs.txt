@@ -111,7 +111,28 @@ Material Texture "PIPE"
 	specularlevel 7.5;
 }
 
+Material Texture "GLASS"
+{
+	normal "Materials/NormalMaps/Auto/GLASS.png"
+	specular "Materials/Specular/Auto/GLASS.png"
+	specularlevel 1.0
+}
+
 Material Texture "GLASSTRA"
+{
+	normal "Materials/NormalMaps/Auto/GLASS.png"
+	specular "Materials/Specular/Auto/GLASS.png"
+	specularlevel 1.0
+}
+
+Material Texture "GLASSB"
+{
+	normal "Materials/NormalMaps/Auto/GLASS.png"
+	specular "Materials/Specular/Auto/GLASS.png"
+	specularlevel 1.0
+}
+
+Material Texture "GLASSTRB"
 {
 	normal "Materials/NormalMaps/Auto/GLASS.png"
 	specular "Materials/Specular/Auto/GLASS.png"
@@ -1053,13 +1074,13 @@ Material Texture "FloorDm3"
 	texture displacement "materials/displacement/FloorDm.png"
 	normal "Materials/NormalMaps/Auto/FloorDm.png"
 	specular "Materials/Specular/Auto/FloorDm.png"
-
 }
 
 Material Texture "CAUTIONS"
 {
 	normal "Materials/NormalMaps/Auto/Floor.png"
-	specular "Materials/Specular/Auto/Floor.png"
+	Specular "Materials/Specular/Auto/Floor.png"
+	specularlevel 1.5
 }
 
 Material Texture "MetlWall"

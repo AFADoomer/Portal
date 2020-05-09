@@ -1,353 +1,8 @@
-class CarryActor : Actor
-{
-	Vector3 oldpos;
-	double oldangle, spawnheight, spawnradius;
-	Sound slidesound;
-	Array<Actor> touchers;
-	Vector3[64] offsets;
-	bool fizzle, explode;
-	int offset, fizzletime;
-	bool crushed;
-	bool initialized;
-	int waterstate;
-	double zoffset;
-
-	Property SlideSound:slidesound;
-	Property Fizzle:fizzle;
-	Property Explode:explode;
-
-	Default
-	{
-		//$Category Portal/Decorations/Carryable
-		+ALLOWBOUNCEONACTORS
-		+BOUNCEONACTORS
-		+MBFBOUNCER
-		+BOUNCEAUTOOFF
-		+SLIDESONWALLS
-		+PUSHABLE
-		+WINDTHRUST
-		+SOLID
-		+CANPASS
-		+SHOOTABLE
-		+NOBLOOD
-		+NOTAUTOAIMED
-		+NODAMAGE
-		BounceType "Grenade";
-		BounceFactor 0.25;
-		BounceSound "cube/bounce";
-		WallBounceSound "cube/bounce";
-		Health 35;
-		CarryActor.SlideSound "cube/slide";
-		CarryActor.Fizzle False;
-		CarryActor.Explode False;
-	}
-
-	States
-	{
-		Fizzle:
-			UNKN A 1;
-			UNKN A 0 {
-				Utilities.Fizzle(self);
-
-				if (fizzletime++ < 70) { SetStateLabel("Fizzle"); }
-			}
-			Stop;
-		Death:
-			UNKN # 1 {
-				if (explode) { SetStateLabel("Death.Explode"); }
-				A_NoBlocking();
-			}
-			UNKN # -1;
-			Stop;
-		Death.Crush:
-			UNKN # 1;
-			UNKN # 0 {
-				if (explode) { SetStateLabel("Death.Explode"); }
-/*
-				else if (scale.y * spawnheight > 9.0)
-				{
-					double newscale = (ceilingz - floorz) / spawnheight;
-					if (newscale < scale.y)
-					{
-						scale.y = newscale;
-						scale.x = max(1.0, 1.0 / (newscale * 3));
-						A_SetSize(spawnradius * scale.x, spawnheight * scale.y);
-					}
-
-					SetStateLabel("Death.Crush");
-				}
-*/
-			}
-			UNKN # -1;
-			Stop;
-		Death.Explode:
-			UNKN # 4 {
-				Actor debris = Spawn("DebrisSpawner", pos);
-				if (debris) { debris.master = self; }
-
-				bNoGravity = true;
-				scale.y *= 0.9;
-				scale.x *= 1.1;
-				SetOrigin(pos + (0, 0, 0.2 * height), true);
-
-				frame++;
-			}
-			UNKN # 2 {
-				scale.y *= 0.8;
-				scale.x *= 1.2;
-				SetOrigin(pos + (0, 0, 0.4 * height), true);
-
-				Actor explosion = Spawn("Explosion", pos);
-				if (explosion) { explosion.master = self; }
-			}
-			Stop;
-	}
-
-	override void BeginPlay()
-	{
-		A_SetSize(radius * scale.x, height * scale.y); // This sets based on Default scale properties
-		offset = Random(0, 35);
-	}
-
-	override void PostBeginPlay()
-	{
-		A_SetSize(radius * scale.x, height * scale.y); // This sets based on UDMF scale properties
-		mass = int(mass * scale.x);
-
-		spawnheight = height;
-		spawnradius = radius;
-
-		Super.PostBeginPlay();
-
-		bDormant = SpawnFlags & MTF_DORMANT;
-
-		bPushable = !bStandStill && !bDormant;
-		bNoGravity = bStandStill;
-		bNoInteraction = bStandStill;
-
-		pushfactor = double(100) / mass;
-
-		if (scale.x > 1.5 || scale.y > 1.5) { bPushable = false; }
-
-		gravity = 0.5;
-	}
-
-	override void Tick()
-	{
-		if (IsFrozen()) { return; }
-
-		if (!initialized && level.time - SpawnTime > 35 && vel.length() == 0)
-		{
-			gravity = Default.gravity;
-			initialized = true;
-		}
-
-		if (!bNoGravity && !master || !(master is "PlayerPawn")) { zoffset = Utilities.SetPitchRoll(self); }
-
-		if (!fizzle && pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
-		{
-			ClearBounce();
-
-			scale *= 0.9;
-
-			if (Scale.X < 0.05) { Destroy(); return; }
-		}
-
-		if (master is "Launcher")
-		{
-			if (!vel.z || pos.z == ceilingz - height)
-			{
-				gravity = Default.gravity;
-				master = null;
-			}
-		}
-
-		// Handling so that bounce sound doesn't play if the object didn't move 
-		// or when it's being carried, and so that the angle doesn't stutter when
-		// the object is pushed but cannnot move.
-		if (pos == oldpos || (master is "PlayerPawn") || waterlevel)
-		{
-			bNoBounceSound = true;
-		}
-		else
-		{
-			bNoBounceSound = false;
-		}
-
-		oldpos = pos;
-		oldangle = angle;
-
-		// Stackable movable objects
-		if ((level.time + offset) % 10 == 0) { CheckTouchers(); }
-
-		if (fizzle) { Utilities.CheckFizzle(self, "Fizzle"); }
-		else
-		{
-			// One-time water entry/exit splashes
-			if (waterlevel > 1 && !waterstate) { A_PlaySound("world/water/enter", CHAN_AUTO, 0.5 * vel.length(), false, ATTN_NORM, false); }
-			else if (!waterlevel && waterstate > 1) { A_PlaySound("world/water/exit", CHAN_AUTO, 0.5 * vel.length(), false, ATTN_NORM, false); }
-
-			waterstate = waterlevel;
-		}
-
-		for (int i = 0; i < min(touchers.Size(), 64); i++)
-		{
-			if (touchers[i] && touchers[i] != master)
-			{
-				if (
-					Distance3D(touchers[i]) > (Radius + touchers[i].radius) * 2.0 ||
-					touchers[i].pos.z < pos.z + height
-				) { touchers.Delete(i); }
-				else { offsets[i] = touchers[i].pos - pos; }
-			}
-			else { touchers.Delete(i); touchers.ShrinkToFit(); }
-		}
-
-		Super.Tick();
-
-		if (master && master is "PortalPlayer")
-		{
-			if (PortalPlayer(master).DragTarget == self) { vel = PortalPlayer(master).dragvel; }
-
-		}
-
-		for (int i = 0; i < min(touchers.Size(), 64); i++)
-		{
-			if (
-				touchers[i] && 
-				(
-					(Distance2D(touchers[i]) < (Radius + touchers[i].radius) * 1.4 && touchers[i].pos.z == pos.z + height) ||
-					deltaangle(angle, AngleTo(touchers[i])) < 45 ||
-					(touchers[i].bOnMobj && Distance3D(touchers[i]) < radius * 2)
-				)
-			)
-			{
-				if (!(touchers[i] is "PlayerPawn") && touchers[i].pos.z == pos.z + height) { touchers[i].vel = vel; }
-				else if (touchers[i].CheckMove(pos.xy + offsets[i].xy)) { touchers[i].SetOrigin(pos + offsets[i], true); }
-				else if (touchers[i].pos.z < pos.z + height) { touchers[i].DamageMobj(self, self, int(max(Speed, 0.5) * vel.length()), "Crush"); }
-			}
-		}
-/*
-		if (zoffset)
-		{
-			if (pos.z <= floorz + zoffset)
-			{
-				vel *= 0;
-				bNoGravity = true;
-				SetOrigin((pos.xy, floorz + zoffset), false);
-			}
-			else
-			{
-				bNoGravity = Default.bNoGravity;
-			}
-		}
-*/
-
-		angle = oldangle;
-
-		if (bNoBounceSound && oldangle) { angle = oldangle; }
-
-		double volume = 0.0;
-
-		if (health > 0 && (pos.z <= floorz + zoffset) && !waterlevel) { volume = vel.xy.length() / 25; }
-
-		if (volume)
-		{
-			A_PlaySound(slidesound, CHAN_5 | CHAN_NOSTOP, volume, true);
-			A_SoundVolume(CHAN_5, volume);
-		}
-		else
-		{
-			A_StopSound(CHAN_5);
-		}
-	}
-
-	override void Touch(Actor toucher)
-	{
-		if (Distance2D(toucher) > Radius + toucher.Radius) { return; }
-		if (toucher == self || toucher == toucher.master || toucher.bNoGravity) { return; }
-		if (toucher.pos.z > pos.z + height + 32.0 || toucher.pos.z <= pos.z) { return; }
-		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
-	}
-
-	void CheckTouchers()
-	{
-		BlockThingsIterator it = BlockThingsIterator.Create(self, Radius);
-		Actor mo;
-
-		while (it.Next() && (mo = it.thing))
-		{
-			if (mo.bSolid && !mo.bNoInteraction && (mo.bPushable || mo is "CarryActor" || mo.player)) { Touch(mo); }
-		}
-	}
-
-	override void OnDestroy()
-	{
-		A_StopSound(CHAN_5);
-	}
-
-	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
-	{
-		if (mod == "Crush" || mod == "Fizzle" || explode)
-		{
-			if (mod == "Crush" && scale.y * spawnheight > 9.0)
-			{
-				double newscale = (ceilingz - floorz) / spawnheight;
-				if (newscale < scale.y)
-				{
-					scale.y = newscale;
-					scale.x = max(1.0, 1.0 / (newscale * 3));
-					A_SetSize(spawnradius * scale.x, spawnheight * scale.y);
-				}
-			}
-
-			if (explode) { return Super.DamageMobj(inflictor, source, damage, mod, flags, angle); }
-		}
-
-		return 0;
-	}
-}
-
-class ActorVariant : Actor
-{
-	int user_variant;
-
-	override void PostBeginPlay()
-	{
-		frame = user_variant;
-
-		Super.PostBeginPlay();
-	}
-
-	void OffsetRelative(Actor mo, double xoffset = 0, double yoffset = 0, double zoffset = 0)
-	{
-		if (!mo) { return; }
-
-		Vector2 temp;
-		Vector3 offset;
-
-		temp = RotateVector((yoffset, zoffset), roll);
-		offset = (xoffset, temp.x, temp.y);
-
-		temp = RotateVector((offset.x, offset.z), -pitch);
-		offset = (temp.x, offset.y, temp.y);
-
-		temp = RotateVector((offset.x, offset.y), angle);
-		offset = (temp.x, temp.y, offset.z);
-
-		offset.x *= scale.x;
-		offset.y *= scale.x;
-		offset.z *= scale.y;
-
-		mo.SetOrigin(pos + offset, true);
-	}
-}
-
-class DoorSprite : Actor
+class DoorSprite : PortalActor
 {
 	Default
 	{
-		//$Category Portal/Flat Sprites
+		//$Category Portal/Objects/Signs
 		//$Title Door
 		+WALLSPRITE
 		+NOGRAVITY
@@ -378,28 +33,19 @@ class Chair : CarryActor
 		Carryactor.SlideSound "chair/slide";
 	}
 
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
 	override void BeginPlay()
 	{
 		ChangeStatNum(Thinker.STAT_USER);
 	}
 
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		A_SpawnItemEx ("Block8x8", -16.0, 0.0, 18.0, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx ("Block8x8", -16.0, 0.0, 26.0, 0, 0, 0, 0, SXF_SETMASTER);
-
-		Super.PostBeginPlay();
 	}
 }
 
-class Monitor : Actor
+class Monitor : PortalActor
 {
 	int delay;
 	AlphaLight light;
@@ -415,13 +61,6 @@ class Monitor : Actor
 		Height 8;
 		Radius 12;
 		Mass 25;
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
 	}
 
 	override void PostBeginPlay()
@@ -480,7 +119,7 @@ class Monitor : Actor
 	}
 }
 
-class Desk : Actor
+class Desk : PortalActor
 {
 	Default
 	{
@@ -490,14 +129,7 @@ class Desk : Actor
 		Mass 150;
 	}
 
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		A_SpawnItemEx("Block36x1", 10.0, -10.5, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx("Block36x1", 10.0, 10.5, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
@@ -519,12 +151,10 @@ class Desk : Actor
 		A_SpawnItemEx("BlockBase", 20.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx("BlockBase", 20.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
 		A_SpawnItemEx("BlockBase", 20.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
-
-		Super.PostBeginPlay();
 	}
 }
 
-class PortalSpawner : Actor
+class PortalSpawner : PortalActor
 {
 	Default
 	{
@@ -537,16 +167,9 @@ class PortalSpawner : Actor
 		Radius 4;
 		Mass 50;
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
 }
 
-class PitDetails : Actor
+class PitDetails : PortalActor
 {
 	Default
 	{
@@ -559,13 +182,6 @@ class PitDetails : Actor
 		RenderRadius 64.0;
 		Species "Block";
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
 }
 
 class PitDetails2 : PitDetails
@@ -577,10 +193,8 @@ class PitDetails2 : PitDetails
 	}
 }
 
-class Pipe : Actor
+class Pipe : PortalActor
 {
-	int user_variant;
-
 	Default
 	{
 		//$Category Portal/Decorations
@@ -590,24 +204,6 @@ class Pipe : Actor
 		Radius 24;
 		Mass 25;
 		Species "Block";
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
-
-	override void PostBeginPlay()
-	{
-		bSolid = !bStandStill;
-		bNoInteraction = bStandStill;
-
-		frame = user_variant;
-
-		Super.PostBeginPlay();
 	}
 }
 
@@ -623,7 +219,7 @@ class SignBase : Actor
 {
 	Default
 	{
-		//$Category Portal/Flat Sprites
+		//$Category Portal/Objects/Signs
 		+FLATSPRITE
 		+NOGRAVITY
 		+DONTTHRUST
@@ -1015,36 +611,17 @@ class SignCatapult : SignBase
 	States { Spawn: SIGO B -1; Stop; }
 }
 
-class Grid : ActorVariant
+class Grid : PortalActor
 {
 	Default
 	{
 		//$Category Portal/Decorations
+		+SOLID
 		+NOGRAVITY
 		+DONTTHRUST
 		Height 1;
 		Radius 40;
 		Species "Block";
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
-	override void PostBeginPlay()
-	{
-		bSolid = !bStandStill;
-
-		if (!bSolid)
-		{
-			bNoInteraction = true;
-			A_SetSize(0, 0);
-		}
-
-		Super.PostBeginPlay();
 	}
 }
 
@@ -1056,7 +633,7 @@ class GridComplete : Grid
 	}
 }
 
-class Platform : Actor
+class Platform : PortalActor
 {
 	Actor glass;
 	bool floating;
@@ -1073,15 +650,10 @@ class Platform : Actor
 		Radius 32;
 	}
 
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
 	override void PostBeginPlay()
 	{
+		Super.PostBeginPlay();
+
 		if (bStandstill) { floating = true; }
 
 		while (!glass) { glass = Spawn("PlatformGlass", pos); }
@@ -1132,18 +704,18 @@ class PlatformMoving : Platform
 			{
 				bStandStill = False;
 				bDormant = False;
-				A_PlaySound("platform2/start", CHAN_AUTO, 0.25);
+				A_StartSound("platform2/start", CHAN_AUTO, 0, 0.25);
 			}
 			UNKN A 245;
 		ActiveLoop:
-			UNKN A 1 { A_PlaySound("platform2/loop", CHAN_6, 0.25, true); }
+			UNKN A 1 { A_StartSound("platform2/loop", CHAN_6, CHANF_LOOP, 0.25); }
 			Loop;
 		Inactive:
 			UNKN A 1
 			{
 				A_StopSound(CHAN_6);
 				bStandStill = True;
-				A_PlaySound("platform2/stop", CHAN_AUTO, 0.25);
+				A_StartSound("platform2/stop", CHAN_AUTO, 0, 0.25);
 			}
 		InactiveLoop:
 			UNKN A 1;
@@ -1159,14 +731,13 @@ class PlatformMoving : Platform
 
 	override void PostBeginPlay()
 	{
-		bDormant = SpawnFlags & MTF_DORMANT;
+		Super.PostBeginPlay();
+
 		if (bDormant) { SetStateLabel("Inactive"); }
 
 		beamtracer = new("LaserFindHitPointTracer");
 
 		DoTrace(self, angle + 180, 2048, -pitch, 0, 0, beamtracer);
-
-		Super.PostBeginPlay();
 	}
 
 	action void DoTrace(Actor origin, double angle, double dist, double pitch, int flags, double zoffset, LaserFindHitPointTracer thistracer)
@@ -1306,7 +877,7 @@ class PlatformLiftStaticWhite : PlatformLiftStatic
 
 }
 
-class PlatformLift : Actor
+class PlatformLift : PortalActor
 {
 	Actor glass;
 	int user_moveheight, delay, maxheight;
@@ -1406,6 +977,8 @@ class PlatformLift : Actor
 
 	override void PostBeginPlay()
 	{
+		Super.PostBeginPlay();
+
 		while (!glass) { glass = Spawn("PlatformGlass", pos); }
 		glass.master = self;
 		glass.alpha = 0.25;
@@ -1453,7 +1026,7 @@ class PlatformLift : Actor
 	}
 }
 
-class PlatformGlass : Actor
+class PlatformGlass : PortalActor
 {
 	Default
 	{
@@ -1475,13 +1048,15 @@ class PlatformGlass : Actor
 
 	override void PostBeginPlay()
 	{
+		Super.PostBeginPlay();
+
 		frame = 0;
 
 		if (master) { scale = master.scale; }
 	}
 }
 
-class Skybox : Actor
+class Skybox : PortalActor
 {
 	Default
 	{
@@ -1491,16 +1066,9 @@ class Skybox : Actor
 		Height 32;
 		Radius 32;
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
 }
 
-class SkyboxSky : Actor
+class SkyboxSky : PortalActor
 {
 	Default
 	{
@@ -1510,16 +1078,9 @@ class SkyboxSky : Actor
 		Height 32;
 		Radius 32;
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
 }
 
-class Launcher : Actor
+class Launcher : PortalActor
 {
 	double dist;
 
@@ -1574,7 +1135,7 @@ class Launcher : Actor
 
 		if (success)
 		{
-			A_PlaySound("spring/launch", CHAN_AUTO, 1.0);
+			A_StartSound("spring/launch", CHAN_AUTO, 0, 1.0);
 			if (!toucher.player) { toucher.master = self; }
 			toucher.vel = (trajectory.xy * (toucher.player ? 1.25 : 1.0), trajectory.z);
 			toucher.gravity = g;
@@ -1647,7 +1208,7 @@ class Launcher : Actor
 	}
 }
 
-class LightFixture : Actor
+class LightFixture : PortalActor
 {
 	AlphaLight light;
 	Class<Actor> paneclass;
@@ -1661,20 +1222,13 @@ class LightFixture : Actor
 
 	Default
 	{
-		//$Category Portal/Objects
+		//$Category Portal/Lights
 		//$Title Light Fixture (Observation Area)
 		+NOGRAVITY
 		+NOINTERACTION
 		Height 2;
 		LightFixture.PaneClass "LightFixturePanes";
 		LightFixture.LightOuterAngle 70;
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
 	}
 
 	override void PostBeginPlay()
@@ -1695,6 +1249,8 @@ class LightFixture : Actor
 			panes.scale = scale;
 			panes.SetShade(fillcolor);
 		}
+
+		Super.PostBeginPlay();
 	}
 
 	override void Tick()
@@ -1797,6 +1353,8 @@ class LightFixtureHallway : LightFixture
 			panes.scale = scale;
 			panes.SetShade(fillcolor);
 		}
+
+		PortalActor.PostBeginPlay();
 	}
 
 	override void InitializeLight()
@@ -1818,7 +1376,7 @@ class LightFixtureHallway : LightFixture
 	}
 }
 
-class LightFixturePanes : Actor
+class LightFixturePanes : PortalActor
 {
 	Actor bulb;
 	Class<Actor> bulbclass;
@@ -1832,13 +1390,6 @@ class LightFixturePanes : Actor
 		+BRIGHT
 		Renderstyle "AddStencil";
 		LightFixturePanes.BulbClass "LightFixtureBulb";
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
 	}
 
 	override void PostBeginPlay()
@@ -1855,6 +1406,8 @@ class LightFixturePanes : Actor
 				bulb.scale = scale;
 			}
 		}
+
+		Super.PostBeginPlay();
 	}
 
 	override void OnDestroy()
@@ -1873,7 +1426,7 @@ class LightFixturePanes : Actor
 	}
 }
 
-class LightFixtureBulb : Actor
+class LightFixtureBulb : PortalActor
 {
 	Default
 	{
@@ -1883,14 +1436,6 @@ class LightFixtureBulb : Actor
 		Renderstyle "AddStencil";
 		Alpha 0.6; 
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
 
 	override void Tick()
 	{
@@ -1913,368 +1458,7 @@ class LightFixtureBulb : Actor
 	}
 }
 
-class FlatText : Actor
-{
-	int value;
-	Vector3 offset;
-	String user_text;
-	bool drawn;
-	
-	Default
-	{
-		//$Category Portal/Special Objects
-		//$Title Floating Text
-		//$Sprite UNKNA0
-		Radius 0;
-		Height 0;
-		Scale 0.125;
-		+MASKROTATION
-		+NOGRAVITY
-		+NOINTERACTION
-		+FLATSPRITE
-		+BRIGHT
-		Renderstyle 'AddShaded';
-		Alpha 1.0;
-		StencilColor "000000";
-		VisibleAngles -90, 90;
-		VisiblePitch 0, 180;
-		RenderRadius 64;
-	}
-
-	States
-	{
-		Spawn:
-			TNT1 A -1;
-			Stop;
-		Glyphs:
-			F033 A 0;
-			F034 A 0;
-			F035 A 0;
-			F036 A 0;
-			F037 A 0;
-			F038 A 0;
-			F039 A 0;
-			F040 A 0;
-			F041 A 0;
-			F042 A 0;
-			F043 A 0;
-			F044 A 0;
-			F045 A 0;
-			F046 A 0;
-			F047 A 0;
-			F048 A 0;
-			F049 A 0;
-			F050 A 0;
-			F051 A 0;
-			F052 A 0;
-			F053 A 0;
-			F054 A 0;
-			F055 A 0;
-			F056 A 0;
-			F057 A 0;
-			F058 A 0;
-			F059 A 0;
-			F060 A 0;
-			F061 A 0;
-			F062 A 0;
-			F063 A 0;
-			F064 A 0;
-			F065 A 0;
-			F066 A 0;
-			F067 A 0;
-			F068 A 0;
-			F069 A 0;
-			F070 A 0;
-			F071 A 0;
-			F072 A 0;
-			F073 A 0;
-			F074 A 0;
-			F075 A 0;
-			F076 A 0;
-			F077 A 0;
-			F078 A 0;
-			F079 A 0;
-			F080 A 0;
-			F081 A 0;
-			F082 A 0;
-			F083 A 0;
-			F084 A 0;
-			F085 A 0;
-			F086 A 0;
-			F087 A 0;
-			F088 A 0;
-			F089 A 0;
-			F090 A 0;
-			F091 A 0;
-			F092 A 0;
-			F093 A 0;
-			F094 A 0;
-			F095 A 0;
-			F096 A 0;
-			F097 A 0;
-			F098 A 0;
-			F099 A 0;
-			F100 A 0;
-			F101 A 0;
-			F102 A 0;
-			F103 A 0;
-			F104 A 0;
-			F105 A 0;
-			F106 A 0;
-			F107 A 0;
-			F108 A 0;
-			F109 A 0;
-			F110 A 0;
-			F111 A 0;
-			F112 A 0;
-			F113 A 0;
-			F114 A 0;
-			F115 A 0;
-			F116 A 0;
-			F117 A 0;
-			F118 A 0;
-			F119 A 0;
-			F120 A 0;
-			F121 A 0;
-			F122 A 0;
-			F123 A 0;
-			F124 A 0;
-			F125 A 0;
-			F126 A 0;
-			F127 A 0;
-			F128 A 0;
-			F129 A 0;
-			F130 A 0;
-			F131 A 0;
-			F132 A 0;
-			F133 A 0;
-			F134 A 0;
-			F135 A 0;
-			F136 A 0;
-			F137 A 0;
-			F138 A 0;
-			F139 A 0;
-			F140 A 0;
-			F141 A 0;
-			F142 A 0;
-			F143 A 0;
-			F144 A 0;
-			F145 A 0;
-			F146 A 0;
-			F147 A 0;
-			F148 A 0;
-			F149 A 0;
-			F150 A 0;
-			F151 A 0;
-			F152 A 0;
-			F153 A 0;
-			F154 A 0;
-			F155 A 0;
-			F156 A 0;
-			F157 A 0;
-			F158 A 0;
-			F159 A 0;
-			F160 A 0;
-			F161 A 0;
-			F162 A 0;
-			F163 A 0;
-			F164 A 0;
-			F165 A 0;
-			F166 A 0;
-			F167 A 0;
-			F168 A 0;
-			F169 A 0;
-			F170 A 0;
-			F171 A 0;
-			F172 A 0;
-			F173 A 0;
-			F174 A 0;
-			F175 A 0;
-			F176 A 0;
-			F177 A 0;
-			F178 A 0;
-			F179 A 0;
-			F180 A 0;
-			F181 A 0;
-			F182 A 0;
-			F183 A 0;
-			F184 A 0;
-			F185 A 0;
-			F186 A 0;
-			F187 A 0;
-			F188 A 0;
-			F189 A 0;
-			F190 A 0;
-			F191 A 0;
-			F192 A 0;
-			F193 A 0;
-			F194 A 0;
-			F195 A 0;
-			F196 A 0;
-			F197 A 0;
-			F198 A 0;
-			F199 A 0;
-			F200 A 0;
-			F201 A 0;
-			F202 A 0;
-			F203 A 0;
-			F204 A 0;
-			F205 A 0;
-			F206 A 0;
-			F207 A 0;
-			F208 A 0;
-			F209 A 0;
-			F210 A 0;
-			F211 A 0;
-			F212 A 0;
-			F213 A 0;
-			F214 A 0;
-			F215 A 0;
-			F216 A 0;
-			F217 A 0;
-			F218 A 0;
-			F219 A 0;
-			F220 A 0;
-			F221 A 0;
-			F222 A 0;
-			F223 A 0;
-			F224 A 0;
-			F225 A 0;
-			F226 A 0;
-			F227 A 0;
-			F228 A 0;
-			F229 A 0;
-			F230 A 0;
-			F231 A 0;
-			F232 A 0;
-			F233 A 0;
-			F234 A 0;
-			F235 A 0;
-			F236 A 0;
-			F237 A 0;
-			F238 A 0;
-			F239 A 0;
-			F240 A 0;
-			F241 A 0;
-			F242 A 0;
-			F243 A 0;
-			F244 A 0;
-			F245 A 0;
-			F246 A 0;
-			F247 A 0;
-			F248 A 0;
-			F249 A 0;
-			F250 A 0;
-			F251 A 0;
-			F252 A 0;
-			F253 A 0;
-			F254 A 0;
-			F255 A 0;
-	}
-
-	override void PostBeginPlay()
-	{
-		if (master)
-		{
-			SpawnPoint = pos;
-			offset = pos - master.pos;
-			offset = (RotateVector(offset.xy, -master.angle), offset.z);
-		}
-
-		Super.PostBeginPlay();
-	}
-
-	override void Tick()
-	{
-		if (IsFrozen() || bDormant) { return; }
-
-		if (user_text && !drawn && level.time > 35)
-		{
-			FlatText.SpawnString(self, user_text, fillcolor);
-			drawn = true;
-		}
-
-		if (value && value != 32 && level.time % 15 == 0)
-		{
-			int newsprite = GetSpriteIndex(String.Format("F%03i", value));
-			if (newsprite && sprite != newsprite) { sprite = newsprite; }
-		}
-
-		Super.Tick();
-
-		if (!master && !user_text) { Destroy(); }
-
-		if (master) { alpha = master.alpha; }
-	}
-
-	static void SpawnString(Actor master, String input, Color clr = 0x000000, double xoffset = 2.0, double yoffset = 0, double zoffset = 0, double scale = 1.0)
-	{
-		if (!master) { return; }
-
-		int digits = input.Length();
-
-		double position = 0;
-		double width = 16 * 0.125 * master.scale.x * scale;
-		double height = 33 * 0.125 * master.scale.y * scale;
-
-		for (int i = 0; i < digits; i++)
-		{
-			int code = input.ByteAt(0);
-
-			if (code == 92)
-			{
-				int next = input.ByteAt(1);
-
-				switch(next)
-				{
-					case 67: //c
-					case 99: //C
-						digits--;
-						input.Remove(0, 1);
-						break;
-					case 80: //p
-					case 112: //P
-						String nm = CVar.GetCVar("name", players[consoleplayer]).GetString();
-						digits += nm.Length();
-						input = input.left(2) .. nm .. input.mid(2);
-						break;
-					case 110: //\n
-					case 114: //\r
-						zoffset -= height * cos(master.pitch);
-						xoffset -= 0.75 * sin(master.pitch);
-						position = 0;
-						break;
-					default:
-						break;
-				}
-
-				digits--;
-				input.Remove(0, 2);
-			}
-			else
-			{
-				bool sp;
-				Actor mo;
-	
-				[sp, mo] = master.A_SpawnItemEx("FlatText", xoffset * master.scale.x, yoffset * master.scale.x + position, zoffset, flags: SXF_NOCHECKPOSITION);
-				if (sp)
-				{
-					FlatText(mo).value = code;
-					mo.master = master;
-					mo.scale *= master.scale.x * scale;
-					mo.pitch = master.pitch - 90;
-					mo.roll = master.roll;
-					mo.SetShade(clr);
-				}
-
-				position -= width;
-				input.Remove(0, 1);
-			}
-		}
-	}
-}
-
-class Silhouette : Actor
+class Silhouette : PortalActor
 {
 	Default
 	{
@@ -2313,7 +1497,7 @@ class Silhouette : Actor
 	}
 }
 
-class Tank : Actor
+class Tank : PortalActor
 {
 	Default
 	{
@@ -2323,13 +1507,6 @@ class Tank : Actor
 		Radius 64;
 		Height 1;
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
 }
 
 class Ladder : LadderBase
@@ -2337,13 +1514,6 @@ class Ladder : LadderBase
 	Default
 	{
 		//$Category Portal/Ladders
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
 	}
 }
 
@@ -2383,7 +1553,8 @@ class DebrisWall : Actor
 {
 	Default
 	{
-		//$Category Portal/Flat Sprites
+		//$Category Portal/Decorations
+		//$Title Wall Debris (X - Clean)
 		+FLATSPRITE
 		+NOGRAVITY
 		+DONTTHRUST
@@ -2402,6 +1573,11 @@ class DebrisWall : Actor
 
 class DebrisWall2 : DebrisWall
 {
+	Default
+	{
+		//$Title Wall Debris (4 holes - Rust)
+	}
+
 	States
 	{
 		Spawn:
@@ -2412,6 +1588,11 @@ class DebrisWall2 : DebrisWall
 
 class DebrisWall3 : DebrisWall
 {
+	Default
+	{
+		//$Title Wall Debris (X - Rust)
+	}
+
 	States
 	{
 		Spawn:
@@ -2422,6 +1603,11 @@ class DebrisWall3 : DebrisWall
 
 class DebrisWall4 : DebrisWall
 {
+	Default
+	{
+		//$Title Wall Debris (1 hole - Clean)
+	}
+
 	States
 	{
 		Spawn:
@@ -2432,6 +1618,11 @@ class DebrisWall4 : DebrisWall
 
 class DebrisWall5 : DebrisWall
 {
+	Default
+	{
+		//$Title Wall Debris (4 holes - Clean)
+	}
+
 	States
 	{
 		Spawn:
@@ -2453,13 +1644,6 @@ class Cone : CarryActor
 		Carryactor.SlideSound "cone/slide";
 	}
 
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
 	override void BeginPlay()
 	{
 		ChangeStatNum(Thinker.STAT_USER);
@@ -2468,8 +1652,6 @@ class Cone : CarryActor
 
 class OilBarrel : CarryActor
 {
-	int user_variant;
-
 	Default
 	{
 		//$Title Oil Drum
@@ -2483,13 +1665,7 @@ class OilBarrel : CarryActor
 		BounceSound "barrel/bounce";
 		WallBounceSound "barrel/bounce";
 		Carryactor.SlideSound "barrel/slide";
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
+		PortalActor.StepSound "footsteps/grate";
 	}
 
 	override void BeginPlay()
@@ -2499,21 +1675,17 @@ class OilBarrel : CarryActor
 
 	override void PostBeginPlay()
 	{
-		frame = user_variant;
+		Super.PostBeginPlay();
 
 		if (user_variant == 4)
 		{
 			explode = true;
 		}
-
-		Super.PostBeginPlay();
 	}
 }
 
 class Crate : Cube
 {
-	int user_variant;
-
 	Default
 	{
 		//$Category Portal/Decorations
@@ -2524,17 +1696,8 @@ class Crate : Cube
 		Scale 1.0;
 	}
 
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
 	override void PostBeginPlay()
 	{
-		frame = user_variant;
-
 		Super.PostBeginPlay();
 
 		if (scale.x > 0.5 || scale.y > 0.5) { bPushable = false; }
@@ -2561,8 +1724,12 @@ class IndustrialLightPanes : LightFixturePanes
 
 class IndustrialLightBulb : LightFixtureBulb {}
 
-class Stairway : Actor
+class Stairway : PortalActor // Base class, not spawned directly
 {
+	int size;
+
+	Property Size:size;
+
 	Default
 	{
 		//$Category Portal/Decorations
@@ -2577,71 +1744,79 @@ class Stairway : Actor
 		Height 16;
 		Radius 1;
 		RenderRadius 256.0;
+		Stairway.Size 96;
+		PortalActor.StepSound "footsteps/grate";
 	}
 
-	States
+	override void SpawnBlocks()
 	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
-	override void PostBeginPlay()
-	{
-		double f = 2.5 / 1.5;
-
-		// Frame the railings and supports
-		A_SpawnItemEx ("RailBlock", 0.0, 26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("RailBlock", 0.0, -26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("RailBlock", -15.0, 26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("RailBlock", -15.0, -26.0, 10.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("RailBlock", -40.0, 26.0, -16.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("RailBlock", -40.0, -26.0, -16.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("RailBlock", -65.0, 26.0, -47.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("RailBlock", -65.0, -26.0, -47.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -90.0, 26.0, -48.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", -90.0, -26.0, -48.0 / f, 0, 0, 0, 0, SXF_SETMASTER);
-
-
 		// Thing-based steps
 		double y = 12.0;
-		double z = -14.0;
-		for (double x = -10.0; x >= -116.0; x -= 10.5)
+		double z = 0.0;
+		for (double x = -8.0; z > -size && z > (floorz - pos.z); x -= 13.333)
 		{
-			A_SpawnItemEx ("Step", x, y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
-			A_SpawnItemEx ("Step", x, -y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
+			A_SpawnItemEx ("Step", x, y, z, 0, 0, 0, 0, SXF_SETMASTER);
+			A_SpawnItemEx ("Step", x, -y, z, 0, 0, 0, 0, SXF_SETMASTER);
 
-			z -= 12.0;
+			z -= 10.0;
+		}
+
+		if (size > 32)
+		{
+			// Thing-based railings
+			A_SpawnItemEx ("RailBlock", 0.0, 26.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+			A_SpawnItemEx ("RailBlock", 0.0, -26.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+			double stepx = -16.0;
+			double stepz;
+			for (stepz = 12.0; stepz > -size * 0.7 && stepz > (floorz - pos.z); stepz -= 12.0)
+			{
+				A_SpawnItemEx ("RailBlock", stepx, 26.0, stepz, 0, 0, 0, 0, SXF_SETMASTER);
+				A_SpawnItemEx ("RailBlock", stepx, -26.0, stepz, 0, 0, 0, 0, SXF_SETMASTER);
+
+				stepx -= 16.0;
+			}
 		}
 	}
 }
 
-class Stairway2 : Stairway
+class Stairway32 : Stairway
 {
 	Default
 	{
-		//$Category Portal/Decorations
-		//$Title Stairway (Short)
-	}
-
-	override void PostBeginPlay()
-	{
-		double f = 2.5 / 1.5;
-
-		// Thing-based steps
-		double y = 12.0;
-		double z = -14.0;
-		for (double x = -10.0; x >= -32.0; x -= 10.5)
-		{
-			A_SpawnItemEx ("Step", x, y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
-			A_SpawnItemEx ("Step", x, -y, z / f, 0, 0, 0, 0, SXF_SETMASTER);
-
-			z -= 12.0;
-		}
+		//$Title Stairway (32 high)
+		Stairway.Size 32;
 	}
 }
 
-class Rail : Actor
+class Stairway64 : Stairway
+{
+	Default
+	{
+		//$Title Stairway (64-high)
+		Stairway.Size 64;
+	}
+}
+
+class Stairway96 : Stairway
+{
+	Default
+	{
+		//$Title Stairway (96-high)
+		Stairway.Size 96;
+	}
+}
+
+class Stairway128 : Stairway
+{
+	Default
+	{
+		//$Title Stairway (128-high)
+		Stairway.Size 128;
+	}
+}
+
+class Rail : PortalActor
 {
 	Default
 	{
@@ -2658,24 +1833,18 @@ class Rail : Actor
 		Height 16;
 		Radius 1;
 		RenderRadius 256.0;
+		PortalActor.StepSound "footsteps/ladder";
 	}
 
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		// Frame the railings
-		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 20.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 40.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 60.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 80.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 100.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 20.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 40.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 60.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 80.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 100.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
 	}
 }
 
@@ -2686,14 +1855,14 @@ class RailMedium : Rail
 		//$Title Rail (Medium)
 	}
 
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		// Frame the railings
-		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 20.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 40.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 60.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 70.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 20.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 40.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 60.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 70.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
 	}
 }
 
@@ -2704,11 +1873,11 @@ class RailShort : Rail
 		//$Title Rail (Short)
 	}
 
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		// Frame the railings
-		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 20.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 20.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
 	}
 }
 
@@ -2719,11 +1888,11 @@ class RailStub : Rail
 		//$Title Rail (Stub)
 	}
 
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		// Frame the railings
-		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx ("BlockBase", 10.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 10.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
 	}
 }
 
@@ -2734,10 +1903,10 @@ class RailPost : Rail
 		//$Title Rail (Post)
 	}
 
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		// Frame the railings
-		A_SpawnItemEx ("BlockBase", 0.0, 0.0, 20.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx ("RailBlock", 0.0, 0.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
 	}
 }
 
@@ -2813,25 +1982,30 @@ class Tile4x4 : Tile2x2
 	}
 }
 
-class Crusher : Actor
+class Tile2x2W : Tile2x2
 {
 	Default
 	{
+		Height 16;
+		Radius 8;
+		Mass 50;
+	}
+}
+
+class Crusher : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Crusher Platform Top (Round)
 		+NOINTERACTION
 		+MOVEWITHSECTOR
 		Height 0;
 		Radius 32;
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
 }
 
-class BigPipe : ActorVariant
+class BigPipe : PortalActor
 {
 	Default
 	{
@@ -2839,94 +2013,57 @@ class BigPipe : ActorVariant
 		//$Title Industrial Pipe
 		+NOGRAVITY
 		+NOINTERACTION
-		+DONTTHRUST
 		Height 0;
 		Radius 0;
-		RenderRadius 128.0;
+		RenderRadius 256.0;
 	}
 
-	States
+	override void SpawnBlocks()
 	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
+		FLineTraceData trace;
+		double dist = 235.0 * scale.x;
 
-	override void PostBeginPlay()
-	{
-		if (pitch == 270)
+		LineTrace(angle, dist, pitch, TRF_THRUACTORS | TRF_THRUBLOCK | TRF_THRUHITSCAN, 0, 1.0, 0, trace);
+
+		if (trace.Distance)
 		{
-			bNoInteraction = false;
+			dist = min(dist, trace.Distance);
 
-			A_SetSize(16 * scale.y, 256 * scale.x);
-			bSolid = true;
-		}
-		else if (pitch == 90)
-		{
-			double zheight = max(floorz, pos.z - 256 * scale.x);
+			Vector3 step = (42.0 * scale.x) * trace.HitDir;
 
-			Actor mo = Spawn("BlockBase", (pos.xy, zheight));
-			if (mo)
+			Vector3 newpos = pos + (0, 0, -21.0 * scale.y) + (step / 2);
+
+			for (double x = 22.0 * scale.x; x < dist; x += 42.0 * scale.x)
 			{
-				mo.master = self;
-				mo.A_SetSize(16 * scale.y, 256 * scale.x);
-			}
-		}
-		else
-		{
-			FLineTraceData trace;
-			double dist = 235.0 * scale.x;
-
-			LineTrace(angle, dist, pitch, TRF_THRUACTORS | TRF_THRUBLOCK | TRF_THRUHITSCAN, 0, 1.0, 0, trace);
-
-			if (trace.Distance)
-			{
-				dist = min(dist, trace.Distance);
-
-				Vector3 step = (42.0 * scale.x) * trace.HitDir;
-
-				Vector3 newpos = pos + (0, 0, -21.0 * scale.y) + (step / 2);
-
-				for (double x = 22.0 * scale.x; x < dist; x += 42.0 * scale.x)
-				{
-					Actor mo = Spawn("Block42x42", newpos);
-					mo.master = self;
-
-					newpos += step;
-				}
-
-				// Make sure the end is covered
-				newpos = pos + (0, 0, -21.0 * scale.y) + trace.HitDir * (trace.Distance - 21.0 * scale.x);
 				Actor mo = Spawn("Block42x42", newpos);
 				mo.master = self;
-			}
-		}
+				mo.bDormant = true;
 
-		Super.PostBeginPlay();
+				newpos += step;
+			}
+
+			// Make sure the end is covered
+			newpos = pos + (0, 0, -21.0 * scale.y) + trace.HitDir * (trace.Distance - 21.0 * scale.x);
+			Actor mo = Spawn("Block42x42", newpos);
+			mo.master = self;
+			mo.bDormant = true;
+		}
 	}
 }
 
-class BigPipeBend : ActorVariant
+class BigPipeBend : PortalActor
 {
 	Default
 	{
 		//$Category Portal/Decorations
 		//$Title Industrial Pipe (90 Degree Bend)
 		+NOGRAVITY
-		+DONTTHRUST
 		Height 0;
 		Radius 0;
 		RenderRadius 64.0;
 	}
 
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
-
-	override void PostBeginPlay()
+	override void SpawnBlocks()
 	{
 		Actor mo;
 
@@ -2943,12 +2080,10 @@ class BigPipeBend : ActorVariant
 			mo.master = self;
 			OffsetRelative(mo, -38.0, 0, -42.0);
 		}
-
-		Super.PostBeginPlay();
 	}
 }
 
-class SkyboxGrid : Actor
+class SkyboxGrid : PortalActor
 {
 	Default
 	{
@@ -2958,13 +2093,6 @@ class SkyboxGrid : Actor
 		Height 0;
 		Radius 0;
 		RenderRadius 256.0;
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
 	}
 }
 
@@ -2995,7 +2123,7 @@ class SkyboxGrid2Large : SkyboxGrid
 	}
 }
 
-class SupportArm : Actor
+class SupportArm : PortalActor
 {
 	Default
 	{
@@ -3006,13 +2134,6 @@ class SupportArm : Actor
 		Height 0;
 		Radius 0;
 		RenderRadius 256.0;
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
 	}
 }
 
@@ -3032,7 +2153,7 @@ class SupportArmGroup : SupportArm
 	}
 }
 
-class WalkwaySegment : Actor
+class WalkwaySegment : PortalActor
 {
 	Default
 	{
@@ -3049,28 +2170,17 @@ class WalkwaySegment : Actor
 		Height 1;
 		Radius 28;
 		RenderRadius 256.0;
-	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
+		PortalActor.StepSound "footsteps/grate";
 	}
 
 	override void PostBeginPlay()
 	{
-		if (bStandStill)
-		{
-			bSolid = false;
-			bNoInteraction = true;
-		}
-		else { SpawnBlocks(); }
+//		user_blockingrails = true;
 
 		Super.PostBeginPlay();
 	}
 
-	virtual void SpawnBlocks()
+	override void SpawnBlocks()
 	{
 		// Frame the railings
 		A_SpawnItemEx ("RailBlock", -24.0, -36.0, 12.0, 0, 0, 0, 0, SXF_SETMASTER);
@@ -3300,7 +2410,7 @@ class WalkwaySegmentIntersection : WalkwaySegment
 	}
 }
 
-class WallPanel1 : Actor
+class WallPanel1 : PortalActor
 {
 	Default
 	{
@@ -3313,13 +2423,6 @@ class WallPanel1 : Actor
 		Radius 8;
 		RenderRadius 256.0;
 	}
-
-	States
-	{
-		Spawn:
-			UNKN A -1;
-			Stop;
-	}
 }
 
 class WallPanel2 : WallPanel1
@@ -3327,5 +2430,103 @@ class WallPanel2 : WallPanel1
 	Default
 	{
 		//$Title Wall Panel (Corridor) 2
+	}
+}
+
+class Frame32 : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Window Frame (32 wide)
+		+NOGRAVITY
+		+MOVEWITHSECTOR
+		Height 0;
+		Radius 0;
+		RenderRadius 256.0;
+	}
+}
+
+class Frame64 : Frame32
+{
+	Default
+	{
+		//$Title Window Frame (64 wide)
+	}
+}
+
+class Frame112 : Frame32
+{
+	Default
+	{
+		//$Title Window Frame (112 wide)
+	}
+}
+
+class WallPipe8 : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Wall Pipe (8 wide)
+		+NOGRAVITY
+		+MOVEWITHSECTOR
+		Height 0;
+		Radius 0;
+		RenderRadius 64.0;
+	}
+}
+
+class WallPipe16 : WallPipe8
+{
+	Default
+	{
+		//$Title Wall Pipe (16 wide)
+	}
+}
+
+class WallPipe24 : WallPipe8
+{
+	Default
+	{
+		//$Title Wall Pipe (24 wide)
+	}
+}
+
+class WallPipe32 : WallPipe8
+{
+	Default
+	{
+		//$Title Wall Pipe (32 wide)
+	}
+}
+
+class WallBox : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Wall Box 1
+		+NOGRAVITY
+		+MOVEWITHSECTOR
+		Height 0;
+		Radius 0;
+		RenderRadius 64.0;
+	}
+}
+
+class WallBox2 : WallBox
+{
+	Default
+	{
+		//$Title Wall Box 2
+	}
+}
+
+class WallBox3 : WallBox
+{
+	Default
+	{
+		//$Title Wall Box 3
 	}
 }

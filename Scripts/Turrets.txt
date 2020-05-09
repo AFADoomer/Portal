@@ -140,7 +140,7 @@ class Turret : CarryActor
 			double slope = pitch + FRandom[AttackPitch](-5.0, 5.0);
 			int damage = Random[Attack](10, 16);
 
-			A_PlaySound(AttackSound, CHAN_WEAPON);
+			A_StartSound(AttackSound, CHAN_WEAPON);
 
 			LineAttack(ang, MISSILERANGE, slope, damage, "Hitscan", "Bulletpuff"); //, offsetz:zoffset);
 		}

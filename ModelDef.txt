@@ -912,7 +912,7 @@ Model LadderExtension
 	Path "Models/"
 	Model 0 "ladder.md3"
 	Path "Textures/"
-	SurfaceSkin 0 0 "gray2.png"
+	SurfaceSkin 0 0 "GRAYDIR2"
 	SurfaceSkin 0 1 "clear.png"
 
 	Offset -4.0 0.0 0.0
@@ -1031,31 +1031,58 @@ Model IndustrialLightBulb
 	FrameIndex UNKN A 0 0
 }
 
-
-Model Stairway
+Model Stairway96
 {
 	USEACTORPITCH
 	USEACTORROLL
 
 	Path "Models/"
-	Model 0 "stairway.md3"
+	Model 0 "stairway96.md3"
 	SurfaceSkin 0 0 "GRAYDIR2"
 
-	ZOffset -4.0
+	Scale 1.0 1.0 1.2
 
 	FrameIndex UNKN A 0 0
 }
 
-Model Stairway2
+Model Stairway32
 {
 	USEACTORPITCH
 	USEACTORROLL
 
 	Path "Models/"
-	Model 0 "stairway2.md3"
+	Model 0 "stairway32.md3"
 	SurfaceSkin 0 0 "GRAYDIR2"
 
-	ZOffset -4.0
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Stairway64
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "stairway64.md3"
+	SurfaceSkin 0 0 "GRAYDIR2"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Stairway128
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "stairway128.md3"
+	SurfaceSkin 0 0 "GRAYDIR2"
+
+	Scale 1.0 1.0 1.2
 
 	FrameIndex UNKN A 0 0
 }
@@ -1215,8 +1242,27 @@ Model Tile2x2
 	USEACTORROLL
 
 	Path "Models/"
-	Model 0 "tile.md3"
-	SurfaceSkin 0 1 "WALLBAS2"
+	Model 0 "tile2.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+
+	PitchOffset 90
+	Offset 16.0 0.0 0.0
+	Scale 1.2 1.0 1.0
+
+	FrameIndex UNKN B 0 0
+}
+
+Model Tile2x2W
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "tile2.md3"
+	SurfaceSkin 0 0 "PORT2x2"
 
 	Scale 1.0 1.0 1.2
 
@@ -1236,8 +1282,6 @@ Model Tile4x4
 
 	Path "Models/"
 	Model 0 "tile.md3"
-	SurfaceSkin 0 0 "WALL4x4"
-	SurfaceSkin 0 1 "WALLBAS2"
 
 	Scale 1.0 0.5 0.6
 
@@ -1718,3 +1762,160 @@ Model Block42x42 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model RailBlock { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model Step { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model DoorBlock { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+
+Model Frame32
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "frame32.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Frame64
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "frame64.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Frame112
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "frame112.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallPipe8
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallpipe8.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallPipe16
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallpipe16.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallPipe24
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallpipe24.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallPipe32
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallpipe32.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
+
+Model WallBox
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallbox1.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "wallbox2.png"
+	FrameIndex UNKN B 0 0
+
+	Skin 0 "wallbox3.png"
+	FrameIndex UNKN C 0 0
+
+	Skin 0 "wallbox4.png"
+	FrameIndex UNKN D 0 0
+}
+
+Model WallBox2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallbox2.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "wallbox2.png"
+	FrameIndex UNKN B 0 0
+
+	Skin 0 "wallbox3.png"
+	FrameIndex UNKN C 0 0
+
+	Skin 0 "wallbox4.png"
+	FrameIndex UNKN D 0 0
+}
+
+Model WallBox3
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "wallbox3.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "wallbox2.png"
+	FrameIndex UNKN B 0 0
+
+	Skin 0 "wallbox3.png"
+	FrameIndex UNKN C 0 0
+
+	Skin 0 "wallbox4.png"
+	FrameIndex UNKN D 0 0
+}

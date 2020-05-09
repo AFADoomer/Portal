@@ -148,7 +148,7 @@ Class LightningBeam : Actor
 
 		Actor prev;
 
-		A_PlaySound(ActiveSound, CHAN_AUTO, 0.5, false, ATTN_STATIC);
+		A_StartSound(ActiveSound, CHAN_AUTO, 0, 0.5, ATTN_STATIC);
 
 		While (CurDistance < MaxDistance - StepDistance)
 		{
@@ -454,7 +454,7 @@ class ElectricalArc : SwitchableDecoration
 
 	Default
 	{
-		//$Category Hazards (BoA)/ZScript
+		//$Category Portal/Effects
 		//$Title Electrical Arc
 		//$Sprite AMRKA0
 		//$Color 3

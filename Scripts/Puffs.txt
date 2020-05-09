@@ -50,7 +50,7 @@ class LaserHit : Actor
 
 	override void PostBeginPlay()
 	{
-		A_PlaySound("laser/hit", CHAN_AUTO, 0.05, false, ATTN_STATIC);
+		A_StartSound("laser/hit", CHAN_AUTO, 0, 0.05, ATTN_STATIC);
 
 		if (level.time % Random(3, 7) == 0 && self)
 		{

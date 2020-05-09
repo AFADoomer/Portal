@@ -1102,21 +1102,34 @@ Texture LIWWW2x1, 128, 128
 	Patch "Patches/LITWW2x1.png", 0, 0 { Rotate 90 }
 }
 
-Texture GLASS, 256, 384
+Texture GLASS, 256, 256
 {
 	XScale 4.0
-	YScale 6.0
+	YScale 4.0
 	Patch "Patches/GLASS.png", 0, 0
-	Patch "Patches/GLASS.png", 0, 256
 }
 
-Texture GLASSTRA, 256, 384
+Texture GLASSTRA, 256, 256
 {
 	XScale 4.0
-	YScale 6.0
+	YScale 4.0
 	Patch "Patches/GLASSTRA.png", 0, 0
-	Patch "Patches/GLASSTRA.png", 0, 256
 }
+
+Texture GLASSB, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GLASSB.png", 0, 0
+}
+
+Texture GLASSTRB, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GLASSTRB.png", 0, 0
+}
+
 
 Texture GLASS2, 256, 512
 {
@@ -1984,8 +1997,6 @@ Texture DOTBMGF0, 32, 1024
 
 Texture SLIME, 256, 256
 {
-	XScale 2.0
-	YScale 2.0
 	Patch "Patches/Slime.png", 0, 0
 }
 

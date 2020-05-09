@@ -77,6 +77,7 @@ class Pivot : Actor
 				{
 					blockers[i].master = self;
 					blockers[i].A_SetSize(-1, door.height);
+					BlockBase(blockers[i]).dontcull = true;
 				}
 			}
 		}
@@ -104,7 +105,7 @@ class Pivot : Actor
 
 			if (targetangle == spawnangle && angle >= spawnangle - Speed && angle < spawnangle)
 			{
-				A_PlaySound(door.close, CHAN_AUTO | CHAN_NOSTOP, 0.5);
+				A_StartSound(door.close, CHAN_AUTO, CHAN_NOSTOP, 0.5);
 			}
 
 			door.SetXYZ((pos.xy + RotateVector((16, 0), angle), pos.z));
@@ -233,8 +234,8 @@ class SwingingDoor : Actor
 
 		if (Pivot(master).angle == Pivot(master).spawnangle)
 		{
-			if (master.bDormant) { A_PlaySound(locked, CHAN_AUTO, 0.5); }
-			else { A_PlaySound(open, CHAN_AUTO, 0.5); }
+			if (master.bDormant) { A_StartSound(locked, CHAN_AUTO, 0, 0.5); }
+			else { A_StartSound(open, CHAN_AUTO, 0, 0.5); }
 			SetStateLabel("Open");
 		}
 
@@ -294,7 +295,7 @@ class SlidingDoor : Actor
 	{
 		Open:
 			UNKN A 8;
-			UNKN B 8 A_PlaySound(open, CHAN_AUTO, 0.5, false, ATTN_STATIC);
+			UNKN B 8 A_StartSound(open, CHAN_AUTO, 0, 0.5, ATTN_STATIC);
 			UNKN C 6;
 			UNKN DE 4;
 		Opened:
@@ -303,7 +304,7 @@ class SlidingDoor : Actor
 		Close:
 			UNKN FE 8;
 			UNKN D 4;
-			UNKN C 4 A_PlaySound(close, CHAN_AUTO, 0.5, false, ATTN_STATIC);
+			UNKN C 4 A_StartSound(close, CHAN_AUTO, 0, 0.5, ATTN_STATIC);
 			UNKN B 2;
 		Spawn:
 		Closed:

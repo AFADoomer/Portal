@@ -3,7 +3,7 @@ gameinfo
 	dimcolor = "0 0 0"
 	dimamount = 0.5
 	bluramount = 0.5
-	borderflat = "WALL2x2S"
+	borderflat = "WALL_1"
 	titlemusic = "AS_Mel"
 	creditpage = ""
 	fullscreenautoaspect = 3
@@ -168,7 +168,7 @@ DoomEdNums
 	30071 = OilBarrel
 	30072 = Crate
 	30073 = IndustrialLight
-	30074 = Stairway
+	30074 = Stairway96
 	30075 = LadderRung
 	30076 = PipeBend
 	30077 = Rail
@@ -220,8 +220,21 @@ DoomEdNums
 	32027 = WallPanel1
 	32028 = WallPanel2
 	32029 = SkyboxGrid2
-	32030 = Stairway2
+	32030 = Stairway32
 	32031 = SkyboxGridLarge
 	32032 = SkyboxGrid2Large
 	32033 = GridComplete
+	32034 = Frame32
+	32035 = Frame64
+	32036 = Frame112
+	32037 = Tile2x2W
+	32038 = Stairway64
+	32039 = Stairway128
+	32040 = WallPipe8
+	32041 = WallPipe16
+	32042 = WallPipe32
+	32043 = WallBox
+	32044 = WallBox2
+	32045 = WallPipe24
+	32046 = WallBox3
 }

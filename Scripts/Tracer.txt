@@ -33,6 +33,18 @@ Class PortalFindHitPointTracer : LineTracer
 			if (Results.HitLine.flags & (Line.ML_BLOCKING | Line.ML_BLOCKEVERYTHING)) { return TRACE_Stop; }
 			if (Results.HitTexture)
 			{
+				if (!Results.HitLine.alpha) { return TRACE_Skip; }
+
+				if (
+					Results.Tier == TIER_Middle && 
+					Results.HitLine.flags & Line.ML_TWOSIDED && 
+					!(Results.HitLine.flags & Line.ML_3DMIDTEX) && 
+					!(
+						Results.HitLine.flags & Line.ML_BLOCKING ||
+						Results.HitLine.flags & Line.ML_BLOCKEVERYTHING	
+					)
+				) { return TRACE_Skip; }
+
 				String tex = Texman.GetName(Results.HitTexture);
 
 				if (tex ~== "WATERLIN" || tex ~== "KILLGRIL")
@@ -46,10 +58,6 @@ Class PortalFindHitPointTracer : LineTracer
 				}
 				else if (tex ~== "EMANGRIL")
 				{
-					if (!Results.HitLine.alpha) { return TRACE_Skip; }
-
-					if (Results.HitLine.flags & Line.ML_WRAP_MIDTEX) { return TRACE_Stop; }
-
 					Side HitSide = Results.HitLine.sidedef[Results.Side];
 
 					if (HitSide.flags & Side.WALLF_WRAP_MIDTEX || Results.HitLine.flags & Line.ML_WRAP_MIDTEX) { return TRACE_Stop; } // If it's floor-to-ceiling, skip checks

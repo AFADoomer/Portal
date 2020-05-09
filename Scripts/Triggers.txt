@@ -38,12 +38,12 @@ class CubeTrigger : Actor
 
 	override void PostBeginPlay()
 	{
+		Super.PostBeginPlay();
+
 		A_SetSize(activationradius);
 		SpawnPoint = (pos.xy, max(pos.z, floorz));
 
 		[h, current, current3d] = curSector.NextLowestFloorAt(pos.x, pos.y, pos.z + 4);
-		
-		Super.PostBeginPlay();
 	}
 
 	override void Touch(Actor toucher)
@@ -96,7 +96,7 @@ class CubeTrigger : Actor
 				Level.ExecuteSpecial(special, self, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
 				active = true;
 				ActivatePeers(true);
-				A_PlaySound("button/down", CHAN_AUTO, 0.5);
+				A_StartSound("button/down", CHAN_AUTO, 0, 0.5);
 
 				SetOrigin(SpawnPoint, false);
 			}
@@ -121,7 +121,7 @@ class CubeTrigger : Actor
 				Level.ExecuteSpecial(special, self, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
 				active = false;
 				ActivatePeers(false);
-				A_PlaySound("button/up", CHAN_AUTO, 0.5);
+				A_StartSound("button/up", CHAN_AUTO, 0, 0.5);
 
 				SetOrigin(SpawnPoint, false);
 			}
@@ -130,14 +130,14 @@ class CubeTrigger : Actor
 
 	void CheckActivators()
 	{
-		BlockThingsIterator it = BlockThingsIterator.Create(self, Radius);
+		ThinkerIterator it = ThinkerIterator.Create("Cube", Thinker.STAT_USER);
 		Cube mo;
 
-		while (it.Next() && (mo = Cube(it.thing)))
+		while (mo = Cube(it.Next()))
 		{
 			if (
 				Activators.Find(mo) == Activators.Size() &&
-				Distance2D(mo) <= Radius && 
+				Distance2D(mo) <= activationradius && 
 				mo.pos.z - mo.zoffset <= pos.z + 4
 			)
 			{ Activators.Push(mo); }
@@ -220,7 +220,7 @@ class SwitchTrigger : Actor
 			active = !active;
 			move = true;
 			movetimeout = timeout;
-			A_PlaySound("switch/press", CHAN_AUTO, 0.5);
+			A_StartSound("switch/press", CHAN_AUTO, 0, 0.5);
 		}
 
 		return false;
@@ -382,7 +382,7 @@ class LaserTrigger : Actor
 			frame = 0;
 			bBright = false;
 			timeout = -1;
-			A_PlaySound("laser/target/off", CHAN_AUTO, 0.5);
+			A_StartSound("laser/target/off", CHAN_AUTO, 0, 0.5);
 			A_StopSound(CHAN_7);
 		}
 	}
@@ -394,8 +394,8 @@ class LaserTrigger : Actor
 			Level.ExecuteSpecial(special, null, null, false, args[0], args[1], !args[2], args[3], args[4]);
 			frame = 1;
 			bBright = true;
-			A_PlaySound("laser/target/on", CHAN_AUTO, 0.5);
-			A_PlaySound("laser/target/loop", CHAN_7, 0.25, true);
+			A_StartSound("laser/target/on", CHAN_AUTO, 0, 0.5);
+			A_StartSound("laser/target/loop", CHAN_7, CHANF_LOOP, 0.25);
 		}
 
 		timeout = 5;
@@ -475,7 +475,7 @@ class WallSwitch : Actor
 		if (activator && !moving)
 		{
 			Level.ExecuteSpecial(special, activator, null, false, args[0], args[1], args[2] ? !active : active, args[3], args[4]);
-			A_PlaySound(active ? "switch/on" : "switch/off", CHAN_AUTO, 0.25);
+			A_StartSound(active ? "switch/on" : "switch/off", CHAN_AUTO, 0, 0.25);
 
 			activator = null;
 		}

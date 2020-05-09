@@ -295,7 +295,7 @@ class LaserSpot : Actor
 	{
 		if (snd != "")
 		{
-			A_PlaySound(snd, CHAN_6 | CHAN_NOSTOP, 0.125, true, ATTN_STATIC);
+			A_StartSound(snd, CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.125, ATTN_STATIC);
 		}
 
 		double zoffset;
@@ -439,7 +439,7 @@ class LaserEmitterBlue : LaserSpot
 	{
 		if (snd != "")
 		{
-			A_PlaySound(snd, CHAN_6 | CHAN_NOSTOP, 0.0125, true, ATTN_STATIC);
+			A_StartSound(snd, CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.0125, ATTN_STATIC);
 		}
 
 		[beam, hitspot] = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, "LaserBeamBlue", "", damage, 0, false, 0.75);
@@ -498,7 +498,7 @@ class BridgeSpot : Actor
 
 	void A_FireBeam(int damage = 3, sound snd = "laser")
 	{
-		A_PlaySound(snd, 0, 1.0);
+		A_StartSound(snd, CHAN_AUTO, 0, 1.0);
 
 		DoBridgeTrace(self, angle, 2048, pitch, 0, 0, hittracer);
 		DrawBridge(hittracer.Results);

@@ -179,13 +179,13 @@ class PortalPlayer : PlayerPawn
 			else { lastline = null; }
 
 			// One-time water entry/exit splashes
-			if (waterlevel > 1 && !waterstate) { A_PlaySound("world/water/enter", CHAN_AUTO, 0.5, false, ATTN_NORM, false); }
-			else if (!waterlevel && waterstate > 1) { A_PlaySound("world/water/exit", CHAN_AUTO, 0.5, false, ATTN_NORM, false); }
+			if (waterlevel > 1 && !waterstate) { A_StartSound("world/water/enter", CHAN_AUTO, 0, 0.5); }
+			else if (!waterlevel && waterstate > 1) { A_StartSound("world/water/exit", CHAN_AUTO, 0, 0.5); }
 
 			// Underwater effect
 			//  Note:  Should just be a local sound, but local sounds apparently can't be stopped with A_StopSound, so
 			//  world/underwater sound is set up with a 8-16 unit log attenuation in SNDINFO to get a similar effect...
-			if (waterlevel >= 3 && waterstate < 3) { A_PlaySound("world/underwater", CHAN_5 | CHAN_NOPAUSE | CHAN_NOSTOP, 0.25, true, ATTN_NORM); }
+			if (waterlevel >= 3 && waterstate < 3) { A_StartSound("world/underwater", CHAN_5, CHANF_NOPAUSE | CHANF_NOSTOP | CHANF_LOOP, 0.25); }
 			else if (waterlevel < 3 && waterstate >= 3) { A_StopSound(CHAN_5); }
 
 			waterstate = waterlevel;
@@ -198,7 +198,7 @@ class PortalPlayer : PlayerPawn
 
 			if (!party && (player.cheats & CF_GODMODE2 || player.cheats & CF_GODMODE) && !developer) // Just for fun...
 			{
-				A_PlaySound("world/party", CHAN_AUTO);
+				A_StartSound("world/party", CHAN_AUTO);
 				
 				sparks = Spawn("ConfettiSpawner", pos + (0, 0, 64));
 				party = true;
@@ -219,7 +219,7 @@ class PortalPlayer : PlayerPawn
 			if (player.health > 0 && player.health < GetMaxHealth(true)) { player.health++; player.mo.health = player.health; }
 
 			double volume = clamp((AirSpeed - 10) / 35.0, 0.0, 1.0);
-			A_PlaySound("world/whoosh", CHAN_7 | CHAN_NOSTOP, volume);
+			A_StartSound("world/whoosh", CHAN_7, CHANF_NOSTOP, volume);
 			A_SoundVolume(CHAN_7, volume);
 		}
 
@@ -393,7 +393,7 @@ class PortalPlayer : PlayerPawn
 
 		if (level.time > 35 && !waslanded && player.onground && waterlevel < 3)
 		{
-			String snd = GetFlatSound(TextureName(floorpic));
+			String snd = GetStepSound();
 			double volume = clamp(airspeed / 40, 0, 4.0);
 
 			stepdelay = 15;
@@ -401,10 +401,7 @@ class PortalPlayer : PlayerPawn
 
 			if (snd != "") { A_StartSound(snd, step ? 40 : 41, CHANF_OVERLAP, volume, ATTN_STATIC, FRandom(0.95, 1.05)); }
 
-			if (airspeed > 12)
-			{
-				A_PlaySound("player/land", CHAN_AUTO, airspeed / 96.0);
-			}
+			A_StartSound("player/land", CHAN_AUTO, 0, max(0, airspeed - 8) / 96.0);
 		}
 
 		airspeed = vel.length();
@@ -498,7 +495,7 @@ class PortalPlayer : PlayerPawn
 				Vel.Z += jumpvelz;
 				bOnMobj = false;
 				player.jumpTics = -1;
-				if (!(player.cheats & CF_PREDICTING)) A_PlaySound("*jump", CHAN_BODY);
+				if (!(player.cheats & CF_PREDICTING)) A_StartSound("*jump", CHAN_BODY);
 			}
 		}
 	}
@@ -570,12 +567,12 @@ class PortalPlayer : PlayerPawn
 
 			bool fizzle = false;
 
-			if (gun.portalA) { PortalSpot(gun.portalA).DoDestroy(); gun.portalA.A_PlaySound("portal/fizzle", CHAN_AUTO); fizzle = true; }
-			if (gun.portalB) { PortalSpot(gun.portalB).DoDestroy(); gun.portalB.A_PlaySound("portal/fizzle", CHAN_AUTO); fizzle = true; }
+			if (gun.portalA) { PortalSpot(gun.portalA).DoDestroy(); gun.portalA.A_StartSound("portal/fizzle", CHAN_AUTO); fizzle = true; }
+			if (gun.portalB) { PortalSpot(gun.portalB).DoDestroy(); gun.portalB.A_StartSound("portal/fizzle", CHAN_AUTO); fizzle = true; }
 
 			if (fizzle)
 			{
-				A_PlaySound("portalgun/fizzle", CHAN_AUTO);
+				A_StartSound("portalgun/fizzle", CHAN_AUTO);
 
 				if (gun == player.ReadyWeapon)
 				{
@@ -601,7 +598,7 @@ class PortalPlayer : PlayerPawn
 
 	override void Touch(Actor toucher)
 	{
-		if (Distance2D(toucher) > (Radius + toucher.Radius) * 1.4) { return; }
+		if (Distance2D(toucher) > Radius + toucher.Radius) { return; }
 		if (toucher == self || toucher == toucher.master) { return; }
 		if (toucher.pos.z > pos.z + height + 32.0 || toucher.pos.z <= pos.z) { return; }
 		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
@@ -612,18 +609,18 @@ class PortalPlayer : PlayerPawn
 /*
 		if (DragTarget.CanCollideWith(self, true))
 		{
-			A_PlaySound("*usefail", CHAN_AUTO);
+			A_StartSound("*usefail", CHAN_AUTO);
 			return;
 		}
 */
 
 		if (!DragTarget.TryMove(DragTarget.pos.xy, true))
 		{
-			A_PlaySound("*usefail", CHAN_AUTO);
+			A_StartSound("*usefail", CHAN_AUTO);
 			return;
 		}
 
-		A_PlaySound("object/drop", CHAN_AUTO);
+		A_StartSound("object/drop", CHAN_AUTO);
 
 		DragTarget.angle = angle;
 		DragTarget.vel = vel * DragTarget.pushfactor + dragvel; // + (RotateVector((1, 0), angle), -1);
@@ -682,7 +679,7 @@ class PortalPlayer : PlayerPawn
 					{
 						if (AimActor.bPushable)
 						{
-							A_PlaySound("object/pickup", CHAN_AUTO);
+							A_StartSound("object/pickup", CHAN_AUTO);
 
 							DragTarget = AimActor;
 							DragTarget.master = self;
@@ -691,7 +688,7 @@ class PortalPlayer : PlayerPawn
 						}
 						else if (Inventory(AimActor))
 						{
-							A_PlaySound(Inventory(AimActor).PickupSound, CHAN_AUTO);
+							A_StartSound(Inventory(AimActor).PickupSound, CHAN_AUTO);
 
 							AimActor.Touch(self);
 						}
@@ -769,7 +766,7 @@ class PortalPlayer : PlayerPawn
 
 			if (measure && (bOnMobj || pos.z <= floorheight || (waterlevel > 0 && waterlevel < 3)))
 			{
-				String snd = GetFlatSound(TextureName(floorpic));
+				String snd = GetStepSound();
 
 				double volume = clamp(measure / 80, 0, 4.0);
 
@@ -821,7 +818,7 @@ class PortalPlayer : PlayerPawn
 		return null;
 	}
 
-	String GetFlatSound(Name input)
+	String GetStepSound()
 	{
 		if (waterlevel == 1) { return "footsteps/puddle"; }
 		else if (waterlevel == 2) { return "footsteps/wade"; }
@@ -837,30 +834,17 @@ class PortalPlayer : PlayerPawn
 					while(onmo.master) { onmo = onmo.master; }
 				}
 
+				if (onmo is "PortalActor")
+				{
+					String snd = PortalActor(onmo).stepsound;
+					if (snd.length()) { return snd; }
+				}
+
+				// For actor-specifics, as needed...  Most actors handled by the PortalActorstepsound property above now
 				Switch(onmo.GetClassName())
 				{
 					case 'BridgeBeam':
 						return "footsteps/glass";
-					case 'RailPost':
-					case 'RailStub':
-					case 'RailShort':
-					case 'RailMedium':
-					case 'RailLong':
-						return "footsteps/ladder";
-					case 'OilBarrel':
-					case 'Stairway':
-					case 'Stairway2':
-					case 'WalkwaySegment':
-					case 'WalkwaySegmentOpenSide':
-					case 'WalkwaySegmentOpenSide2':
-					case 'WalkwaySegmentOpenSides':
-					case 'WalkwaySegmentOpenSides2':
-					case 'WalkwaySegmentEnd':
-					case 'WalkwaySegmentOpenEnd':
-					case 'WalkwaySegmentCorner':
-					case 'WalkwaySegmentTee':
-					case 'WalkwaySegmentIntersection':
-						return "footsteps/grate";
 					default:
 						return "footsteps/default";
 						break;
@@ -868,7 +852,7 @@ class PortalPlayer : PlayerPawn
 			}
 		}
 
-		Switch(input)
+		Switch(Name(TextureName(floorpic)))
 		{
 			case 'WALL1x1':
 			case 'WALL2x1':
@@ -882,6 +866,8 @@ class PortalPlayer : PlayerPawn
 			case 'WALL2x1D':
 			case 'WALL2x2D':
 			case 'WALL4x4D':
+			case 'WALLTX1':
+			case 'WALLTX2':
 			case 'LITB1x1':
 			case 'LITB2x1':
 			case 'LITB2x2':
@@ -896,6 +882,8 @@ class PortalPlayer : PlayerPawn
 			case 'PORT2x2':
 			case 'PORT4x1':
 			case 'PORT4x4':
+			case 'PORTTX1':
+			case 'PORTTX2':
 			case 'LITW1x1':
 			case 'LITW2x1':
 			case 'LITW2x2':

@@ -118,8 +118,8 @@ class PortalGun : Weapon
 			player.mo.PlayAttacking2();
 		}
 
-		if (invoker.dual && player.ReadyWeapon && player.ReadyWeapon.bAltFire) { A_PlaySound("portalgun/fire2", CHAN_WEAPON); invoker.shottype = 1; }
-		else { A_PlaySound("portalgun/fire1", CHAN_WEAPON); invoker.shottype = 0; }
+		if (invoker.dual && player.ReadyWeapon && player.ReadyWeapon.bAltFire) { A_StartSound("portalgun/fire2", CHAN_WEAPON); invoker.shottype = 1; }
+		else { A_StartSound("portalgun/fire1", CHAN_WEAPON); invoker.shottype = 0; }
 
 		DoTrace(self, angle, 2048, pitch, 0, player.viewheight, invoker.portaltracer);
 

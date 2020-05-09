@@ -180,7 +180,7 @@ class Utilities : Actor
 			Sound DeathSound = mo.DeathSound;
 			if (!DeathSound) { DeathSound = "cube/fizzle"; }
 
-			mo.A_PlaySound(DeathSound, CHAN_VOICE, 1, false, mo.bBoss ? ATTN_NONE : ATTN_NORM);
+			mo.A_StartSound(DeathSound, CHAN_VOICE, 0, 1.0, mo.bBoss ? ATTN_NONE : ATTN_NORM);
 		}
 
 		if (mo.master && PortalPlayer(mo.master))
@@ -290,7 +290,7 @@ class Utilities : Actor
 	static void DoFizzle(Actor mo, StateLabel fizzlestate = "Death")
 	{
 		mo.ClearBounce();
-		mo.A_PlaySound("cube/fizzle", CHAN_AUTO | CHAN_NOSTOP);
+		mo.A_StartSound("cube/fizzle", CHAN_AUTO, CHANF_NOSTOP);
 		mo.SetStateLabel(fizzlestate);
 	}
 
@@ -357,7 +357,7 @@ class Utilities : Actor
 				!(traceresults.HitActor is "PlatformEndpoint")
 			)
 			{
-				hitspot.A_PlaySound("laser/hit", CHAN_6 | CHAN_NOSTOP, 0.25, true, ATTN_STATIC);
+				hitspot.A_StartSound("laser/hit", CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.25, ATTN_STATIC);
 
 				if (!traceresults.HitActor.bNoBlood && drawdecal)
 				{
@@ -382,7 +382,7 @@ class Utilities : Actor
 
 				if (puff)
 				{
-					hitspot.A_PlaySound("laser/hit", CHAN_6 | CHAN_NOSTOP, 0.25, true, ATTN_STATIC);
+					hitspot.A_StartSound("laser/hit", CHAN_6, CHAN_NOSTOP | CHANF_LOOP, 0.25, ATTN_STATIC);
 					if (LaserHitMarker(hitspot) && LaserHitMarker(hitspot).moved)
 					{
 						puff.angle = origin.AngleTo(puff);
@@ -437,6 +437,7 @@ class FloorOverlayAdjust : Actor
 {
 	Default
 	{
+		//$Category Portal/Utilities
 		//$Title 3d Floor Overlay
 		//$Sprite AMRKA0
 		//$Arg0 "Tag of sector to overlay"
@@ -457,6 +458,367 @@ class FloorOverlayAdjust : Actor
 			if (ceilingz == dest) { return; }
 
 			curSector.MoveCeiling(16, dest, 0, (ceilingz < dest), false);
+		}
+	}
+}
+
+class FlatText : PortalActor
+{
+	int value;
+	Vector3 offset;
+	String user_text;
+	bool drawn;
+	
+	Default
+	{
+		//$Category Portal/Utilities
+		//$Title Floating Text
+		//$Sprite UNKNA0
+		Radius 0;
+		Height 0;
+		Scale 0.125;
+		+MASKROTATION
+		+NOGRAVITY
+		+NOINTERACTION
+		+FLATSPRITE
+		+BRIGHT
+		Renderstyle 'AddShaded';
+		Alpha 1.0;
+		StencilColor "000000";
+		VisibleAngles -90, 90;
+		VisiblePitch 0, 180;
+		RenderRadius 64;
+	}
+
+	States
+	{
+		Spawn:
+			TNT1 A -1;
+			Stop;
+		Glyphs:
+			F033 A 0;
+			F034 A 0;
+			F035 A 0;
+			F036 A 0;
+			F037 A 0;
+			F038 A 0;
+			F039 A 0;
+			F040 A 0;
+			F041 A 0;
+			F042 A 0;
+			F043 A 0;
+			F044 A 0;
+			F045 A 0;
+			F046 A 0;
+			F047 A 0;
+			F048 A 0;
+			F049 A 0;
+			F050 A 0;
+			F051 A 0;
+			F052 A 0;
+			F053 A 0;
+			F054 A 0;
+			F055 A 0;
+			F056 A 0;
+			F057 A 0;
+			F058 A 0;
+			F059 A 0;
+			F060 A 0;
+			F061 A 0;
+			F062 A 0;
+			F063 A 0;
+			F064 A 0;
+			F065 A 0;
+			F066 A 0;
+			F067 A 0;
+			F068 A 0;
+			F069 A 0;
+			F070 A 0;
+			F071 A 0;
+			F072 A 0;
+			F073 A 0;
+			F074 A 0;
+			F075 A 0;
+			F076 A 0;
+			F077 A 0;
+			F078 A 0;
+			F079 A 0;
+			F080 A 0;
+			F081 A 0;
+			F082 A 0;
+			F083 A 0;
+			F084 A 0;
+			F085 A 0;
+			F086 A 0;
+			F087 A 0;
+			F088 A 0;
+			F089 A 0;
+			F090 A 0;
+			F091 A 0;
+			F092 A 0;
+			F093 A 0;
+			F094 A 0;
+			F095 A 0;
+			F096 A 0;
+			F097 A 0;
+			F098 A 0;
+			F099 A 0;
+			F100 A 0;
+			F101 A 0;
+			F102 A 0;
+			F103 A 0;
+			F104 A 0;
+			F105 A 0;
+			F106 A 0;
+			F107 A 0;
+			F108 A 0;
+			F109 A 0;
+			F110 A 0;
+			F111 A 0;
+			F112 A 0;
+			F113 A 0;
+			F114 A 0;
+			F115 A 0;
+			F116 A 0;
+			F117 A 0;
+			F118 A 0;
+			F119 A 0;
+			F120 A 0;
+			F121 A 0;
+			F122 A 0;
+			F123 A 0;
+			F124 A 0;
+			F125 A 0;
+			F126 A 0;
+			F127 A 0;
+			F128 A 0;
+			F129 A 0;
+			F130 A 0;
+			F131 A 0;
+			F132 A 0;
+			F133 A 0;
+			F134 A 0;
+			F135 A 0;
+			F136 A 0;
+			F137 A 0;
+			F138 A 0;
+			F139 A 0;
+			F140 A 0;
+			F141 A 0;
+			F142 A 0;
+			F143 A 0;
+			F144 A 0;
+			F145 A 0;
+			F146 A 0;
+			F147 A 0;
+			F148 A 0;
+			F149 A 0;
+			F150 A 0;
+			F151 A 0;
+			F152 A 0;
+			F153 A 0;
+			F154 A 0;
+			F155 A 0;
+			F156 A 0;
+			F157 A 0;
+			F158 A 0;
+			F159 A 0;
+			F160 A 0;
+			F161 A 0;
+			F162 A 0;
+			F163 A 0;
+			F164 A 0;
+			F165 A 0;
+			F166 A 0;
+			F167 A 0;
+			F168 A 0;
+			F169 A 0;
+			F170 A 0;
+			F171 A 0;
+			F172 A 0;
+			F173 A 0;
+			F174 A 0;
+			F175 A 0;
+			F176 A 0;
+			F177 A 0;
+			F178 A 0;
+			F179 A 0;
+			F180 A 0;
+			F181 A 0;
+			F182 A 0;
+			F183 A 0;
+			F184 A 0;
+			F185 A 0;
+			F186 A 0;
+			F187 A 0;
+			F188 A 0;
+			F189 A 0;
+			F190 A 0;
+			F191 A 0;
+			F192 A 0;
+			F193 A 0;
+			F194 A 0;
+			F195 A 0;
+			F196 A 0;
+			F197 A 0;
+			F198 A 0;
+			F199 A 0;
+			F200 A 0;
+			F201 A 0;
+			F202 A 0;
+			F203 A 0;
+			F204 A 0;
+			F205 A 0;
+			F206 A 0;
+			F207 A 0;
+			F208 A 0;
+			F209 A 0;
+			F210 A 0;
+			F211 A 0;
+			F212 A 0;
+			F213 A 0;
+			F214 A 0;
+			F215 A 0;
+			F216 A 0;
+			F217 A 0;
+			F218 A 0;
+			F219 A 0;
+			F220 A 0;
+			F221 A 0;
+			F222 A 0;
+			F223 A 0;
+			F224 A 0;
+			F225 A 0;
+			F226 A 0;
+			F227 A 0;
+			F228 A 0;
+			F229 A 0;
+			F230 A 0;
+			F231 A 0;
+			F232 A 0;
+			F233 A 0;
+			F234 A 0;
+			F235 A 0;
+			F236 A 0;
+			F237 A 0;
+			F238 A 0;
+			F239 A 0;
+			F240 A 0;
+			F241 A 0;
+			F242 A 0;
+			F243 A 0;
+			F244 A 0;
+			F245 A 0;
+			F246 A 0;
+			F247 A 0;
+			F248 A 0;
+			F249 A 0;
+			F250 A 0;
+			F251 A 0;
+			F252 A 0;
+			F253 A 0;
+			F254 A 0;
+			F255 A 0;
+	}
+
+	override void PostBeginPlay()
+	{
+		if (master)
+		{
+			SpawnPoint = pos;
+			offset = pos - master.pos;
+			offset = (RotateVector(offset.xy, -master.angle), offset.z);
+		}
+
+		Super.PostBeginPlay();
+	}
+
+	override void Tick()
+	{
+		if (IsFrozen() || bDormant) { return; }
+
+		if (user_text && !drawn && level.time > 35)
+		{
+			FlatText.SpawnString(self, user_text, fillcolor);
+			drawn = true;
+		}
+
+		if (value && value != 32 && level.time % 15 == 0)
+		{
+			int newsprite = GetSpriteIndex(String.Format("F%03i", value));
+			if (newsprite && sprite != newsprite) { sprite = newsprite; }
+		}
+
+		Super.Tick();
+
+		if (!master && !user_text) { Destroy(); }
+
+		if (master) { alpha = master.alpha; }
+	}
+
+	static void SpawnString(Actor master, String input, Color clr = 0x000000, double xoffset = 2.0, double yoffset = 0, double zoffset = 0, double scale = 1.0)
+	{
+		if (!master) { return; }
+
+		int digits = input.Length();
+
+		double position = 0;
+		double width = 16 * 0.125 * master.scale.x * scale;
+		double height = 33 * 0.125 * master.scale.y * scale;
+
+		for (int i = 0; i < digits; i++)
+		{
+			int code = input.ByteAt(0);
+
+			if (code == 92)
+			{
+				int next = input.ByteAt(1);
+
+				switch(next)
+				{
+					case 67: //c
+					case 99: //C
+						digits--;
+						input.Remove(0, 1);
+						break;
+					case 80: //p
+					case 112: //P
+						String nm = CVar.GetCVar("name", players[consoleplayer]).GetString();
+						digits += nm.Length();
+						input = input.left(2) .. nm .. input.mid(2);
+						break;
+					case 110: //\n
+					case 114: //\r
+						zoffset -= height * cos(master.pitch);
+						xoffset -= 0.75 * sin(master.pitch);
+						position = 0;
+						break;
+					default:
+						break;
+				}
+
+				digits--;
+				input.Remove(0, 2);
+			}
+			else
+			{
+				bool sp;
+				Actor mo;
+	
+				[sp, mo] = master.A_SpawnItemEx("FlatText", xoffset * master.scale.x, yoffset * master.scale.x + position, zoffset, flags: SXF_NOCHECKPOSITION);
+				if (sp)
+				{
+					FlatText(mo).value = code;
+					mo.master = master;
+					mo.scale *= master.scale.x * scale;
+					mo.pitch = master.pitch - 90;
+					mo.roll = master.roll;
+					mo.SetShade(clr);
+				}
+
+				position -= width;
+				input.Remove(0, 1);
+			}
 		}
 	}
 }
