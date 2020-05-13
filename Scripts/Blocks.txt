@@ -51,7 +51,7 @@ class BlockBase : SwitchableDecoration
 
 		if (master)
 		{
-			A_setSize(Radius * master.scale.x, Height * master.scale.y);
+			A_SetSize(Radius * master.scale.x, Height * master.scale.y);
 		}
 
 		scale.x = Radius * 2.0;
@@ -59,7 +59,7 @@ class BlockBase : SwitchableDecoration
 
 		if (master)
 		{
-			if (!wasculled)
+			if (!wasculled && !dontcull)
 			{
 				spawnoffset = pos - master.pos;
 
@@ -73,12 +73,14 @@ class BlockBase : SwitchableDecoration
 				offset = (offset.x, temp.x, temp.y);
 
 				spawnoffset = offset;
-			}
 
-			BlockManager.Add(self, spawnoffset);
+				BlockManager.Add(self, spawnoffset);
+			}
 
 			bSpecial = master.bPushable; // Only give SPECIAL if the master actor is pushable, since SPECIAL breaks collision.
 		}
+
+		if (pos.z < floorz) { Destroy(); }
 
 		interval = Random(0, 15);
 	}
@@ -172,7 +174,7 @@ class BlockInfo
 	double range;
 }
 
-// Blocks get culled 
+// Blocks get tracked in a dynamic array and culled when not in range of a player, then respawned when needed
 class BlockManager : Thinker
 {
 	Array<BlockInfo> Blocks;
@@ -180,7 +182,7 @@ class BlockManager : Thinker
 
 	static void Add(BlockBase block, Vector3 spawnoffset)
 	{
-		if (!block || block.dontcull || spawnoffset == (0, 0, 0)) { return; }
+		if (!block || spawnoffset == (0, 0, 0)) { return; }
 
 		ThinkerIterator it = ThinkerIterator.Create("BlockManager", Thinker.STAT_Default);
 		BlockManager manager = BlockManager(it.Next());
@@ -196,7 +198,7 @@ class BlockManager : Thinker
 	{
 		for (int i = 0; i < Blocks.Size(); i++)
 		{
-			if (Blocks[i] && Blocks[i].block == block) { return i; }
+			if (Blocks[i] && Blocks[i].block && Blocks[i].block == block) { return i; }
 		}
 		return Blocks.Size();
 	}
@@ -230,12 +232,12 @@ class BlockManager : Thinker
 
 		for (int i = 0; i < blocks.Size(); i++)
 		{
-
 			bool inrange = false;
 
 			for (int p = 0; p < MAXPLAYERS && !inrange; p++)
 			{
 				if (!playeringame[p]) { continue; }
+				if (blocks[i].master.master && blocks[i].master.master == players[p].mo) { continue; }
 
 				if (
 					(level.Vec3Diff(players[p].mo.pos, blocks[i].position)).length() < blocks[i].range ||
@@ -296,6 +298,13 @@ class DoorBlock : BlockBase
 		-SPECIAL;
 		Radius 0;
 		Height 64;
+	}
+
+	override void PostBeginPlay()
+	{
+		dontcull = true;
+
+		Super.PostBeginPlay();
 	}
 
 	override void Tick()

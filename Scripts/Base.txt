@@ -198,7 +198,7 @@ class CarryActor : PortalActor
 			initialized = true;
 		}
 
-		if (!bNoGravity && !master || !(master is "PlayerPawn")) { zoffset = Utilities.SetPitchRoll(self); }
+//		if (!bNoGravity && !master || !(master is "PlayerPawn")) { zoffset = Utilities.SetPitchRoll(self); }
 
 		if (!fizzle && pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
 		{

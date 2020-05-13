@@ -91,6 +91,9 @@ laser/burn		l_burn
 laser/target/on		l2_on
 laser/target/loop	l2_loop
 laser/target/off	l2_off
+laser/song1		laser1
+laser/song2		laser2
+$random laser/song0 { laser/song1 laser/song2 }
 
 bridge/loop		b_loop
 bridge/start		b_start

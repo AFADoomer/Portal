@@ -812,7 +812,7 @@ Model LightFixture
 	FrameIndex UNKN A 0 0
 }
 
-Model LightFixtureHallway
+Model LightFixtureObservation
 {
 	USEACTORPITCH
 	USEACTORROLL

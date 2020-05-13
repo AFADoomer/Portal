@@ -153,9 +153,9 @@ DoomEdNums
 	30054 = LaserTrigger
 	30055 = BridgeEmitter
 	30056 = PlatformMoving
-	30059 = LightFixture
+	30059 = LightFixtureObservation
 	30060 = Silhouette
-	30061 = LightFixtureHallway
+	30061 = LightFixture
 	30062 = Tank
 	30063 = Ladder
 	30064 = LadderExtension

@@ -633,7 +633,7 @@ class GridComplete : Grid
 	}
 }
 
-class Platform : PortalActor
+class Platform : Actor
 {
 	Actor glass;
 	bool floating;
@@ -650,9 +650,18 @@ class Platform : PortalActor
 		Radius 32;
 	}
 
+	States
+	{
+		Spawn:
+			UNKN A -1;
+			Stop;
+	}
+
 	override void PostBeginPlay()
 	{
 		Super.PostBeginPlay();
+
+		bDormant = SpawnFlags & MTF_DORMANT;
 
 		if (bStandstill) { floating = true; }
 
@@ -667,7 +676,7 @@ class Platform : PortalActor
 		if (!floating)
 		{
 			SetOrigin((pos.xy, floorz), true);
-			if (glass) { glass.SetOrigin(pos, true); }
+			if (glass) { glass.SetXYZ(pos); }
 		}
 
 		Super.Tick();
@@ -1213,7 +1222,7 @@ class LightFixture : PortalActor
 	AlphaLight light;
 	Class<Actor> paneclass;
 	Actor panes;
-	double user_lightlevel, user_flicker;
+	double user_lightlevel, user_flicker, user_radius;
 	double OuterAngle;
 	bool active;
 
@@ -1223,7 +1232,7 @@ class LightFixture : PortalActor
 	Default
 	{
 		//$Category Portal/Lights
-		//$Title Light Fixture (Observation Area)
+		//$Title Light Fixture (Standard)
 		+NOGRAVITY
 		+NOINTERACTION
 		Height 2;
@@ -1233,7 +1242,7 @@ class LightFixture : PortalActor
 
 	override void PostBeginPlay()
 	{
-		if (!user_lightlevel) { user_lightlevel = 2.0; }
+		if (!user_lightlevel) { user_lightlevel = 1.5; }
 
 		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
 
@@ -1302,10 +1311,10 @@ class LightFixture : PortalActor
 		{
 			light.master = self;
 			light.angle = angle;
-			light.pitch = 0;
-			light.maxradius = 384.0;
+			light.pitch = pitch - 90;
+			light.maxradius = user_radius ? user_radius : ceilingz - floorz * 0.75;
 			light.clr = fillcolor;
-			light.alpha = bStandStill ? 0.0 : user_lightlevel;
+			light.alpha = bStandstill ? 0.0 : user_lightlevel;
 			light.scale.y = 1 / user_lightlevel;
 			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
 		}
@@ -1326,50 +1335,54 @@ class LightFixture : PortalActor
 	}
 }
 
-class LightFixtureHallway : LightFixture
+class LightFixtureObservation : LightFixture
 {
-	int user_radius;
+	AlphaLight light2;
 
 	Default
 	{
-		//$Title Light Fixture (Standard)
+		//$Title Light Fixture (Observation Area)
 	}
 
 	override void PostBeginPlay()
 	{
-		if (!user_lightlevel) { user_lightlevel = 1.5; }
+		if (!user_lightlevel) { user_lightlevel = 2.0; }
 
-		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
+		Super.PostBeginPlay();
+	}
 
-		InitializeLight();
+	override void Tick()
+	{
+		Super.Tick();
 
-		panes = Spawn(paneclass, pos);
-		if (panes)
+		If (IsFrozen()) { return; }
+
+		if (active)
 		{
-			panes.master = light;
-			panes.roll = roll;
-			panes.pitch = pitch;
-			panes.angle = angle;
-			panes.scale = scale;
-			panes.SetShade(fillcolor);
+			if (light2)
+			{
+				light2.alpha = (bStandstill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_flicker ? alpha * user_lightlevel : user_lightlevel;
+				light2.clr = fillcolor;
+			}
 		}
-
-		PortalActor.PostBeginPlay();
 	}
 
 	override void InitializeLight()
 	{
-		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (RotateVector((1 * sin(-pitch), 0), angle), 1 * cos(-pitch))));
-		if (light)
+		Super.InitializeLight();
+
+		if (!light2) { light2 = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 48.0))); }
+
+		if (light2)
 		{
-			light.master = self;
-			light.angle = angle;
-			light.pitch = pitch - 90;
-			light.maxradius = user_radius ? user_radius : ceilingz - floorz * 0.75;
-			light.clr = fillcolor;
-			light.alpha = bStandstill ? 0.0 : user_lightlevel;
-			light.scale.y = 1 / user_lightlevel;
-			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
+			light2.master = self;
+			light2.angle = angle;
+			light2.pitch = 0;
+			light2.maxradius = 384.0;
+			light2.clr = fillcolor;
+			light2.alpha = bStandStill ? 0.0 : user_lightlevel;
+			light2.scale.y = 1 / user_lightlevel;
+			AttenuatedAlphaLight(light2).SpotOuterAngle = outerangle;
 		}
 
 		active = true;
@@ -1704,7 +1717,7 @@ class Crate : Cube
 	}
 }
 
-class IndustrialLight : LightFixtureHallway
+class IndustrialLight : LightFixture
 {
 	Default
 	{
@@ -1753,7 +1766,7 @@ class Stairway : PortalActor // Base class, not spawned directly
 		// Thing-based steps
 		double y = 12.0;
 		double z = 0.0;
-		for (double x = -8.0; z > -size && z > (floorz - pos.z); x -= 13.333)
+		for (double x = -8.0; z > -size; x -= 13.333)
 		{
 			A_SpawnItemEx ("Step", x, y, z, 0, 0, 0, 0, SXF_SETMASTER);
 			A_SpawnItemEx ("Step", x, -y, z, 0, 0, 0, 0, SXF_SETMASTER);
@@ -1769,7 +1782,7 @@ class Stairway : PortalActor // Base class, not spawned directly
 
 			double stepx = -16.0;
 			double stepz;
-			for (stepz = 12.0; stepz > -size * 0.7 && stepz > (floorz - pos.z); stepz -= 12.0)
+			for (stepz = 12.0; stepz > -size * 0.7; stepz -= 12.0)
 			{
 				A_SpawnItemEx ("RailBlock", stepx, 26.0, stepz, 0, 0, 0, 0, SXF_SETMASTER);
 				A_SpawnItemEx ("RailBlock", stepx, -26.0, stepz, 0, 0, 0, 0, SXF_SETMASTER);
@@ -1833,7 +1846,7 @@ class Rail : PortalActor
 		Height 16;
 		Radius 1;
 		RenderRadius 256.0;
-		PortalActor.StepSound "footsteps/ladder";
+		PortalActor.StepSound "footsteps/grate";
 	}
 
 	override void SpawnBlocks()

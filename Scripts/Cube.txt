@@ -38,7 +38,7 @@ class Cube : CarryActor
 	States
 	{
 		Spawn:
-			UNKN A 1;
+			UNKN # 1;
 			Loop;
 		Death:
 			Goto Fizzle;

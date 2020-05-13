@@ -337,6 +337,7 @@ class LaserTrigger : Actor
 {
 	int timeout;
 	PortalFindHitPointTracer hittracer;
+	int user_sound;
 
 	Default
 	{
@@ -367,6 +368,10 @@ class LaserTrigger : Actor
 		hittracer = new("PortalFindHitPointTracer");
 		A_SetSize(Radius + 8 * abs(sin(pitch)));
 
+		if (!user_sound) { user_sound = Random(0, 1); }
+
+		A_StartSound("laser/song" .. user_sound, 8, CHANF_NOSTOP | CHANF_LOOP, 0.5, ATTN_NORM, 0.75); // Start on spawn so they stay in sync
+
 		Super.PostBeginPlay();
 	}
 
@@ -384,6 +389,7 @@ class LaserTrigger : Actor
 			timeout = -1;
 			A_StartSound("laser/target/off", CHAN_AUTO, 0, 0.5);
 			A_StopSound(CHAN_7);
+			A_SoundVolume(8, 0.0);
 		}
 	}
 
@@ -394,8 +400,9 @@ class LaserTrigger : Actor
 			Level.ExecuteSpecial(special, null, null, false, args[0], args[1], !args[2], args[3], args[4]);
 			frame = 1;
 			bBright = true;
-			A_StartSound("laser/target/on", CHAN_AUTO, 0, 0.5);
+			A_StartSound("laser/target/on", CHAN_AUTO, 0, 0.25);
 			A_StartSound("laser/target/loop", CHAN_7, CHANF_LOOP, 0.25);
+			A_SoundVolume(8, 0.75);
 		}
 
 		timeout = 5;

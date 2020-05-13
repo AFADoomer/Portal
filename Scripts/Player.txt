@@ -673,7 +673,7 @@ class PortalPlayer : PlayerPawn
 				if (!DragTarget)
 				{
 					if (
-						AimActor && 
+						AimActor && !AimActor.bDormant &&
 						(Distance2D(AimActor) < UseRange || portalsource)
 					)
 					{

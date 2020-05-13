@@ -295,7 +295,7 @@ class LaserSpot : Actor
 	{
 		if (snd != "")
 		{
-			A_StartSound(snd, CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.125, ATTN_STATIC);
+			A_StartSound(snd, CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.0625, ATTN_STATIC);
 		}
 
 		double zoffset;
@@ -471,7 +471,7 @@ class BridgeSpot : Actor
 			UNKN A 1;
 			Loop;
 		Active:
-			UNKN A 1;
+			UNKN A 1 A_RemoveChildren(true, RMVF_EVERYTHING); // Make sure the bridge doesn't double-draw if it's activated multiple times somehow
 			UNKN A 1 A_FireBeam();
 		ActiveLoop:
 			UNKN A 1;
@@ -590,6 +590,7 @@ class BridgeBeam : Actor
 	Actor light;
 	int delay;
 	double volume;
+	double dist;
 
 	Default
 	{
@@ -626,6 +627,8 @@ class BridgeBeam : Actor
 				AlphaLight(light).clr = color("00 7B FF");
 			}
 		}
+
+		if (master) { dist = Distance3D(master); }
 	}
 
 
@@ -639,11 +642,12 @@ class BridgeBeam : Actor
 		}
 		else if (level.time > delay)
 		{
-			alpha = 0.8 + 0.1 * sin(3 * level.time - Distance3D(master));
+			alpha = 0.8 + 0.1 * sin(3 * level.time - dist);
+
 			if (light)
 			{
 				light.SetXYZ(pos);
-				light.alpha = 0.5 + 0.4 * sin(3 * level.time - Distance3D(master));
+				light.alpha = 0.5 + 0.4 * sin(3 * level.time - dist);
 			}
 		}
 	}

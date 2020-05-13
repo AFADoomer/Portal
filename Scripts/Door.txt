@@ -93,7 +93,7 @@ class Pivot : Actor
 		{
 			for (int i = 2; i <= 30; i+=2)
 			{
-				if (!blockers[i].CheckPosition(pos.xy + RotateVector((i, 0), angle)))
+				if (blockers[i] && !blockers[i].CheckPosition(pos.xy + RotateVector((i, 0), angle)))
 				{
 					targetangle = angle;
 					return;
@@ -125,7 +125,7 @@ class Pivot : Actor
 
 			for (int i = 2; i <= 30; i+=2)
 			{
-				blockers[i].SetOrigin((pos.xy + RotateVector((i, 0), angle), pos.z), true);
+				if (blockers[i]) { blockers[i].SetOrigin((pos.xy + RotateVector((i, 0), angle), pos.z), true); }
 			}
 		}
 	}

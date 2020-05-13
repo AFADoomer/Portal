@@ -377,6 +377,12 @@ Script "Deactivate" (int thing)
 	SetActorState(thing, "Inactive");
 }
 
+script "Toggle" (int active, int tid)
+{
+	if (active) { ACS_NamedExecuteAlways("Deactivate", 0, tid); }
+	else { ACS_NamedExecuteAlways("Activate", 0, tid); }
+}
+
 Script "Cleanup" (int door, int things)
 {
 	ACS_NamedExecuteAlways("OpenDoor", 0, 1, door); // Close the door behind you
