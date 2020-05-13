@@ -1305,7 +1305,7 @@ class LightFixture : PortalActor
 
 	virtual void InitializeLight()
 	{
-		if (!light) { light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 4.0))); }
+		if (!light) { light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (RotateVector((1 * sin(-pitch), 0), angle), 1 * cos(-pitch)))); }
 
 		if (light)
 		{
