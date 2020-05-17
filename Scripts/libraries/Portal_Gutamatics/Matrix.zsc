@@ -331,4 +331,41 @@ class Portal_Matrix {
 	int getRows() const {
 		return rows;
 	}
+
+	// AFADoomer - Modified from:
+	//  http://vr.cs.uiuc.edu/node81.html
+	//  https://github.com/VSES/SourceEngine2007/blob/43a5c90a5ada1e69ca044595383be67f40b33c61/src_main/mathlib/vmatrix.cpp#L377
+	static Portal_Matrix matrixInverseTR(Portal_Matrix src)
+	{
+		Portal_Matrix dst = Portal_Matrix.Identity(4);
+
+		Vector3 vTrans, vNewTrans;
+
+		// Transpose the upper 3x3.
+		dst.set(0, 0, src.get(0, 0));
+		dst.set(1, 0, src.get(0, 1));
+		dst.set(2, 0, src.get(0, 2));
+
+		dst.set(0, 1, src.get(1, 0));
+		dst.set(1, 1, src.get(1, 1));
+		dst.set(2, 1, src.get(1, 2));
+
+		dst.set(0, 2, src.get(2, 0));
+		dst.set(1, 2, src.get(2, 1));
+		dst.set(2, 2, src.get(2, 2));
+
+		// Transform the translation.
+		vTrans = (-src.get(3, 0), -src.get(3, 1), -src.get(3, 2));
+		vNewTrans = dst.multiplyVector3(vTrans).asVector3();
+		dst.set(3, 0, vNewTrans.x);
+		dst.set(3, 1, vNewTrans.y);
+		dst.set(3, 2, vNewTrans.z);
+
+		dst.set(0, 3, 0);
+		dst.set(1, 3, 0);
+		dst.set(2, 3, 0);
+		dst.set(3, 3, 1);
+
+		return dst;
+	}
 }

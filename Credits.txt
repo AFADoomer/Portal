@@ -2,7 +2,7 @@
 
 I had honestly forgotten about CutmanMike's ZPortal mod when I started this as a proof of concept, but I'll credit inspiration to him, regardless.  MAP02 is a modified version of the original ZPortal map by CutmanMike, intended to be an Easter egg - haven't talked to him about it, so this may not make the cut for final release.
 
-All sounds are from Portal 2 by Valve Software.
+All sound effects are from Portal 2 by Valve Software.
 
 High-resolution COMPTALL texture used as a base for a few textures is from the Doom Neural Upscale - again, haven't asked about using it - may end up just redrawing things myself. (https://www.doomworld.com/forum/topic/99021-doom-neural-upscale-2x-v-0-95minorspritefixsmoothweapons/)
 Brightmap for the same texture from https://forum.zdoom.org/viewtopic.php?f=46&t=64299

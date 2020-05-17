@@ -1,6 +1,6 @@
 class PortalGun : Weapon
 {
-	Actor portalA, portalB;
+	PortalSpot portalA, portalB;
 	bool dual, cleared, shottype;
 	
 	PortalFindHitPointTracer portaltracer;
@@ -209,7 +209,7 @@ class PortalGun : Weapon
 				invoker.PortalSetup(PortalSpot(portal), 0);
 			}
 
-			if (portal.waterlevel) { PortalSpot(portal).pair = portal; }
+			if (portal.waterlevel) { PortalSpot(portal).pair = PortalSpot(portal); }
 		}
 	}
 

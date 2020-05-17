@@ -21,9 +21,9 @@ class PortalStatusBar : BaseStatusBar
 	{
 		if (!CPlayer) { return; }
 
-		CVar debughealth = CVar.GetCVar("g_debughealth");
+		CVar debughealth = CVar.FindCVar("g_debughealth");
 
-		if (debughealth && debughealth.GetInt() > 0)
+		if (debughealth && debughealth.GetBool() == True)
 		{
 			Screen.DrawText(SmallFont, 0, Screen.GetWidth() - 40, 10, String.Format("%i%%", CPlayer.health));
 		}

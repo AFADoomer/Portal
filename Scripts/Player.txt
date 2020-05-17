@@ -179,8 +179,8 @@ class PortalPlayer : PlayerPawn
 			else { lastline = null; }
 
 			// One-time water entry/exit splashes
-			if (waterlevel > 1 && !waterstate) { A_StartSound("world/water/enter", CHAN_AUTO, 0, 0.5); }
-			else if (!waterlevel && waterstate > 1) { A_StartSound("world/water/exit", CHAN_AUTO, 0, 0.5); }
+			if (waterlevel > 0 && waterstate == 0) { A_StartSound("world/water/enter", 8, 0, 0.1 * abs(vel.z)); }
+			else if (waterlevel == 0 && waterstate > 0) { A_StartSound("world/water/exit", 8, 0, 0.1 * abs(vel.z)); }
 
 			// Underwater effect
 			//  Note:  Should just be a local sound, but local sounds apparently can't be stopped with A_StopSound, so

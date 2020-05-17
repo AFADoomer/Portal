@@ -1,6 +1,7 @@
 class PortalSpot : Actor
 {
-	Actor pair, camera, ring;
+	PortalSpot pair;
+	Actor camera, ring;
 	PlayerPawn closest;
 	Array<Actor> Activators;
 	Array<Actor> BeamSources;
@@ -11,9 +12,11 @@ class PortalSpot : Actor
 	PortalFindHitPointTracer hittracer;
 	CarryPointTracer blocktracer;
 	Line linedef;
-	Portal_Quaternion inportal, outportal;
+//	Portal_Quaternion inportal, outportal;
 	int offset;
 	bool blocked, noplayers;
+	Vector3 forward, right, up;
+	Portal_Matrix worldtransform, transform;
 
 	Default
 	{
@@ -106,6 +109,12 @@ class PortalSpot : Actor
 			noplayers = true;
 		}
 
+		forward = tracedir.Unit();
+		right = forward cross (0, 0, 1);
+		up = right cross forward;
+
+		worldtransform = Portal_Matrix.createTRSEuler(pos, angle, pitch, roll, (1, 1, 1));
+
 		Super.PostBeginPlay();
 	}
 
@@ -132,17 +141,16 @@ class PortalSpot : Actor
 
 		if (IsFrozen()) { return; }
 
-		if (pair && pair != self && open && PortalSpot(pair).open && ring)
+		if (pair && pair != self && open && pair.open && ring)
 		{
 			bInvisible = false;
 
 			if (finalpos == (0, 0, 0)) { finalpos = pos; }
 			SetOrigin(finalpos, false);
 
-			inportal = Portal_Quaternion.createFromAngles(angle, pitch, roll);
-			outportal = Portal_Quaternion.createFromAngles(pair.angle, pair.pitch, pair.roll);
+			transform = pair.worldtransform.multiplyMatrix(Portal_Matrix.matrixInverseTR(worldtransform));
 
-			if (PortalSpot(pair).camera)
+			if (pair.camera)
 			{
 				double camfov = 90;
 
@@ -150,40 +158,38 @@ class PortalSpot : Actor
 				{
 					camfov = camfov + 30 / clamp(Distance2D(players[consoleplayer].mo) / 32, 1, 60);
 
-					Portal_Quaternion orientation = Portal_Quaternion.createFromAngles(
+					Portal_Matrix view = Portal_Matrix.fromEulerAngles(
 						players[consoleplayer].mo.angleTo(self, true), 
-						PitchTo(self, players[consoleplayer].mo, 32.0 * players[consoleplayer].crouchfactor), 
+						-PitchTo(self, players[consoleplayer].mo, 32.0 * players[consoleplayer].crouchfactor), 
 						players[consoleplayer].mo.roll - roll
 						);
-					orientation = orientation.unit();
-
-					Portal_Quaternion relative = outportal.multiplyQuat(inportal.inverse());
-					Portal_Quaternion results = orientation.multiplyQuat(relative);
-					Portal_Quaternion reverse = new("Portal_Quaternion").initFromAxisAngle((0, 0, 1), 180);
-					results = results.multiplyQuat(reverse);
+					Portal_Matrix newview = transform.multiplyMatrix(view);
+					Vector3 viewoffset = -RotateVector3(forward, -angle, 0, 0);
+					Portal_Matrix reverse = Portal_Matrix.fromEulerAngles(viewoffset.x * 180, viewoffset.y * 180, viewoffset.z * 180);
+					newview = reverse.multiplyMatrix(newview);
 
 					double a, p, r;
-					[a, p, r] = results.toAngles();
+					[a, p, r] = newview.rotationToEulerAngles();
 
-					PortalSpot(pair).camera.angle = a;
-					PortalSpot(pair).camera.pitch = -p;
-//					PortalSpot(pair).camera.roll = r;
+					pair.camera.angle = a;
+					pair.camera.pitch = -p;
+//					pair.camera.roll = r;
 				}
 				else
 				{
-					PortalSpot(pair).camera.angle = pair.angle;
-					PortalSpot(pair).camera.pitch = pair.pitch;
-					PortalSpot(pair).camera.roll = pair.roll;
+					pair.camera.angle = pair.angle;
+					pair.camera.pitch = pair.pitch;
+					pair.camera.roll = pair.roll;
 				}
 
-				TexMan.SetCameraToTexture(PortalSpot(pair).camera, PortalSpot(pair).camtex, camfov);
+				TexMan.SetCameraToTexture(pair.camera, pair.camtex, camfov);
 			}
 
 			if ((level.time + offset) % 10 == 0) { CheckOtherActivators(); }
 
 			for (int i = 0; i < Activators.Size(); i++)
 			{
-				if (Activators[i] && (Activators[i] is "LaserHitMarker" && Activators[i].damage > 0) || Activators[i] is "BridgeHitMarker")
+				if (Activators[i] && Activators[i] is "HitMarker")
 				{
 					if (Distance3D(Activators[i]) > 32.0)
 					{
@@ -194,34 +200,37 @@ class PortalSpot : Actor
 
 					if (!Activators[i].Alternative && Activators.Size() < 8)
 					{
-						if (Activators[i] is "BridgeHitMarker") { Activators[i].Alternative = Spawn("BridgeSpot"); }
-						else { Activators[i].Alternative = Spawn("LaserSpot"); }
-						Activators[i].Alternative.master = pair;
-						Activators[i].Alternative.SetStateLabel("Active");
+						if (Activators[i] is "HitMarker") { Activators[i].Alternative = Spawn(HitMarker(Activators[i]).spot, Activators[i].pos); }
+
+						if (Activators[i].Alternative)
+						{
+							Activators[i].Alternative.angle = Activators[i].angle;
+							Activators[i].Alternative.pitch = Activators[i].pitch;
+							Activators[i].Alternative.roll = Activators[i].roll;
+							Activators[i].Alternative.master = pair;
+							Activators[i].Alternative.SetStateLabel("Active");
+						}
 					}
 
-					if (Activators[i].Alternative)
+					if (Activators[i].Alternative && Activators[i].Alternative.pos == Activators[i].pos)
 					{
-						Vector3 offset = Activators[i].pos - pos;
-
-						offset = RotateVector3(offset, -angle, pitch, -roll);
-						offset = RotateVector3(offset, 180);
-						offset = RotateVector3(offset, pair.angle, -pair.pitch, pair.roll);
-						offset.z *= -1; // Fix offset for light bridges?
-
-						DoMove(Activators[i].Alternative, offset, false);
-
-						Activators[i].Alternative.angle = Activators[i].angle + (pair.angle - angle) + 180;
-						Activators[i].Alternative.pitch = Activators[i].pitch + (pair.pitch - pitch);
-						Activators[i].Alternative.roll = Activators[i].roll + pair.roll - roll;
-
-						if (pair.pitch == 90 || pair.pitch == -90) { Activators[i].Alternative.pitch += 180; }
+						DoMove(Activators[i].Alternative, false);
 					}
 				}
 				else if (Activators[i] && !Activators[i].bNoInteraction && !Activators[i].bNoClip)
 				{
 					double dist = Distance2D(Activators[i]);
 					double disty = PlaneDist(Activators[i], y:true);
+
+					if (Activators[i].pos.z > Activators[i].curSector.NextLowestFloorAt(Activators[i].pos.x, Activators[i].pos.y, Activators[i].pos.z))
+					{
+						if (pitch && pitch % 90 == 0 && dist < 128)
+						{
+							Vector2 pull = AngleToVector(Activators[i].AngleTo(self), 0.1 * dist / 128);
+
+							Activators[i].vel += pull;
+						}
+					}
 
 					if (dist > 64.0 || (Activators[i].master && Activators[i].master is "PlayerPawn")) { Activators.Delete(i); continue; }
 
@@ -234,7 +243,9 @@ class PortalSpot : Actor
 						if (!closest || dist < Distance2D(closest)) { closest = PlayerPawn(Activators[i]); }
 					}
 
-					bool inportalbounds = (!pitch && pos.z - 40.0 <= Activators[i].pos.z && pos.z + 40.0 >= Activators[i].pos.z + Activators[i].height && disty <= 14.0) || (pitch != 0 && Distance3D(Activators[i]) <= movedist + movedist * sin(abs(pitch)));
+					bool inportalbounds = 
+							(!pitch && pos.z - 40.0 <= Activators[i].pos.z && pos.z + 40.0 >= Activators[i].pos.z + Activators[i].height && disty <= 14.0) ||
+							(pitch != 0 && Distance3D(Activators[i]) <= movedist + (2 * movedist) * sin(abs(pitch)));
 
 					if (inportalbounds) { Activators[i].A_SetSize(clamp(dist - 8, 1, Activators[i].Default.Radius), -1, true); }
 					else { Activators[i].A_SetSize(Activators[i].Default.Radius, Activators[i].Default.Height, true); }
@@ -249,23 +260,10 @@ class PortalSpot : Actor
 							if (Activators[i].Alternative) { Activators[i].Alternative.Destroy(); }
 						}
 					}
-
-					if (Activators[i].vel.length() > Activators[i].Speed)
-					{
-						if (pitch == 0 && dist < 256 && abs(deltaangle(Activators[i].angle, Activators[i].AngleTo(self))) <= 30)
-						{
-							Vector2 pull = AngleToVector(Activators[i].AngleTo(self), (1 - dist / 256) * Activators[i].vel.length() / 10);
-
-							pull = RotateVector(pull, -Activators[i].angle);
-							pull = RotateVector((0, pull.y), Activators[i].angle); // Just pull left/right
-
-							Activators[i].vel += pull;
-						}
-					}
 				}
 			}
 
-			if (PortalSpot(pair) && PortalSpot(pair).blocked) { noplayers = true; }
+			if (pair && pair.blocked) { noplayers = true; }
 			else if (!blocked) { noplayers = false; }
 		}
 		else
@@ -300,7 +298,7 @@ class PortalSpot : Actor
 		if (Activators.Find(toucher) == Activators.Size()) { Activators.Push(toucher); }
 	}
 
-	void DoMove(Actor toucher, Vector3 offset = (0, 0, 0), bool sound = true)
+	void DoMove(Actor toucher, bool sound = true)
 	{
 		double zoffset;
 
@@ -318,36 +316,29 @@ class PortalSpot : Actor
 			toucher.pitch = -atan(distz / distxy);
 		}
 
-		Portal_Quaternion orientation = Portal_Quaternion.createFromAngles(toucher.angle, toucher.pitch, toucher.roll);
-		Portal_Quaternion relative = orientation.multiplyQuat(inportal.inverse());
-		Portal_Quaternion results = relative.multiplyQuat(outportal);
-		Portal_Quaternion reverse = new("Portal_Quaternion").initFromAxisAngle((0, 0, 1), 180);
-		results = results.multiplyQuat(reverse);
+		Vector3 neworigin = transform.multiplyVector3(toucher.pos).asVector3();
+		neworigin = neworigin + pair.forward * toucher.radius * 1.4;
+
+		Portal_Matrix view = Portal_Matrix.fromEulerAngles(toucher.angle, -toucher.pitch, toucher.roll);
+		Portal_Matrix newview = transform.multiplyMatrix(view);
+		Vector3 viewoffset = -RotateVector3(forward, -angle) * 180;
+		Portal_Matrix reverse = Portal_Matrix.fromEulerAngles(viewoffset.x, viewoffset.y, viewoffset.z);
+		newview = reverse.multiplyMatrix(newview);
 
 		double a, p, r;
-		[a, p, r] = results.toAngles();
+		[a, p, r] = newview.rotationToEulerAngles();
 
-		toucher.vel = RotateVector3(toucher.vel, a - toucher.angle, -p + toucher.pitch, r - toucher.roll);
-		if (toucher.vel.length() < 16.0) { toucher.vel *= 1.05; }
+		if (toucher.vel.length())
+		{
+			toucher.vel = RotateVector3(toucher.vel, a - toucher.angle, -p - toucher.pitch, r - toucher.roll);
+			if (toucher.vel.length() < 16.0) { toucher.vel *= 1.05; }
+		}
 
 		toucher.angle = a;
 		toucher.pitch = -p;
 		toucher.roll = r;
 
-		if (offset == (0, 0, 0)) { offset = pos - toucher.pos; }
-		offset = RotateVector3(offset, -angle + 180, pitch, -roll);
-		if (!(toucher is "LaserSpot")) { offset.x += max(toucher.vel.length() + toucher.Default.Radius, movedist + 0.5); }
-		if (toucher is "Cube") { offset.z += Cube(toucher).zoffset; }
-		offset.z = clamp(-offset.z, pair.floorz - pair.pos.z, pair.ceilingz - toucher.height - pair.pos.z); // Make sure the spawn spot isn't in the floor or ceiling...
-
-		offset = RotateVector3(offset, pair.angle, pair.pitch, pair.roll);
-
-		if (abs(pair.pitch) > 45) { offset.xy = (0, 0); } // Center anything moving out of a flat plane portal to minimize risk of outside-the-map spawns
-
-		toucher.ClearInterpolation();
-		if (PortalPlayer(toucher)) { toucher.player.camera.ClearInterpolation(); PortalPlayer(toucher).CurrentPortal = null; }
-
-		toucher.SetOrigin(pair.pos + offset, false);
+		if (pos != neworigin) { toucher.SetOrigin(neworigin, false); }
 
 		if (sound) { pair.A_StartSound(pair.frame ? "portal/exit2" : "portal/exit1", CHAN_AUTO); }
 	}
@@ -712,6 +703,14 @@ class PortalSpot : Actor
 
 	void CheckOtherActivators()
 	{
+		if (!noplayers)
+		{
+			for (int p = 0; p < MAXPLAYERS; p++)
+			{
+				if (playeringame[p] && Activators.Find(players[p].mo) == Activators.Size()) { Activators.Push(players[p].mo); }
+			}
+		}
+
 		ThinkerIterator it = ThinkerIterator.Create("Actor", Thinker.STAT_USER);
 		Actor mo;
 
@@ -722,9 +721,9 @@ class PortalSpot : Actor
 				Activators.Find(mo) == Activators.Size()
 			)
 			{
-				if (noplayers && !(mo is "LaserHitMarker")) { continue; }
+				if (noplayers && !(mo is "HitMarker")) { continue; }
 
-				Activators.Push(mo);
+				if (Activators.Find(mo) == Activators.Size()) { Activators.Push(mo); }
 			}
 
 		}
@@ -762,7 +761,7 @@ class PortalSpot : Actor
 		double distxy = max(source.Distance2D(mo), 1);
 		double distz = source.pos.z + zoffset - mo.pos.z;
 
-		return atan(distz / distxy);
+		return atan(distz / max(distxy, 0.0000001));
 	}
 
 	int GetLineAngle()

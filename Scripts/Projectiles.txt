@@ -342,10 +342,13 @@ class LaserSpot : Actor
 	}
 }
 
-class LaserHitMarker : Actor
+class HitMarker : Actor
 {
 	bool moved;
 	Vector3 oldpos;
+	Class<Actor> spot;
+
+	Property Spot:spot;
 
 	Default
 	{
@@ -388,6 +391,14 @@ class LaserHitMarker : Actor
 	override void OnDestroy()
 	{
 		if (Alternative) { Alternative.Destroy(); }
+	}
+}
+
+class LaserHitMarker : HitMarker
+{
+	Default
+	{
+		HitMarker.Spot "LaserSpot";
 	}
 }
 
@@ -496,11 +507,9 @@ class BridgeSpot : Actor
 		}
 	}
 
-	void A_FireBeam(int damage = 3, sound snd = "laser")
+	void A_FireBeam()
 	{
-		A_StartSound(snd, CHAN_AUTO, 0, 1.0);
-
-		DoBridgeTrace(self, angle, 2048, pitch, 0, 0, hittracer);
+		DoBridgeTrace(master, angle, 2048, pitch, 0, 0, hittracer);
 		DrawBridge(hittracer.Results);
 	}
 
@@ -570,6 +579,11 @@ class BridgeSpot : Actor
 
 class BridgeHitMarker : LaserHitMarker
 {
+	Default
+	{
+		HitMarker.Spot "BridgeSpot";
+	}
+
 	override void PostBeginPlay()
 	{
 		if (master)

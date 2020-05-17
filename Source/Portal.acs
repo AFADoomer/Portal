@@ -30,20 +30,26 @@ Script "MoveLift" (int dir, int piston, int lift)
 	if (dir > 0) { doorstate[lift] = 1; }
 	else { doorstate[lift] = -1; }
 
-	if (!start[lift]) { start[lift] = GetSectorCeilingZ(lift, 0, 0); }
+	if (!start[lift])
+	{
+		int ceilingheight = GetSectorCeilingZ(lift, 0, 0);
+		if (ceilingheight == 0) { ceilingheight = 0.5; } // Since this initializes to zero, anything starting at height zero would break, so set "close to" zero
+
+		start[lift] = ceilingheight;
+	}
 
 	PlaySound(lift, "platform/start", CHAN_7, 1.0);
 	PlaySound(lift, "platform/loop", CHAN_6, 1.0, true);
 
 	if (dir)
 	{
-		While (current[lift] < 64.0)
+		While (current[lift] < start[lift] + 64.0)
 		{
 			Generic_Ceiling(lift, speed, speed, 0, 16 | 8);
 			Generic_Floor(lift, speed, speed, 0, 16 | 8);
 			Floor_RaiseByValue(piston, speed, speed);
 
-			current[lift] = GetSectorCeilingZ(lift, 0, 0) - start[lift];
+			current[lift] = GetSectorCeilingZ(lift, 0, 0);
 
 			Delay(1);
 
@@ -52,13 +58,13 @@ Script "MoveLift" (int dir, int piston, int lift)
 	}
 	else
 	{
-		While (current[lift] > 0.0)
+		While (current[lift] > start[lift])
 		{
 			Floor_LowerByValue(piston, speed, speed);
 			Generic_Floor(lift, speed, speed, 0, 16);
 			Generic_Ceiling(lift, speed, speed, 0, 16);
 
-			current[lift] = GetSectorCeilingZ(lift, 0, 0) - start[lift];
+			current[lift] = GetSectorCeilingZ(lift, 0, 0);
 
 			Delay(1);
 
@@ -284,7 +290,7 @@ Script "SpawnCube" (int spottid, int tid, int noreplace)
 			if (noreplace) { activated[spottid] = FALSE; }
 		}
 
-		Delay(35);
+		Delay(16);
 	}
 }
 

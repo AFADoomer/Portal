@@ -1,0 +1,6 @@
+user float g_lightdensity = 0.5;
+user noarchive bool g_debuglights = false;
+user noarchive bool g_debugblocks = false;
+user noarchive bool g_debughealth = false;
+
+server noarchive bool g_allportalsurfaces = false;

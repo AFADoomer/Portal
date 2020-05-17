@@ -1,5 +1,11 @@
 class Utilities : Actor
 {
+	static int Round(double input)
+	{
+		if (input > double(int(input)) + 0.5) { return int(input) + 1; }
+		else { return int(input); }
+	}
+
 	static void SpawnLights(Actor base, int rows = 1, int cols = 1, int rowsize = 16, int colsize = 16, bool activate = false)
 	{
 		if (!base) { return; }
@@ -13,10 +19,10 @@ class Utilities : Actor
 			f = clamp(density.GetFloat(), 0.1, 1.0); 
 		}
 
-		rows = max(1, int(rows * f));
-		cols = max(1, int(cols * f));
-		rowsize = int(rowsize / f);
-		colsize = int(colsize / f);
+		rows = max(1, round(rows * f));
+		cols = max(1, round(cols * f));
+		rowsize = round(rowsize / f);
+		colsize = round(colsize / f);
 
 		int rowpos = -(rows * rowsize) / 2 + rowsize / 2;
 		int colpos = -(cols * colsize) / 2 + colsize / 2;
@@ -50,7 +56,7 @@ class Utilities : Actor
 					AlphaLight(mo).clr.g = int(basecolor.g * scale);
 					AlphaLight(mo).clr.b = int(basecolor.b * scale);
 					AlphaLight(mo).maxradius = (LightSpawner(base) && LightSpawner(base).user_maxradius) ? LightSpawner(base).user_maxradius : clamp(max(rowsize, colsize) * 4.0 * f, 16.0, 512.0 * f);
-					AttenuatedAlphaLight(mo).user_lightlevel = 1.0;
+					AttenuatedAlphaLight(mo).user_lightlevel = 1.0 / f;
 
 					if (base.tid)
 					{
@@ -189,7 +195,10 @@ class Utilities : Actor
 			mo.master = null;
 		}
 
+		mo.ChangeTID(0); // Clear the TID so a replacement can be spawned if applicable
+
 		mo.bSolid = false;
+		mo.bNoInteraction = true;
 		mo.bInvulnerable = true;
 		mo.bNoTarget = true;
 		mo.bMBFBouncer = false;
@@ -327,7 +336,7 @@ class Utilities : Actor
 			beam.alpha = beam.Default.alpha * alpha;
 		}
 
-		if (!hitspot) { hitspot = Spawn("LaserHitMarker", traceresults.HitPos - traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
+		if (!hitspot && damage > 0) { hitspot = Spawn("LaserHitMarker", traceresults.HitPos - traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
 		if (hitspot)
 		{
 			hitspot.master = origin;

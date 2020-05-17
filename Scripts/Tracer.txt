@@ -35,16 +35,6 @@ Class PortalFindHitPointTracer : LineTracer
 			{
 				if (!Results.HitLine.alpha) { return TRACE_Skip; }
 
-				if (
-					Results.Tier == TIER_Middle && 
-					Results.HitLine.flags & Line.ML_TWOSIDED && 
-					!(Results.HitLine.flags & Line.ML_3DMIDTEX) && 
-					!(
-						Results.HitLine.flags & Line.ML_BLOCKING ||
-						Results.HitLine.flags & Line.ML_BLOCKEVERYTHING	
-					)
-				) { return TRACE_Skip; }
-
 				String tex = Texman.GetName(Results.HitTexture);
 
 				if (tex ~== "WATERLIN" || tex ~== "KILLGRIL")
@@ -87,6 +77,16 @@ Class PortalFindHitPointTracer : LineTracer
 						}
 					}
 				}
+				else if (
+					Results.Tier == TIER_Middle && 
+					Results.HitLine.flags & Line.ML_TWOSIDED && 
+					!(Results.HitLine.flags & Line.ML_3DMIDTEX) && 
+					!(
+						Results.HitLine.flags & Line.ML_BLOCKING ||
+						Results.HitLine.flags & Line.ML_BLOCKEVERYTHING	
+					)
+				) { return TRACE_Skip; }
+
 				return TRACE_Stop;
 			}
 			return TRACE_Skip;
