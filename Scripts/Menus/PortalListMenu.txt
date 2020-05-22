@@ -66,6 +66,19 @@ class PortalListMenu : ListMenu
 						screen.DrawText(font, this.mColor, x, y, text);
 					}
 				}
+				else if (item is "ListMenuItemStaticPatch")
+				{
+					let this = ListMenuItemStaticPatch(item);
+
+					if (!this.mTexture.Exists()) { return; }
+
+					Vector2 vec = TexMan.GetScaledSize(this.mTexture);
+
+					double x = this.GetX();
+					if (this.mCentered) { x -= vec.X / 2; }
+
+					screen.DrawTexture(this.mTexture, true, int(x), this.GetY(), DTA_Clean, true);
+				}
 
 				if (selected)
 				{

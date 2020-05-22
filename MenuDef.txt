@@ -22,6 +22,8 @@ DefaultOptionMenu
 
 ListMenu "MainMenu"
 {
+	StaticPatch 10, 10, "Title"
+
 	TextItem "New Game", "n", "PlayerclassMenu"
 	TextItem "Configuration","c", "OptionsMenu"
 	TextItem "Load Game", "l", "LoadGameMenu"
