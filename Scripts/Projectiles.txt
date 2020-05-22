@@ -509,6 +509,8 @@ class BridgeSpot : Actor
 
 	void A_FireBeam()
 	{
+		StartSoundSequence("BridgeUp", 0);
+
 		DoBridgeTrace(master, angle, 2048, pitch, 0, 0, hittracer);
 		DrawBridge(hittracer.Results);
 	}
@@ -571,6 +573,8 @@ class BridgeSpot : Actor
 
 	override void Deactivate(Actor activator)
 	{
+		StartSoundSequence("BridgeDown", 0);
+
 		A_RemoveChildren(true, RMVF_EVERYTHING);
 
 		Super.Deactivate(activator);
@@ -627,8 +631,6 @@ class BridgeBeam : Actor
 	{
 		Super.PostBeginPlay();
 
-		StartSoundSequence("BridgeUp", 0);
-
 		if (!light && !bNoInteraction)
 		{
 			light = Spawn("AlphaLight", pos);
@@ -668,8 +670,6 @@ class BridgeBeam : Actor
 
 	override void OnDestroy()
 	{
-		StartSoundSequence("BridgeDown", 0);
-
 		if (light) { light.Destroy(); }
 	}
 }

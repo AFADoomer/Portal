@@ -1,130 +1,33 @@
 class Cube : CarryActor
 {
-	Sector activesector;
-	double rollvel, pitchvel;
-	double bounceangle;
-
 	Default
 	{
 		//$Category Portal/Cubes
 		//$Sprite "UNKNB0"
-		+SOLID
-		+NOBLOOD
-		+NOTAUTOAIMED
-		+PUSHABLE
-		+CANPASS
-		+SHOOTABLE
-		+ALLOWBOUNCEONACTORS
-		+BOUNCEONACTORS
-		+MBFBOUNCER
-		+BOUNCEAUTOOFF
-		+CANBOUNCEWATER
 		-NODAMAGE
 		Health 100;
-		Height 51;
-		Radius 33;
-		Mass 111;
-		Scale 0.45;
-		MaxDropoffHeight 26;
-		MaxStepHeight 26;
-		BounceType "Grenade";
-		BounceFactor 0.05;
+		Height 22;
+		Radius 14;
+		Mass 55;
 		BounceSound "cube/bounce";
 		WallBounceSound "cube/bounce";
-		DamageFactor 0.0;
-		DamageFactor "Slime", 10.0;
+		CarryActor.Fizzle True;
+		CarryActor.SlideSound "cube/slide";
 	}
 
 	States
 	{
 		Spawn:
-			UNKN # 1;
-			Loop;
+			UNKN # -1;
+			Stop;
 		Death:
 			Goto Fizzle;
 	}
 
 	override void BeginPlay()
 	{
-		ChangeStatNum(Thinker.STAT_USER);
+		ChangeStatNum(Thinker.STAT_USER); // Used to set actors that can activate buttons.
 		Super.BeginPlay();
-	}
-
-	override void Tick()
-	{
-		bounceangle = angle;
-
-		Super.Tick();
-
-		angle = bounceangle; // Undo angle change made by AngelFromVel call in internal bouncing code
-
-		if (bDormant) { return; }
-
-		Utilities.CheckFizzle(self);
-
-		if (master)
-		{
-//			pitch = master.pitch;
-			roll = master.roll;
-			return;
-		}
-
-//		pitchvel = vel.z * sin(pitch);
-
-		Vector2 relmove = RotateVector(vel.xy, -angle);
-//		rollvel = relmove.y;
-
-		if (pos.z <= floorz + zoffset || bOnMobj)
-		{ 
-			if (vel.length() < 2.0 || bOnMobj)
-			{
-				vel = (0, 0, 0);
-				pitchvel = 0;
-				rollvel = 0;
-				A_SetSize(Default.Radius * scale.x, Default.Height * scale.y, true); // Reset the size, just in case a portal left it shrunken
-			}
-			else
-			{
-				vel.xy *= 0.4;
-				pitchvel *= 0.4;
-				rollvel *= 0.4;
-			}
-
-			if (master && (master is "Launcher")) { master = null; }
-		}
-		else if (pos.z >= ceilingz - zoffset) { vel.z *= -1.2; }
-		else
-		{
-			pitch -= pitchvel;
-			roll -= rollvel;
-
-			if (!master || !(master is "Launcher"))
-			{
-				if (vel.z > 0) { vel *= 0.8; }
-				else { vel *= 1.00125; }
-			}
-		}
-
-		if (master && (master is "PlayerPawn"))
-		{
-			pitch = 0; // Temporary until I can fix the "physics"
-			roll = 0;
-		}
-
-//		zoffset = abs(radius * sin(pitch) * sin(roll)) + abs((height / 2) * cos(pitch) * cos(roll));
-		zoffset = 0;
-
-		SetOrigin((pos.xy, max(pos.z, floorz + zoffset)), true);
-	}
-
-	override bool CanCollideWith(Actor other, bool passive)
-	{
-		if (passive && other && other is "PlayerPawn")
-		{
-//			if (Distance2D(other) > radius + other.radius / 4) { return false; }
-		}
-
-		return true;
 	}
 }
 
@@ -192,7 +95,7 @@ class LaserCubeInterior : Actor
 	Default
 	{
 		+NOINTERACTION
-		Scale 0.45;
+		+NOBLOCKMAP
 		Renderstyle "Translucent";
 		Alpha 0.7;
 		Species "Laser";
@@ -200,12 +103,12 @@ class LaserCubeInterior : Actor
 
 	override void Tick()
 	{
-		if (master)
+		if (LaserCube(master))
 		{
 			angle = master.angle;
 			pitch = master.pitch;
 			roll = master.roll;
-			SetOrigin(master.pos, true);
+			SetXYZ(master.pos - (0, 0, LaserCube(master).zoffset));
 			return;
 		}
 		else { Destroy(); }

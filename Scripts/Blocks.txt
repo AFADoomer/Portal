@@ -15,6 +15,7 @@ class BlockBase : SwitchableDecoration
 
 	Default
 	{
+		+BRIGHT
 		+NOGRAVITY
 		+SOLID
 		+SHOOTABLE
@@ -31,6 +32,7 @@ class BlockBase : SwitchableDecoration
 		Height 1;
 		Species "Block";
 		RenderStyle "Add";
+		Alpha 0.95;
 	}
 	States
 	{
@@ -43,12 +45,6 @@ class BlockBase : SwitchableDecoration
 	{
 		debug = Cvar.FindCVar("g_debugblocks");
 
-		if (debug && debug.GetBool())
-		{
-			dodebug = true;
-			bInvisible = false;
-		}
-
 		if (master)
 		{
 			A_SetSize(Radius * master.scale.x, Height * master.scale.y);
@@ -59,7 +55,7 @@ class BlockBase : SwitchableDecoration
 
 		if (master)
 		{
-			if (!wasculled && !dontcull)
+			if (!wasculled)
 			{
 				spawnoffset = pos - master.pos;
 
@@ -74,7 +70,7 @@ class BlockBase : SwitchableDecoration
 
 				spawnoffset = offset;
 
-				BlockManager.Add(self, spawnoffset);
+				if (!dontcull) { BlockManager.Add(self, spawnoffset); }
 			}
 
 			bSpecial = master.bPushable; // Only give SPECIAL if the master actor is pushable, since SPECIAL breaks collision.
@@ -97,10 +93,15 @@ class BlockBase : SwitchableDecoration
 			else if (bNoBlockMap) { A_ChangeLinkFlags(0); }
 		}
 
-		if (dodebug)
+		if (debug && debug.GetBool())
 		{
-			bBright = true;
-			alpha = 0.95;
+			dodebug = true;
+			bInvisible = false;
+		}
+		else
+		{
+			dodebug = false;
+			bInvisible = true;
 		}
 
 		Super.Tick();
@@ -194,6 +195,20 @@ class BlockManager : Thinker
 		manager.AddBlock(block, spawnoffset);
 	}
 
+	static void Remove(BlockBase block)
+	{
+		if (!block) { return; }
+
+		ThinkerIterator it = ThinkerIterator.Create("BlockManager", Thinker.STAT_Default);
+		BlockManager manager = BlockManager(it.Next());
+
+		if (!manager) { manager = new("BlockManager"); }
+
+		if (!manager) { return; }
+
+		manager.RemoveBlock(block);
+	}
+
 	uint FindBlock(BlockBase block)
 	{
 		for (int i = 0; i < Blocks.Size(); i++)
@@ -226,18 +241,31 @@ class BlockManager : Thinker
 		}
 	}
 
+	void RemoveBlock(BlockBase block)
+	{
+		if (!block) { return; }
+
+		int i = FindBlock(block);
+		if (i == Blocks.Size()) { return; }
+
+		Blocks.Delete(i);
+		block.Destroy();
+	}
+
 	override void Tick()
 	{
 		if (interval > 0) { interval--; return; }
 
 		for (int i = 0; i < blocks.Size(); i++)
 		{
+			if (!blocks[i]) { continue; }
+
 			bool inrange = false;
 
 			for (int p = 0; p < MAXPLAYERS && !inrange; p++)
 			{
 				if (!playeringame[p]) { continue; }
-				if (blocks[i].master.master && blocks[i].master.master == players[p].mo) { continue; }
+				if (!blocks[i].master || blocks[i].master.master && blocks[i].master.master == players[p].mo) { continue; }
 
 				if (
 					(level.Vec3Diff(players[p].mo.pos, blocks[i].position)).length() < blocks[i].range ||

@@ -23,7 +23,7 @@ class PortalActor : Actor
 		if (!bSolid && bNoInteraction) { A_SetSize(0, 0); }
 		else
 		{
-			A_SetSize(radius * scale.x, height * scale.y); // This sets based on UDMF scale properties
+			A_SetSize(Default.Radius * scale.x, Default.Height * scale.y); // This sets based on UDMF scale properties
 			mass = int(mass * scale.x);
 		}
 
@@ -69,11 +69,16 @@ class CarryActor : PortalActor
 	Array<Actor> touchers;
 	Vector3[64] offsets;
 	bool fizzle, explode;
-	int offset, fizzletime;
+	int interval, fizzletime;
 	bool crushed;
 	bool initialized;
 	int waterstate;
-	double zoffset;
+	double zoffset, heightoffset;
+	double rollvel, pitchvel;
+	Actor onmobj, oldonmobj;
+	BlockBase block;
+	bool onground;
+	Vector2 spawnscale;
 
 	Property SlideSound:slidesound;
 	Property Fizzle:fizzle;
@@ -96,10 +101,11 @@ class CarryActor : PortalActor
 		+NOTAUTOAIMED
 		+NODAMAGE
 		BounceType "Grenade";
-		BounceFactor 0.25;
+		BounceFactor 0.05;
 		BounceSound "cube/bounce";
 		WallBounceSound "cube/bounce";
 		Health 35;
+		DamageFactor "Crush", 4.0;
 		CarryActor.SlideSound "cube/slide";
 		CarryActor.Fizzle False;
 		CarryActor.Explode False;
@@ -168,8 +174,10 @@ class CarryActor : PortalActor
 
 	override void BeginPlay()
 	{
-		A_SetSize(radius * scale.x, height * scale.y); // This sets based on Default scale properties
-		offset = Random(0, 35);
+		ChangeStatNum(Thinker.STAT_USER);
+
+		A_SetSize(radius * scale.x, height / 2 * scale.y); // This sets based on Default scale properties
+		interval = Random(0, 9);
 	}
 
 	override void PostBeginPlay()
@@ -178,6 +186,7 @@ class CarryActor : PortalActor
 
 		spawnheight = height;
 		spawnradius = radius;
+		spawnscale = scale;
 
 		bPushable = !bStandStill && !bDormant;
 
@@ -190,7 +199,7 @@ class CarryActor : PortalActor
 
 	override void Tick()
 	{
-		if (IsFrozen()) { return; }
+		if (IsFrozen() || bDormant) { return; }
 
 		if (!initialized && level.time - SpawnTime > 35 && vel.length() == 0)
 		{
@@ -198,9 +207,7 @@ class CarryActor : PortalActor
 			initialized = true;
 		}
 
-//		if (!bNoGravity && !master || !(master is "PlayerPawn")) { zoffset = Utilities.SetPitchRoll(self); }
-
-		if (!fizzle && pos.z == floorz && floorpic == TexMan.CheckForTexture("F_SKY1", TexMan.Type_Any))
+		if (!fizzle && pos.z <= floorz + zoffset && floorpic == skyflatnum)
 		{
 			ClearBounce();
 
@@ -208,6 +215,26 @@ class CarryActor : PortalActor
 
 			if (Scale.X < 0.05) { Destroy(); return; }
 		}
+
+		if (fizzle) { Utilities.CheckFizzle(self, "Fizzle"); }
+		else
+		{
+			// One-time water entry/exit splashes
+			if (waterlevel > 0 && waterstate == 0) { A_StartSound("world/water/enter", 8, 0, 0.005 * mass / 100.0 * abs(vel.z)); }
+			else if (waterlevel == 0 && waterstate > 0) { A_StartSound("world/water/exit", 8, 0, 0.005 * mass / 100.0 * abs(vel.z)); }
+
+			waterstate = waterlevel;
+		}
+
+		oldangle = angle;
+
+		Super.Tick();
+
+		onmobj = Utilities.FindOnMobj(self, zoffset);
+
+		if (pos == oldpos && angle == oldangle && onmobj == oldonmobj) { return; }
+
+		angle = oldangle;
 
 		if (master is "Launcher")
 		{
@@ -231,20 +258,9 @@ class CarryActor : PortalActor
 		}
 
 		oldpos = pos;
-		oldangle = angle;
 
 		// Stackable movable objects
-		if ((level.time + offset) % 10 == 0) { CheckTouchers(); }
-
-		if (fizzle) { Utilities.CheckFizzle(self, "Fizzle"); }
-		else
-		{
-			// One-time water entry/exit splashes
-			if (waterlevel > 1 && !waterstate) { A_StartSound("world/water/enter", CHAN_AUTO, 0, 0.5 * vel.length()); }
-			else if (!waterlevel && waterstate > 1) { A_StartSound("world/water/exit", CHAN_AUTO, 0, 0.5 * vel.length(), false, ATTN_NORM, false); }
-
-			waterstate = waterlevel;
-		}
+		if (level.time % 10 == interval) { CheckTouchers(); }
 
 		for (int i = 0; i < min(touchers.Size(), 64); i++)
 		{
@@ -259,12 +275,19 @@ class CarryActor : PortalActor
 			else { touchers.Delete(i); touchers.ShrinkToFit(); }
 		}
 
-		Super.Tick();
+		pitchvel = vel.z * sin(pitch);
 
 		if (master && master is "PortalPlayer")
 		{
-			if (PortalPlayer(master).DragTarget == self) { vel = PortalPlayer(master).dragvel; }
+			if (PortalPlayer(master).DragTarget == self)
+			{
+				vel = PortalPlayer(master).dragvel;
+				pitch = 0; //master.pitch;
+				pitchvel = vel.z * sin(master.pitch);
+				roll = master.roll;
 
+				return;
+			}
 		}
 
 		for (int i = 0; i < min(touchers.Size(), 64); i++)
@@ -280,32 +303,88 @@ class CarryActor : PortalActor
 			{
 				if (!(touchers[i] is "PlayerPawn") && touchers[i].pos.z == pos.z + height) { touchers[i].vel = vel; }
 				else if (touchers[i].CheckMove(pos.xy + offsets[i].xy)) { touchers[i].SetOrigin(pos + offsets[i], true); }
-				else if (touchers[i].pos.z < pos.z + height) { touchers[i].DamageMobj(self, self, int(max(Speed, 0.5) * vel.length()), "Crush"); }
+				else if (touchers[i].pos.z < pos.z + height + zoffset) { touchers[i].DamageMobj(self, self, int(max(Speed, 0.5) * vel.length()), "Crush"); }
 			}
 		}
-/*
-		if (zoffset)
+
+		Vector2 relmove = RotateVector(vel.xy, -angle);
+		rollvel = relmove.y;
+
+		zoffset = abs(spawnradius * sin(pitch) * sin(roll)) + abs(spawnheight / 2 * cos(pitch) * cos(roll)) + heightoffset;
+
+		double floorheight = max(curSector.NextLowestFloorAt(pos.x, pos.y, pos.z), floorz) + zoffset;
+
+		if (onmobj)
 		{
-			if (pos.z <= floorz + zoffset)
+			floorheight = onmobj.pos.z + onmobj.height + zoffset;
+		}
+
+		oldonmobj = onmobj;
+
+		if (pos.z <= floorheight || onmobj)
+		{
+			if (vel.length() < 0.05)
 			{
 				vel *= 0;
-				bNoGravity = true;
-				SetOrigin((pos.xy, floorz + zoffset), false);
 			}
 			else
 			{
-				bNoGravity = Default.bNoGravity;
+				vel.xy *= 0.4;
+				vel.z = 0.0;
+			}
+
+			if (radius != spawnradius || height != spawnheight - zoffset)
+			{
+				A_SetSize(spawnradius, spawnheight - zoffset, true); // Reset the size
+			}
+
+			if (master && (master is "Launcher")) { master = null; }
+
+			Vector3 newpos = (pos.xy, max(pos.z, floorheight));
+			if (pos != newpos) { SetOrigin(newpos, false); }
+
+			if (!block)
+			{
+				block = BlockBase(Spawn("BlockBase", (pos.xy, floorheight - zoffset)));
+				if (block)
+				{
+					block.master = self;
+					block.dontcull = true;
+					block.bActLikeBridge = false;
+				}
+			}
+
+			if (block && (block.radius != spawnradius || block.height != zoffset))
+			{
+				block.A_SetSize(spawnradius, zoffset, false);
+				block.scale.x = spawnradius * 2.0;
+				block.scale.y = zoffset * level.pixelStretch;
 			}
 		}
-*/
+		else
+		{
+			pitch = Normalize180(pitch - pitchvel);
+			roll = Normalize180(roll - rollvel);
 
-		angle = oldangle;
+			if (!master || !(master is "Launcher"))
+			{
+				if (vel.z > 0) { vel *= 0.8; }
+				else { vel *= 1.00125; }
+			}
+		}
 
-		if (bNoBounceSound && oldangle) { angle = oldangle; }
+		if (pos.z <= floorheight && !onground)
+		{
+//			PitchRollManager.Add(self);
+			pitch = 0;
+			roll = 0;
+			onground = true;
+		}
+		else if (pos.z > floorheight) { onground = false; }
 
 		double volume = 0.0;
 
-		if (health > 0 && (pos.z <= floorz + zoffset) && !waterlevel) { volume = vel.xy.length() / 25; }
+		if (health > 0 && (pos.z <= floorheight) && !waterlevel) { volume = vel.xy.length() / 25; }
 
 		if (volume)
 		{
@@ -320,7 +399,7 @@ class CarryActor : PortalActor
 
 	override void Touch(Actor toucher)
 	{
-		if (Distance2D(toucher) > Radius + toucher.Radius) { return; }
+		if (Distance2D(toucher) > (Radius + toucher.Radius) * 1.4) { return; }
 		if (toucher == self || toucher == toucher.master || toucher.bNoGravity) { return; }
 		if (toucher.pos.z > pos.z + height + 32.0 || toucher.pos.z <= pos.z) { return; }
 		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
@@ -345,22 +424,42 @@ class CarryActor : PortalActor
 
 	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
-		if (mod == "Crush" || mod == "Fizzle" || explode)
+		if (source && source is "PlayerPawn" && damage == 1000000 && mod == '') // Assume this is the mdk cheat...
 		{
-			if (mod == "Crush" && scale.y * spawnheight > 9.0)
-			{
-				double newscale = (ceilingz - floorz) / spawnheight;
-				if (newscale < scale.y)
-				{
-					scale.y = newscale;
-					scale.x = max(1.0, 1.0 / (newscale * 3));
-					A_SetSize(spawnradius * scale.x, spawnheight * scale.y);
-				}
-			}
-
-			if (explode) { return Super.DamageMobj(inflictor, source, damage, mod, flags, angle); }
+			damagefactor = 1.0;
+			return Super.DamageMobj(inflictor, source, damage, mod, flags, angle);
 		}
 
+		if (mod == "Crush" && damage > 1.0)
+		{
+			if (block)
+			{
+				block.Destroy();
+			}
+
+			double newscale = (ceilingz - floorz) / spawnheight;
+
+			if (newscale < scale.y)
+			{
+				scale.y = spawnscale.y * newscale;
+				scale.x = max(spawnscale.x, spawnscale.x / (newscale * 3));
+				A_SetSize(spawnradius * scale.x, spawnheight * scale.y, false);
+
+				spawnheight = height;
+			}
+		}
+
+		if (explode) { return Super.DamageMobj(inflictor, source, damage, mod, flags, angle); }
+
 		return 0;
+	}
+
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		if (other == block || (other is "BlockBase" && other.master == self)) { return false; }
+		if (other.master && other.master is "PlayerPawn") { return false; }
+		if (other is "PlayerPawn" && other.master) { return false; }
+
+		return true;
 	}
 }

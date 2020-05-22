@@ -10,7 +10,7 @@ class SkyViewPointStatic : SkyViewPoint
 	Default
 	{
 		//$Category Portal/Skyboxes
-		//$Title Skybox ViewPoint (Static)
+		//$Title Skybox ViewPoint (Dynamic)
 		//$Arg1 "Skybox Scene Scale"
 		//$Arg1Tooltip "The scale of the skybox's scene (default is 100).  The larger this number is, the farther away the skybox contents will appear to be."
 		//$Arg1Default 100
@@ -36,7 +36,7 @@ class SkyViewPointStatic : SkyViewPoint
 
 		if (!mo)
 		{
-			console.printf("ERROR: Invalid SkyViewPointStatic TID.");
+			console.printf("ERROR: Invalid anchor TID provided to %s.", mo.GetClassName());
 			return;
 		}
 

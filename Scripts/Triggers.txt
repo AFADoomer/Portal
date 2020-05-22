@@ -11,6 +11,8 @@ class CubeTrigger : Actor
 	double h;
 	transient F3DFloor current3d;
 
+	double interval;
+
 	Property ActivationRadius:activationradius;
 	Property Timeout:timeout;
 
@@ -23,7 +25,8 @@ class CubeTrigger : Actor
 		+NOLIFTDROP
 		-SOLID
 		+DONTTHRUST
-		Height 1;
+		+NOINTERACTION
+		Height 0;
 		Radius 8;
 		CubeTrigger.ActivationRadius 32;
 		CubeTrigger.timeout 5;
@@ -43,6 +46,8 @@ class CubeTrigger : Actor
 		A_SetSize(activationradius);
 		SpawnPoint = (pos.xy, max(pos.z, floorz));
 
+		interval = Random(0, 9);
+
 		[h, current, current3d] = curSector.NextLowestFloorAt(pos.x, pos.y, pos.z + 4);
 	}
 
@@ -57,17 +62,20 @@ class CubeTrigger : Actor
 
 		if (isFrozen()) { return; }
 
-		if (level.time % 10 == 0) { CheckActivators(); }
+		if (level.time % 10 == interval) { CheckActivators(); }
 
 		for (int i = 0; i < Activators.Size(); i++)
 		{
 			if (Activators[i])
 			{
-				if (Distance2D(Activators[i]) <= Radius && Activators[i].pos.z <= pos.z + height)
+				double zoffset = 0;
+				if (Activators[i] is "CarryActor") { zoffset = CarryActor(Activators[i]).zoffset; }
+
+				if (Distance2D(Activators[i]) <= Radius && Activators[i].pos.z - zoffset <= pos.z + height)
 				{
 					movetimeout = timeout;
 				}
-				else if (Distance2D(Activators[i]) > Radius || Activators[i].pos.z > pos.z + height + 4)
+				else if (Distance2D(Activators[i]) > Radius || Activators[i].pos.z - zoffset > pos.z + height + 4)
 				{
 					Activators.Delete(i);
 				}
@@ -98,7 +106,7 @@ class CubeTrigger : Actor
 				ActivatePeers(true);
 				A_StartSound("button/down", CHAN_AUTO, 0, 0.5);
 
-				SetOrigin(SpawnPoint, false);
+//				SetOrigin(SpawnPoint, false);
 			}
 		}
 		else
@@ -123,13 +131,24 @@ class CubeTrigger : Actor
 				ActivatePeers(false);
 				A_StartSound("button/up", CHAN_AUTO, 0, 0.5);
 
-				SetOrigin(SpawnPoint, false);
+//				SetOrigin(SpawnPoint, false);
 			}
 		}
 	}
 
 	void CheckActivators()
 	{
+		for (int p = 0; p < MAXPLAYERS; p++)
+		{
+			if (
+				playeringame[p] && players[p].mo &&
+				Activators.Find(players[p].mo) == Activators.Size() &&
+				Distance2D(players[p].mo) <= activationradius && 
+				players[p].mo.pos.z <= pos.z + 4
+			)
+			{ Activators.Push(players[p].mo); }
+		}
+
 		ThinkerIterator it = ThinkerIterator.Create("Cube", Thinker.STAT_USER);
 		Cube mo;
 
@@ -143,7 +162,7 @@ class CubeTrigger : Actor
 			{ Activators.Push(mo); }
 		}
 /*
-		// Monsters can also activate buttons 
+		// Monsters can also activate buttons
 		it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
 		Actor mo2;
 

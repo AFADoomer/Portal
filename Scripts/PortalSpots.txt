@@ -12,7 +12,6 @@ class PortalSpot : Actor
 	PortalFindHitPointTracer hittracer;
 	CarryPointTracer blocktracer;
 	Line linedef;
-//	Portal_Quaternion inportal, outportal;
 	int offset;
 	bool blocked, noplayers;
 	Vector3 forward, right, up;
@@ -106,7 +105,9 @@ class PortalSpot : Actor
 		if (blocktracer.Results.HitType)
 		{
 			blocked = true;
-			noplayers = true;
+
+			if (blocktracer.Results.HitType == TRACE_HitActor && blocktracer.Results.HitActor is "CarryActor") { noplayers = false; }
+			else { noplayers = true; }
 		}
 
 		forward = tracedir.Unit();
@@ -337,6 +338,11 @@ class PortalSpot : Actor
 		toucher.angle = a;
 		toucher.pitch = -p;
 		toucher.roll = r;
+
+		if (!toucher.CheckMove(neworigin.xy)) // If the move would fail for some reason...
+		{
+			if (abs(pair.pitch) > 45) { neworigin = pair.pos + pair.forward * toucher.radius * 1.4; } // Center anything moving out of a flat plane portal to minimize risk of outside-the-map spawns
+		}
 
 		if (pos != neworigin) { toucher.SetOrigin(neworigin, false); }
 
@@ -723,7 +729,7 @@ class PortalSpot : Actor
 			{
 				if (noplayers && !(mo is "HitMarker")) { continue; }
 
-				if (Activators.Find(mo) == Activators.Size()) { Activators.Push(mo); }
+				Activators.Push(mo);
 			}
 
 		}

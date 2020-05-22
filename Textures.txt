@@ -2776,3 +2776,10 @@ Texture METLWAL2, 256, 256
 	YScale 2.0
 	Patch "Patches/MetlWal2.png", 0, 0
 }
+
+Graphic Title, 1024, 256
+{
+	XScale 7.5
+	YScale 7.5
+	Patch "Graphics/Title.png", 0, 0
+}

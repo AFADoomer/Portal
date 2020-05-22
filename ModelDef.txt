@@ -6,10 +6,11 @@ Model Cube
 	Path "Models/"
 	Model 0 "cube.md3"
 
-	Offset 0.0 0.0 25.1;
+	Scale 0.45 0.45 0.45
+
 	FrameIndex UNKN A 0 0
 
-	Offset 0.0 0.0 25.1;
+	Offset 0.0 0.0 11.0;
 	FrameIndex UNKN B 0 0 // For GZDB view
 }
 
@@ -22,10 +23,11 @@ Model LaserCube
 	Model 0 "cube.md3"
 	Skin 0 "LaserCube4.png"
 
-	Offset 0.0 0.0 25.1;
+	Scale 0.45 0.45 0.45
+
 	FrameIndex UNKN A 0 0
 
-	Offset 0.0 0.0 25.1;
+	Offset 0.0 0.0 11.0;
 	FrameIndex UNKN B 0 0 // For GZDB view
 }
 
@@ -39,11 +41,10 @@ Model LaserCubeInterior
 	Model 0 "cube.md3"
 	Skin 0 "LaserCube3.png"
 
-	Offset 0.0 0.0 25.1;
-	FrameIndex UNKN A 0 0
+	Scale 0.45 0.45 0.45
 
-	Offset 0.0 0.0 25.1;
-	FrameIndex UNKN B 0 0 // For GZDB view
+	Offset 0.0 0.0 11.0;
+	FrameIndex UNKN A 0 0
 }
 
 Model PortalSpot
@@ -328,7 +329,11 @@ Model Chair
 	Model 0 "chair.md3"
 	Skin 0 "chair.png"
 
+	Offset 0.0 0.0 -6.5;
 	FrameIndex UNKN A 0 0
+
+	Offset 0.0 0.0 0.0;
+	FrameIndex UNKN Z 0 0 // For editor view
 }
 
 Model Monitor
@@ -943,7 +948,11 @@ Model Cone
 	Path "Models/"
 	Model 0 "cone.md3"
 
+	Offset 0.0 0.0 -9.0;
 	FrameIndex UNKN A 0 0
+
+	Offset 0.0 0.0 0.0;
+	FrameIndex UNKN Z 0 0 // For editor view
 }
 
 Model OilBarrel
@@ -953,6 +962,8 @@ Model OilBarrel
 
 	Path "Models/"
 	Model 0 "barrel.md3"
+
+	Offset 0.0 0.0 -16.5;
 
 	FrameIndex UNKN A 0 0
 
@@ -970,6 +981,9 @@ Model OilBarrel
 
 	Skin 0 "Barrel_Old.png"
 	FrameIndex UNKN C 0 0
+
+	Offset 0.0 0.0 0.0;
+	FrameIndex UNKN Z 0 0 // For editor view
 }
 
 Model Crate
@@ -980,13 +994,14 @@ Model Crate
 	Path "Models/"
 	Model 0 "cube.md3"
 
-	Offset 0.0 0.0 24.0;
-
 	Skin 0 "Crate_G.png"
 	FrameIndex UNKN A 0 0
 
 	Skin 0 "Crate_B.png"
 	FrameIndex UNKN B 0 0
+
+	Offset 0.0 0.0 25.0;
+	FrameIndex UNKN Z 0 0 // For editor view
 }
 
 Model IndustrialLight
@@ -1246,10 +1261,11 @@ Model Tile2x2
 
 	Scale 1.0 1.0 1.2
 
+	Offset 0.0 0.0 -16.0;
 	FrameIndex UNKN A 0 0
 
 	PitchOffset 90
-	Offset 16.0 0.0 0.0
+	Offset -32.0 0.0 0.0
 	Scale 1.2 1.0 1.0
 
 	FrameIndex UNKN B 0 0
@@ -1266,10 +1282,11 @@ Model Tile2x2W
 
 	Scale 1.0 1.0 1.2
 
+	Offset 0.0 0.0 -16.0;
 	FrameIndex UNKN A 0 0
 
 	PitchOffset 90
-	Offset 16.0 0.0 0.0
+	Offset -32.0 0.0 0.0
 	Scale 1.2 1.0 1.0
 
 	FrameIndex UNKN B 0 0
@@ -1285,10 +1302,11 @@ Model Tile4x4
 
 	Scale 1.0 0.5 0.6
 
+	Offset 0.0 0.0 -16.0;
 	FrameIndex UNKN A 0 0
 
 	PitchOffset 90
-	Offset 8.0 0.0 0.0
+	Offset -16.0 0.0 0.0
 	Scale 0.6 0.5 1.0
 
 	FrameIndex UNKN B 0 0
@@ -1884,7 +1902,7 @@ Model WallBox2
 	Path "Models/"
 	Model 0 "wallbox2.md3"
 
-	Scale 1.0 1.0 1.2
+	Scale 1.5 1.5 1.8
 
 	FrameIndex UNKN A 0 0
 
@@ -1906,7 +1924,7 @@ Model WallBox3
 	Path "Models/"
 	Model 0 "wallbox3.md3"
 
-	Scale 1.0 1.0 1.2
+	Scale 1.5 1.5 1.8
 
 	FrameIndex UNKN A 0 0
 

@@ -104,12 +104,12 @@ class Utilities : Actor
 	}
 
 	// Handling for terrain-based pitch/roll calculations...
-	static double SetPitchRoll(Actor mo, bool cube = true, bool force = false)
+	static double, double, double SetPitchRoll(Actor mo, bool force = false)
 	{
 		if (!mo) { return 0; }
 
-		double xoffset = 0;
-		double yoffset = 0;
+		double xoffset = -4;
+		double yoffset = -4;
 
 		double testwidth = mo.radius + yoffset;
 		double testlength;
@@ -123,23 +123,62 @@ class Utilities : Actor
 		testlength = max(testlength, 1);
 		testwidth = max(testwidth, 1);
 
-		double points[4], minz = 0x7FFFFFFF, maxz = -0x7FFFFFFF;
+		double points[4], center, minz = 0x7FFFFFFF, maxz = -0x7FFFFFFF;
 
 		// Get the relative z-height at the four corners of the actor
-		points[0] = mo.GetZAt(testlength, testwidth);
-		points[1] = mo.GetZAt(testlength, -testwidth);
-		points[2] = mo.GetZAt(-testlength, testwidth);
-		points[3] = mo.GetZAt(-testlength, -testwidth);
+		double maxstep = mo.MaxStepHeight;
+		double maxdrop = mo.MaxDropoffHeight;
+/*
+int oldpoints[4];
+		oldpoints[0] = mo.GetZAt(testlength, testwidth);
+		oldpoints[1] = mo.GetZAt(testlength, -testwidth);
+		oldpoints[2] = mo.GetZAt(-testlength, testwidth);
+		oldpoints[3] = mo.GetZAt(-testlength, -testwidth);
+*/
+		CarryPointTracer carrytracer;
+		carrytracer = new("CarryPointTracer");
+
+		Vector3 tracedir = (0, 0, -1);
+		carrytracer.skipactor = mo;
+
+		double zoffset = mo.pos.z + maxstep;
+		if (CarryActor(mo)) { zoffset -= CarryActor(mo).zoffset; }
+		double dist = 128.0; //maxdrop + maxstep;
+
+		Vector3 tracepos = mo.pos; 
+		carrytracer.Trace(tracepos, level.PointInSector(tracepos.xy), tracedir, dist, 0);
+		center = carrytracer.Results.HitPos.z;
+
+		tracepos = (mo.pos.xy + RotateVector((testlength, testwidth), mo.angle), zoffset); 
+		carrytracer.Trace(tracepos, level.PointInSector(tracepos.xy), tracedir, dist, 0);
+		points[1] = carrytracer.Results.HitPos.z;
+
+		tracepos = (mo.pos.xy + RotateVector((testlength, -testwidth), mo.angle), zoffset);
+		carrytracer.Trace(tracepos, level.PointInSector(tracepos.xy), tracedir, dist, 0);
+		points[0] = carrytracer.Results.HitPos.z;
+
+		tracepos = (mo.pos.xy + RotateVector((-testlength, testwidth), mo.angle), zoffset);
+		carrytracer.Trace(tracepos, level.PointInSector(tracepos.xy), tracedir, dist, 0);
+		points[3] = carrytracer.Results.HitPos.z;
+
+		tracepos = (mo.pos.xy + RotateVector((-testlength, -testwidth), mo.angle), zoffset);
+		carrytracer.Trace(tracepos, level.PointInSector(tracepos.xy), tracedir, dist, 0);
+		points[2] = carrytracer.Results.HitPos.z;
+
+		int count;
 
 		for (int i = 0; i < 4; i++)
 		{
-			double maxstep = mo.MaxStepHeight;
-			double maxdrop = mo.MaxDropoffHeight;
+//			if (points[i] > mo.pos.z + maxstep) { points[i] = 0; } // Ignore the point if you can't climb that high
+//			else if (points[i] < mo.pos.z - maxdrop) { points[i] = 0; } // Ignore the point if it's a dropoff
+//			else { 
+points[i] -= mo.floorz;
+// }
 
-			if (points[i] > mo.pos.z + maxstep) { points[i] = 0; } // Ignore the point if you can't climb that high
-			if (points[i] < mo.pos.z - maxdrop) { points[i] = 0; } // Ignore the point if it's a dropoff
-			else { points[i] -= mo.floorz; }
+			if (points[i] != center) { count++; }
 		}
+
+		if (count <= 2 && center == mo.floorz) { return 0; }
 
 		// Use those values to calculate the pitch.roll amounts
 		double pitchinput = (points[0] + points[1]) / 2 - (points[2] + points[3]) / 2;
@@ -148,35 +187,10 @@ class Utilities : Actor
 		pitchinput = atan(pitchinput / (testlength * 2));
 		rollinput = atan(rollinput / (testwidth * 2));
 
-		if (cube)
-		{
-			// It's a cube.  Stop rolling if it's on a flat face...
-			if (int(mo.pitch) % 90 == int(-pitchinput)) { pitchinput = -mo.pitch; }
-			if (int(mo.roll) % 90 == int(rollinput)) { rollinput = mo.roll; }
-		}
-
-		// Interpolate to the new values
-		if (force || level.time && level.time < 15)
-		{
-			mo.pitch = -pitchinput;
-			mo.roll = rollinput;
-		}
-		else
-		{
-			int pstep = 1; //max(1, int(abs(mo.pitch % 90 + pitchinput) / 10));
-			int rstep = 1; //max(1, int(abs(mo.roll % 90 - rollinput) / 10));
-
-			if (mo.pitch > -pitchinput) { mo.pitch = max(mo.pitch - pstep, -pitchinput); }
-			else if (mo.pitch < -pitchinput) { mo.pitch = min(mo.pitch + pstep, -pitchinput); }
-
-			if (mo.roll > rollinput) { mo.roll = max(mo.roll - rstep, rollinput); }
-			else if (mo.roll < rollinput) { mo.roll = min(mo.roll + rstep, rollinput); }
-		}
-
 		// Return the amount that you need to adjust the model z position by in order to keep it looking like it's actually on the ground
-		double deltaz = testlength * sin(abs(mo.pitch)) + testwidth * sin(abs(mo.roll));
+		double deltaz = testlength * sin(abs(-pitchinput)) + testwidth * sin(abs(rollinput));
 
-		return deltaz; 
+		return deltaz, -pitchinput, rollinput; 
 	}
 
 	static void Fizzle(Actor mo)
@@ -220,6 +234,13 @@ class Utilities : Actor
 	{
 		if (!mo.InStateSequence(mo.CurState, mo.FindState(fizzlestate)))
 		{
+			double heightoffset = 0;
+
+			if (mo is "CarryActor")
+			{
+				heightoffset = CarryActor(mo).zoffset;
+			}
+
 			if (mo.waterlevel)
 			{
 				F3DFloor w = mo.curSector.Get3dFloor(0);
@@ -244,7 +265,7 @@ class Utilities : Actor
 			}
 
 			if (
-				mo.pos.z == mo.floorz &&
+				mo.pos.z == mo.floorz + heightoffset &&
 				mo.floorpic == skyflatnum
 			)
 			{
@@ -353,26 +374,52 @@ class Utilities : Actor
 		}
 
 		Actor puff;
-		if (traceresults.HitActor)
+		if (hitspot)
 		{
-			Actor m = origin;
-			while (m.master && m is "LaserSpot") { m = m.master; }
-
-			traceresults.HitActor.DamageMobj(beam, m, damage, "LaserBeam");
-
-			if (
-				!(traceresults.HitActor is "LaserTrigger") && 
-				!(traceresults.HitActor is "LaserCube") &&
-				!(traceresults.HitActor is "PlatformEndpoint")
-			)
+			if (traceresults.HitActor)
 			{
-				hitspot.A_StartSound("laser/hit", CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.25, ATTN_STATIC);
+				Actor m = origin;
+				while (m.master && m is "LaserSpot") { m = m.master; }
 
-				if (!traceresults.HitActor.bNoBlood && drawdecal)
+				traceresults.HitActor.DamageMobj(beam, m, damage, "LaserBeam");
+
+				if (
+					!(traceresults.HitActor is "LaserTrigger") && 
+					!(traceresults.HitActor is "LaserCube") &&
+					!(traceresults.HitActor is "PlatformEndpoint")
+				)
 				{
-					puff = Spawn("SmokePuff", hitspot.pos, ALLOW_REPLACE);
+					hitspot.A_StartSound("laser/hit", CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.25, ATTN_STATIC);
+
+					if (!traceresults.HitActor.bNoBlood && drawdecal)
+					{
+						puff = Spawn("SmokePuff", hitspot.pos, ALLOW_REPLACE);
+						if (puff)
+						{
+							puff.angle = puff.AngleTo(origin);
+						}
+					}
+				}
+				else
+				{
+					hitspot.A_StopSound(CHAN_6);
+				}
+			}
+			else if (traceresults.HitType == TRACE_HitFloor || traceresults.HitType == TRACE_HitCeiling || traceresults.HitType == TRACE_HitWall)
+			{
+				// Spawn bullet puff
+				if (puffclass != "")
+				{
+					puff = Spawn(puffclass, hitspot.pos - traceresults.HitVector * 3.0, ALLOW_REPLACE);
+
 					if (puff)
 					{
+						hitspot.A_StartSound("laser/hit", CHAN_6, CHAN_NOSTOP | CHANF_LOOP, 0.25, ATTN_STATIC);
+						if (LaserHitMarker(hitspot) && LaserHitMarker(hitspot).moved)
+						{
+							puff.angle = origin.AngleTo(puff);
+							puff.A_SprayDecal("LaserBeamScorch", 8.0);
+						}
 						puff.angle = puff.AngleTo(origin);
 					}
 				}
@@ -381,29 +428,6 @@ class Utilities : Actor
 			{
 				hitspot.A_StopSound(CHAN_6);
 			}
-		}
-		else if (traceresults.HitType == TRACE_HitFloor || traceresults.HitType == TRACE_HitCeiling || traceresults.HitType == TRACE_HitWall)
-		{
-			// Spawn bullet puff
-			if (puffclass != "")
-			{
-				puff = Spawn(puffclass, hitspot.pos - traceresults.HitVector * 3.0, ALLOW_REPLACE);
-
-				if (puff)
-				{
-					hitspot.A_StartSound("laser/hit", CHAN_6, CHAN_NOSTOP | CHANF_LOOP, 0.25, ATTN_STATIC);
-					if (LaserHitMarker(hitspot) && LaserHitMarker(hitspot).moved)
-					{
-						puff.angle = origin.AngleTo(puff);
-						puff.A_SprayDecal("LaserBeamScorch", 8.0);
-					}
-					puff.angle = puff.AngleTo(origin);
-				}
-			}
-		}
-		else
-		{
-			hitspot.A_StopSound(CHAN_6);
 		}
 
 		return beam, hitspot;
@@ -439,6 +463,63 @@ class Utilities : Actor
 		double distz = (source.pos.z + sourcezoffset) - (mo.pos.z + targetzoffset);
 
 		return -atan(distz / distxy);
+	}
+
+	static Actor FindOnMObj(Actor origin, double zoffset = 0.0)
+	{
+		FLineTraceData onmobjtracer;
+		Actor ret = null;
+		double retheight = -0x7FFFFFFF;
+
+		// Check center and all four corners, and pick the highest
+		origin.LineTrace(0, 1.0, 90, TRF_SOLIDACTORS, -zoffset, 0, 0, onmobjtracer);
+		if (onmobjtracer.HitActor && (!onmobjtracer.HitActor.master || onmobjtracer.HitActor.master != origin))
+		{
+			ret = onmobjtracer.HitActor;
+			retheight = onmobjtracer.HitActor.pos.z;
+		}
+
+		origin.LineTrace(0, 1.0, 90, TRF_SOLIDACTORS, -zoffset, origin.radius, origin.radius, onmobjtracer);
+		if (onmobjtracer.HitActor && (!onmobjtracer.HitActor.master || onmobjtracer.HitActor.master != origin))
+		{
+			if (onmobjtracer.HitActor.pos.z > retheight)
+			{
+				ret = onmobjtracer.HitActor;
+				retheight = onmobjtracer.HitActor.pos.z;
+			}
+		}
+
+		origin.LineTrace(0, 1.0, 90, TRF_SOLIDACTORS, -zoffset, origin.radius, -origin.radius, onmobjtracer);
+		if (onmobjtracer.HitActor && (!onmobjtracer.HitActor.master || onmobjtracer.HitActor.master != origin))
+		{
+			if (onmobjtracer.HitActor.pos.z > retheight)
+			{
+				ret = onmobjtracer.HitActor;
+				retheight = onmobjtracer.HitActor.pos.z;
+			}
+		}
+
+		origin.LineTrace(0, 1.0, 90, TRF_SOLIDACTORS, -zoffset, -origin.radius, -origin.radius, onmobjtracer);
+		if (onmobjtracer.HitActor && (!onmobjtracer.HitActor.master || onmobjtracer.HitActor.master != origin))
+		{
+			if (onmobjtracer.HitActor.pos.z > retheight)
+			{
+				ret = onmobjtracer.HitActor;
+				retheight = onmobjtracer.HitActor.pos.z;
+			}
+		}
+
+		origin.LineTrace(0, 1.0, 90, TRF_SOLIDACTORS, -zoffset, -origin.radius, origin.radius, onmobjtracer);
+		if (onmobjtracer.HitActor && (!onmobjtracer.HitActor.master || onmobjtracer.HitActor.master != origin))
+		{
+			if (onmobjtracer.HitActor.pos.z > retheight)
+			{
+				ret = onmobjtracer.HitActor;
+				retheight = onmobjtracer.HitActor.pos.z;
+			}
+		}
+
+		return ret;
 	}
 }
 
@@ -827,6 +908,113 @@ class FlatText : PortalActor
 
 				position -= width;
 				input.Remove(0, 1);
+			}
+		}
+	}
+}
+
+class ActorPitchRollInfo
+{
+	CarryActor mo;
+	double zoffset;
+	double startpitch;
+	double startroll;
+	double targetpitch;
+	double targetroll;
+}
+
+class PitchRollManager : Thinker
+{
+	Array<ActorPitchRollInfo> Actors;
+
+	static void Add(CarryActor mo)
+	{
+		if (!mo) { return; }
+
+		ThinkerIterator it = ThinkerIterator.Create("PitchRollManager", Thinker.STAT_Default);
+		PitchRollManager manager = PitchRollManager(it.Next());
+
+		if (!manager) { manager = new("PitchRollManager"); }
+
+		if (!manager) { return; }
+
+		manager.AddActor(mo);
+	}
+
+	uint FindActor(CarryActor mo)
+	{
+		for (int i = 0; i < Actors.Size(); i++)
+		{
+			if (Actors[i] && Actors[i].mo && Actors[i].mo == mo) { return i; }
+		}
+		return Actors.Size();
+	}
+
+	void AddActor(CarryActor mo)
+	{
+		if (!mo) { return; }
+
+		int i = FindActor(mo);
+		if (i == Actors.Size()) // Only add it if it's not already there somehow.
+		{
+			ActorPitchRollInfo this = New("ActorPitchRollInfo");
+			this.mo = mo;
+			this.startpitch = mo.pitch;
+			this.startroll = mo.roll;
+			if (level.time > 15) { [this.zoffset, this.targetpitch, this.targetroll] = Utilities.SetPitchRoll(mo); }
+			Actors.Push(this);
+		}
+		else
+		{	
+			ActorPitchRollInfo this = actors[i];
+			this.startpitch = mo.pitch;
+			this.startroll = mo.roll;
+			[this.zoffset, this.targetpitch, this.targetroll] = Utilities.SetPitchRoll(mo);
+		}
+	}
+
+	override void Tick()
+	{
+		for (int i = 0; i < actors.Size(); i++)
+		{
+			if (actors[i].mo && actors[i].mo.onground || actors[i].mo.master is "PlayerPawn")
+			{
+				actors.delete(i);
+			}
+			else
+			{
+				// Interpolate to the new values
+				if (level.time && level.time < 15)
+				{
+					actors[i].mo.pitch = actors[i].targetpitch;
+					actors[i].mo.roll = actors[i].targetroll;
+				}
+				else
+				{
+					let this = actors[i];
+
+					int pstep = 3;
+					int rstep = 3;
+
+					int pdir = 0, rdir = 0;
+/*
+					// It's a cube.  Stop rolling if it's on a flat face...
+					if (int(this.mo.pitch) % 90 == int(this.targetpitch)) { this.targetpitch = -this.mo.pitch; }
+					if (int(this.mo.roll) % 90 == int(this.targetroll)) { this.targetroll = this.mo.roll; }
+*/
+					if (this.mo.pitch > this.targetpitch) { this.mo.pitch = max(this.mo.pitch - pstep, this.targetpitch); pdir = -1; }
+					else if (this.mo.pitch < this.targetpitch) { this.mo.pitch = min(this.mo.pitch + pstep, this.targetpitch); pdir = 1; }
+
+					if (this.mo.roll > this.targetroll) { this.mo.roll = max(this.mo.roll - rstep, this.targetroll); rdir = 1; }
+					else if (this.mo.roll < this.targetroll) { this.mo.roll = min(this.mo.roll + rstep, this.targetroll); rdir = -1; }
+
+					Vector2 move = (sin(this.targetpitch), sin(this.targetroll));
+					move = Actor.Rotatevector(move, this.mo.angle);
+					this.mo.vel.xy = -move;
+
+					if (this.mo.roll == this.targetroll && this.mo.pitch == this.targetpitch/* || move.length() == 0.0*/) { this.mo.onground = true; }
+				}
+	
 			}
 		}
 	}

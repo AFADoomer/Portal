@@ -14,6 +14,9 @@ class PortalPlayer : PlayerPawn
 	double AirSpeed;
 	Array<Actor> touchers;
 	bool step;
+	int carryrange;
+
+	Property CarryRange:carryrange;
 
 	Default
 	{
@@ -27,6 +30,7 @@ class PortalPlayer : PlayerPawn
 		MaxStepHeight 20;
 		Player.JumpZ 3.5;
 		Player.ViewBob 0.3;
+		Player.UseRange 0.0;
 
 		Player.DisplayName "Test Subject";
 		Player.CrouchSprite "PLYC";
@@ -41,6 +45,8 @@ class PortalPlayer : PlayerPawn
 		Player.Colorset 5, "Light Brown", 0x38, 0x47,  0x3A;
 		Player.Colorset 6, "Light Red",	0xB0, 0xBF,  0xB2;
 		Player.Colorset 7, "Light Blue", 0xC0, 0xCF,  0xC2;
+
+		PortalPlayer.CarryRange 96.0;
 	}
 	
 
@@ -231,7 +237,7 @@ class PortalPlayer : PlayerPawn
 		if (roll > 0) { roll = max(roll - 5, 0); }
 		else if (roll < 0) { roll = min(roll + 5, 0); }
 
-		if (pos.z == floorz) { gravity = Default.gravity; }
+		if (player.onground) { gravity = Default.gravity; }
 
 		Super.Tick();
 	}
@@ -419,8 +425,8 @@ class PortalPlayer : PlayerPawn
 		if (!(player.cheats & CF_PREDICTING))
 		{
 			CheckEnvironment();
-			CheckUse();
-			CheckUndoMorph();
+			player.mo.CheckUse();
+			player.mo.CheckUndoMorph();
 			// Cycle psprites.
 			// Note that after this point the PlayerPawn may have changed due to getting unmorphed so 'self' is no longer safe to use.
 			player.mo.TickPSprites();
@@ -547,15 +553,16 @@ class PortalPlayer : PlayerPawn
 		CheckFakeFloorTriggers(pos.Z + oldheight, true);
 	}
 
-
+/*
 	override bool CanCollideWith(Actor other, bool passive)
 	{
-		if (DragTarget && other == DragTarget) { return false; }
+//		if (DragTarget && other == DragTarget) { return false; }
 
 //		if (Distance2D(other) > radius / 4 + other.radius) { console.printf("no"); return false; }
 
 		return true;
 	}
+*/
 
 	void ClearPortals()
 	{
@@ -628,6 +635,8 @@ class PortalPlayer : PlayerPawn
 		DragTarget.bNoGravity = DragTarget.Default.bNoGravity;
 		DragTarget.master = null;
 		DragTarget = null;
+
+		UseRange = carryrange;
 	}
 
 	void DoInteractions()
@@ -645,10 +654,10 @@ class PortalPlayer : PlayerPawn
 		{
 			double dist = Distance2D(currentportal);
 
-			if (dist < UseRange && abs(deltaangle(angle, AngleTo(currentportal))) < 75)
+			if (dist < carryrange && abs(deltaangle(angle, AngleTo(currentportal))) < 75)
 			{
 				portalsource = PortalSpot(currentportal).pair;
-				DoTrace(portalsource, angle - currentportal.angle + portalsource.angle + 180, UseRange * 1.5 - dist, pitch, 0, (player.viewheight - 32.0) * sin(portalsource.pitch), actortracer);
+				DoTrace(portalsource, angle - currentportal.angle + portalsource.angle + 180, carryrange * 1.5 - dist, pitch, 0, (player.viewheight - 32.0) * sin(portalsource.pitch), actortracer);
 			}
 		}
 
@@ -668,13 +677,13 @@ class PortalPlayer : PlayerPawn
 		{
 			if (!useheld)
 			{
-				if (AimActor && Distance3d(AimActor) < UseRange) { AimActor.Used(self); }
-
 				if (!DragTarget)
 				{
+					if (AimActor && Distance3d(AimActor) < carryrange) { AimActor.Used(self); }
+
 					if (
 						AimActor && !AimActor.bDormant &&
-						(Distance2D(AimActor) < UseRange || portalsource)
+						(Distance3D(AimActor) < carryrange || portalsource)
 					)
 					{
 						if (AimActor.bPushable)
@@ -685,6 +694,8 @@ class PortalPlayer : PlayerPawn
 							DragTarget.master = self;
 							DragTarget.bNoGravity = true;
 							DragTarget.bInterpolateAngles = true;
+
+							UseRange = 0;
 						}
 						else if (Inventory(AimActor))
 						{
@@ -708,40 +719,55 @@ class PortalPlayer : PlayerPawn
 
 		if (DragTarget)
 		{
+			player.cmd.buttons |= BT_USE;
+
 			Vector3 oldpos = DragTarget.pos;
 
-			double range = max(UseRange, (radius + DragTarget.radius) * 1.5);
+			double range = max(carryrange - 32.0, (radius + DragTarget.radius) * 1.5);
 
 			Vector3 tracedir = (cos(angle) * cos(max(pitch, -20)), sin(angle) * cos(max(pitch, -20)), -sin(max(pitch, -20)));
-			carrytracer.Trace(pos + (0, 0, player.viewheight / 2), CurSector, tracedir, range, 0 );
+			carrytracer.skipactor = self;
+			carrytracer.Trace(pos + (0, 0, player.viewheight), CurSector, tracedir, range, 0 );
 
-			Vector3 dragtargetpos;
+			double floorheight = max(DragTarget.curSector.NextLowestFloorAt(DragTarget.pos.x, DragTarget.pos.y, DragTarget.pos.z), DragTarget.floorz);
 
-			if (carrytracer.Results.HitType)
-			{
-				dragtargetpos = carrytracer.Results.HitPos - RotateVector((-DragTarget.Radius * 1.4, 0), angle + 180) + (0, 0, -12);
-			}
+			let carrytarget = CarryActor(DragTarget);
+			if (carrytarget) { floorheight += carrytarget.zoffset; }
+
+			Vector3 dragtargetpos = pos + RotateVector((cos(max(pitch, -20)) * range - DragTarget.Radius * 1.4, 0), angle) + (0, 0, player.viewheight - sin(pitch) * range - DragTarget.Radius * 1.4);
+
+			if (bNoClip) { DragTarget.SetOrigin(dragtargetpos, true); }
 			else
 			{
-				dragtargetpos = pos + RotateVector((cos(max(pitch, -20)) * range - DragTarget.Radius * 1.4, 0), angle) + (0, 0, player.viewheight - sin(pitch) * range - DragTarget.Radius * 1.4);
-			}
+				if (carrytracer.Results.HitType) // && carrytracer.Results.HitType != TRACE_HitActor)
+				{
+					if (
+						carrytracer.Results.HitType = TRACE_HitWall && 
+						carrytracer.Results.HitLine &&
+						carrytracer.Results.HitLine.flags & Line.ML_TWOSIDED &&
+						carrytracer.Results.HitLine.sidedef[carrytracer.Results.Side].sector.floorplane.ZAtPoint(dragtargetpos.xy) <= dragtargetpos.z
+					)
+					{
+						// Continue...
+					}
+					else
+					{
+						dragtargetpos = carrytracer.Results.HitPos - RotateVector((-DragTarget.Radius * 1.4, 0), angle + 180) + (0, 0, -12);
+					}
+				}
+				dragtargetpos.z = max(dragtargetpos.z, floorheight);
 
-			let cubetarget = Cube(DragTarget);
-			if (cubetarget) { dragtargetpos.z = max(dragtargetpos.z, cubetarget.floorz + cubetarget.zoffset); }
-
-			if (Distance3D(DragTarget) > range * 1.5)
-			{
-				DragTarget.ClearInterpolation();
-				DragTarget.SetOrigin(dragtargetpos, true);
-			}
-			else
-			{
-				DragTarget.SetOrigin(dragtargetpos, true);
+				if (DragTarget.pos != dragtargetpos && DragTarget.CheckMove(dragtargetpos.xy, PCM_NOACTORS) && DragTarget.IsVisible(self, true))
+				{
+					DragTarget.SetOrigin(dragtargetpos, true);
+				}
 			}
 
 			DragTarget.angle = angle;
 
 			dragvel = (DragTarget.pos - oldpos + (player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90), player.cmd.pitch)) / (5 * DragTarget.Mass);
+
+			if (!bNoClip && Distance3D(DragTarget) > (range + (!!carrytarget ? carrytarget.zoffset : 0)) * 1.5) { DropCarried(); }
 		}
 	}
 
@@ -799,25 +825,6 @@ class PortalPlayer : PlayerPawn
 		return texname;
 	}
 
-	Actor FindOnMObj()
-	{
-		BlockThingsIterator it = BlockThingsIterator.Create(self, 64.0);
-
-		while (it.Next())
-		{
-			let mo = it.thing;
-
-			if (mo == self) { continue; } // Ignore itself
-
-			if (mo.bSolid && pos.z == mo.pos.z + mo.height)
-			{
-				return mo;
-			}
-		}
-
-		return null;
-	}
-
 	String GetStepSound()
 	{
 		if (waterlevel == 1) { return "footsteps/puddle"; }
@@ -825,7 +832,7 @@ class PortalPlayer : PlayerPawn
 
 		if (bOnMobj)
 		{
-			Actor onmo = FindOnMobj();
+			Actor onmo = Utilities.FindOnMobj(self);
 
 			if (onmo)
 			{

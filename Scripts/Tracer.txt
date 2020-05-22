@@ -189,6 +189,8 @@ Class BridgeFindHitPointTracer : LineTracer
 
 Class CarryPointTracer : LineTracer
 {
+	Actor skipactor;
+
 	override ETraceStatus TraceCallback()
 	{
 		if (Results.HitTexture)
@@ -203,7 +205,8 @@ Class CarryPointTracer : LineTracer
 
 		if (Results.HitType == TRACE_HitActor)
 		{
-			if (Results.HitActor is "BlockBase") { return TRACE_Stop; }
+			if (skipactor && (Results.HitActor == skipactor || Results.HitActor == skipactor.master || Results.HitActor.master && Results.HitActor.master == skipactor)) { return TRACE_Skip; }
+			if (Results.HitActor.bSolid && !Results.HitActor.bNoInteraction) { return TRACE_Stop; }
 			return TRACE_Skip;
 		}
 		else if (Results.HitType == TRACE_HitFloor || Results.HitType == TRACE_HitCeiling)

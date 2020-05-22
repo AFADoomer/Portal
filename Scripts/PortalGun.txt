@@ -98,7 +98,7 @@ class PortalGun : Weapon
 
 		if (player && player.mo)
 		{
-			if (PortalPlayer(player.mo) && PortalPlayer(player.mo).DragTarget) { flags = WRF_NOFIRE; }
+			if (PortalPlayer(player.mo) && PortalPlayer(player.mo).DragTarget) { flags |= WRF_NOFIRE; }
 		}
 
 		A_WeaponReady(flags);

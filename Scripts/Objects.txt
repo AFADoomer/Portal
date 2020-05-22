@@ -733,8 +733,9 @@ class PlatformMoving : Platform
 
 	override void Touch(Actor toucher)
 	{
-		if (toucher == self || toucher == glass || toucher.bNoGravity || toucher is "Platform") { return; }
+		if (toucher == self || toucher == glass || toucher.bNoGravity || toucher is "Platform" || toucher is "BlockBase") { return; }
 		if (toucher.pos.z > pos.z + 32.0 || toucher.pos.z < pos.z - 16) { return; }
+		if (toucher.master && touchers.Find(toucher.master)) { return; }
 		if (touchers.Find(toucher) == touchers.Size()) { touchers.Push(toucher); }
 	}
 
@@ -801,7 +802,7 @@ class PlatformMoving : Platform
 
 		FCheckPosition checkpos;
 
-		if (CheckMove(newpos, 0, checkpos) && !(checkpos.thing is "PlatformEndpoint"))
+		if (CheckMove(newpos, PCM_NOACTORS, checkpos)) //(!CheckMove(newpos, 0, checkpos) && !(checkpos.thing is "PlatformEndpoint")))
 		{
 			SetOrigin((newpos, pos.z), true);
 			if (glass) { glass.SetXYZ(pos); }
