@@ -221,7 +221,6 @@ Texture WALL2x1, 128, 128
 	YScale 2.0
 	Patch "Patches/WALL_1.png", 0, 0
 	Patch "Patches/BORD2x1.png", 0, 0 { Style Overlay }
-
 }
 
 Texture WALL2x2, 128, 128
@@ -373,19 +372,19 @@ Texture WALLTX1D, 256, 512
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Materials/Displacement/WALL2x2.png", 0, 64
-	Patch "Materials/Displacement/WALL2x2.png", 128, 0
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 64
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 0
 	Patch "Materials/Displacement/WALL2x2D.png", 192, 0
-	Patch "Materials/Displacement/WALL4x4.png", 128, 64
+	Patch "Materials/Displacement/WALL4x4S.png", 128, 64
 	Patch "Materials/Displacement/WALL1x1D.png", 0, 0
 	Patch "Materials/Displacement/WALL4x4D.png", 0, 128
 	Patch "Materials/Displacement/WALL4x4D.png", 0, 256
-	Patch "Materials/Displacement/WALL2x2.png", 128, 128
-	Patch "Materials/Displacement/WALL2x2.png", 0, 192
-	Patch "Materials/Displacement/WALL2x1.png", 64, 128
-	Patch "Materials/Displacement/WALL2x1.png", 128, 256
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 128
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 192
+	Patch "Materials/Displacement/WALL2x1S.png", 64, 128
+	Patch "Materials/Displacement/WALL2x1S.png", 128, 256
 	Patch "Materials/Displacement/WALL2x1D.png", 128, 384
-	Patch "Materials/Displacement/WALL1x1.png", 0, 384
+	Patch "Materials/Displacement/WALL1x1S.png", 0, 384
 }
 
 Texture PORTTX1, 256, 512
@@ -526,17 +525,17 @@ Texture WALLTX2D, 256, 512
 	XScale 2.0
 	YScale 2.0
 	Patch "Materials/Displacement/WALL1x1D.png", 0, 64
-	Patch "Materials/Displacement/WALL2x2.png", 128, 0
-	Patch "Materials/Displacement/WALL4x4.png", 192, 0
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 0
+	Patch "Materials/Displacement/WALL4x4S.png", 192, 0
 	Patch "Materials/Displacement/WALL2x2D.png", 128, 64
-	Patch "Materials/Displacement/WALL2x2.png", 0, 0
-	Patch "Materials/Displacement/WALL4x4.png", 0, 128
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 0
+	Patch "Materials/Displacement/WALL4x4S.png", 0, 128
 	Patch "Materials/Displacement/WALL2x2D.png", 0, 256
-	Patch "Materials/Displacement/WALL2x2.png", 128, 128
-	Patch "Materials/Displacement/WALL4x4.png", 0, 192
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 128
+	Patch "Materials/Displacement/WALL4x4S.png", 0, 192
 	Patch "Materials/Displacement/WALL2x1D.png", 64, 128
-	Patch "Materials/Displacement/WALL2x2.png", 128, 256
-	Patch "Materials/Displacement/WALL4x4.png", 128, 384
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 256
+	Patch "Materials/Displacement/WALL4x4S.png", 128, 384
 	Patch "Materials/Displacement/WALL1x1D.png", 0, 384
 }
 
@@ -674,58 +673,58 @@ Texture WALF4x4_, 256, 640
 
 Texture WALF1x1D, 256, 640
 {
-	Patch "Materials/Displacement/WALL1x1.png", 0, 0
-	Patch "Materials/Displacement/WALL1x1.png", 0, 128
-	Patch "Materials/Displacement/WALL1x1.png", 0, 256
-	Patch "Materials/Displacement/WALL1x1.png", 0, 384
-	Patch "Materials/Displacement/WALL1x1.png", 0, 512
-	Patch "Materials/Displacement/WALL1x1.png", 128, 0
-	Patch "Materials/Displacement/WALL1x1.png", 128, 128
-	Patch "Materials/Displacement/WALL1x1.png", 128, 256
-	Patch "Materials/Displacement/WALL1x1.png", 128, 384
-	Patch "Materials/Displacement/WALL1x1.png", 128, 512
+	Patch "Materials/Displacement/WALL1x1S.png", 0, 0
+	Patch "Materials/Displacement/WALL1x1S.png", 0, 128
+	Patch "Materials/Displacement/WALL1x1S.png", 0, 256
+	Patch "Materials/Displacement/WALL1x1S.png", 0, 384
+	Patch "Materials/Displacement/WALL1x1S.png", 0, 512
+	Patch "Materials/Displacement/WALL1x1S.png", 128, 0
+	Patch "Materials/Displacement/WALL1x1S.png", 128, 128
+	Patch "Materials/Displacement/WALL1x1S.png", 128, 256
+	Patch "Materials/Displacement/WALL1x1S.png", 128, 384
+	Patch "Materials/Displacement/WALL1x1S.png", 128, 512
 }
 
 Texture WALF2x1D, 256, 640
 {
-	Patch "Materials/Displacement/WALL2x1.png", 0, 0
-	Patch "Materials/Displacement/WALL2x1.png", 0, 128
-	Patch "Materials/Displacement/WALL2x1.png", 0, 256
-	Patch "Materials/Displacement/WALL2x1.png", 0, 384
-	Patch "Materials/Displacement/WALL2x1.png", 0, 512
-	Patch "Materials/Displacement/WALL2x1.png", 128, 0
-	Patch "Materials/Displacement/WALL2x1.png", 128, 128
-	Patch "Materials/Displacement/WALL2x1.png", 128, 256
-	Patch "Materials/Displacement/WALL2x1.png", 128, 384
-	Patch "Materials/Displacement/WALL2x1.png", 128, 512
+	Patch "Materials/Displacement/WALL2x1S.png", 0, 0
+	Patch "Materials/Displacement/WALL2x1S.png", 0, 128
+	Patch "Materials/Displacement/WALL2x1S.png", 0, 256
+	Patch "Materials/Displacement/WALL2x1S.png", 0, 384
+	Patch "Materials/Displacement/WALL2x1S.png", 0, 512
+	Patch "Materials/Displacement/WALL2x1S.png", 128, 0
+	Patch "Materials/Displacement/WALL2x1S.png", 128, 128
+	Patch "Materials/Displacement/WALL2x1S.png", 128, 256
+	Patch "Materials/Displacement/WALL2x1S.png", 128, 384
+	Patch "Materials/Displacement/WALL2x1S.png", 128, 512
 }
 
 Texture WALF2x2D, 256, 640
 {
-	Patch "Materials/Displacement/WALL2x2.png", 0, 0
-	Patch "Materials/Displacement/WALL2x2.png", 0, 128
-	Patch "Materials/Displacement/WALL2x2.png", 0, 256
-	Patch "Materials/Displacement/WALL2x2.png", 0, 384
-	Patch "Materials/Displacement/WALL2x2.png", 0, 512
-	Patch "Materials/Displacement/WALL2x2.png", 128, 0
-	Patch "Materials/Displacement/WALL2x2.png", 128, 128
-	Patch "Materials/Displacement/WALL2x2.png", 128, 256
-	Patch "Materials/Displacement/WALL2x2.png", 128, 384
-	Patch "Materials/Displacement/WALL2x2.png", 128, 512
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 0
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 128
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 256
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 384
+	Patch "Materials/Displacement/WALL2x2S.png", 0, 512
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 0
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 128
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 256
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 384
+	Patch "Materials/Displacement/WALL2x2S.png", 128, 512
 }
 
 Texture WALF4x4D, 256, 640
 {
-	Patch "Materials/Displacement/WALL4x4.png", 0, 0
-	Patch "Materials/Displacement/WALL4x4.png", 0, 128
-	Patch "Materials/Displacement/WALL4x4.png", 0, 256
-	Patch "Materials/Displacement/WALL4x4.png", 0, 384
-	Patch "Materials/Displacement/WALL4x4.png", 0, 512
-	Patch "Materials/Displacement/WALL4x4.png", 128, 0
-	Patch "Materials/Displacement/WALL4x4.png", 128, 128
-	Patch "Materials/Displacement/WALL4x4.png", 128, 256
-	Patch "Materials/Displacement/WALL4x4.png", 128, 384
-	Patch "Materials/Displacement/WALL4x4.png", 128, 512
+	Patch "Materials/Displacement/WALL4x4S.png", 0, 0
+	Patch "Materials/Displacement/WALL4x4S.png", 0, 128
+	Patch "Materials/Displacement/WALL4x4S.png", 0, 256
+	Patch "Materials/Displacement/WALL4x4S.png", 0, 384
+	Patch "Materials/Displacement/WALL4x4S.png", 0, 512
+	Patch "Materials/Displacement/WALL4x4S.png", 128, 0
+	Patch "Materials/Displacement/WALL4x4S.png", 128, 128
+	Patch "Materials/Displacement/WALL4x4S.png", 128, 256
+	Patch "Materials/Displacement/WALL4x4S.png", 128, 384
+	Patch "Materials/Displacement/WALL4x4S.png", 128, 512
 }
 
 Texture WALF1x1N, 256, 640
@@ -1995,12 +1994,7 @@ Texture DOTBMGF0, 32, 1024
 	Patch "Materials/Brightmaps/Auto/Dot_G.png", 0, 992
 }
 
-Texture SLIME, 256, 256
-{
-	Patch "Patches/Slime.png", 0, 0
-}
-
-Texture SLIMEOV, 512, 512
+Texture SLIME, 512, 512
 {
 	XScale 2.0
 	YScale 2.0
@@ -2011,7 +2005,7 @@ Texture "WATER", 256, 256
 {
 	XScale 2.0
 	YScale 2.0
-	Patch "Patches/Water.png", 0, 0
+	Patch "Textures/Shader/Water2.png", 0, 0
 }
 
 Sprite F033A0, 19, 33 { Patch "Patches/Font/FONT033.png", 0, 0 }
