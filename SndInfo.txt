@@ -99,6 +99,8 @@ bridge/loop		b_loop
 bridge/start		b_start
 bridge/stop		b_stop
 
+drip/loop		drip
+
 spring/launch		f_launch
 
 cube/fizzle		c_fizzle

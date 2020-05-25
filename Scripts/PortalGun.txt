@@ -71,10 +71,12 @@ class PortalGun : Weapon
 		Shake:
 			PGUN A 0 { if (invoker.shottype) { return ResolveState("Shake.Orange"); } return ResolveState(null); }
 			Shake.Blue:
-				PGUN FG 5;
+				PGUN I 5;
+				PGUN JK 10;
 				Goto Ready;
 			Shake.Orange:
-				PGU2 FG 5;
+				PGU2 I 5;
+				PGU2 JK 10;
 				Goto Ready;
 	}
 

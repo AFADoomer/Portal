@@ -203,8 +203,9 @@ Model PortalGun
 	Path "Models/"
 	Model 0 "portalgun.md3"
 	Model 1 "portalgun_glass.md3"
+	Skin 1 "glass2.png"
 
-	RollOffset 90.0
+	PitchOffset -13.0
 	Scale 2.0 2.0 2.0
 	Offset -10.0 0.0 3.0
 
@@ -220,8 +221,9 @@ Model DualPortalGun
 	Path "Models/"
 	Model 0 "portalgun.md3"
 	Model 1 "portalgun_glass.md3"
+	Skin 1 "glass2.png"
 
-	RollOffset 90.0
+	PitchOffset -13.0
 	Scale 2.0 2.0 2.0
 	Offset -10.0 0.0 3.0
 
@@ -253,6 +255,13 @@ Model PortalGun
 	FrameIndex PGUN E 0 9
 	FrameIndex PGUN E 1 9
 
+	FrameIndex PGUN I 0 9
+	FrameIndex PGUN I 1 9
+	FrameIndex PGUN J 0 12
+	FrameIndex PGUN J 1 12
+	FrameIndex PGUN K 0 14
+	FrameIndex PGUN K 1 14
+
 	AngleOffset 8.0
 	PitchOffset 2.0
 	FrameIndex PGUN F 0 0
@@ -287,6 +296,13 @@ Model DualPortalGun
 	FrameIndex PGUN E 0 9
 	FrameIndex PGUN E 1 9
 
+	FrameIndex PGUN I 0 9
+	FrameIndex PGUN I 1 9
+	FrameIndex PGUN J 0 12
+	FrameIndex PGUN J 1 12
+	FrameIndex PGUN K 0 14
+	FrameIndex PGUN K 1 14
+
 	AngleOffset 8.0
 	PitchOffset 2.0
 	FrameIndex PGUN F 0 0
@@ -308,6 +324,13 @@ Model DualPortalGun
 	FrameIndex PGU2 D 1 7
 	FrameIndex PGU2 E 0 9
 	FrameIndex PGU2 E 1 9
+
+	FrameIndex PGU2 I 0 9
+	FrameIndex PGU2 I 1 9
+	FrameIndex PGU2 J 0 12
+	FrameIndex PGU2 J 1 12
+	FrameIndex PGU2 K 0 14
+	FrameIndex PGU2 K 1 14
 
 	AngleOffset 8.0
 	PitchOffset 2.0
@@ -685,6 +708,21 @@ Model LaserBeamSight
 	AngleOffset 90.0
 
 	Scale 0.3 0.3 0.15
+
+	FrameIndex UNKN A 0 0
+}
+
+Model DripStream
+{
+	Path "Models/"
+	Model 0 "flatbeam.md3"
+
+	USEACTORPITCH
+
+	PitchOffset 90.0
+	AngleOffset 90.0
+
+	Scale 1.0 1.0 0.15
 
 	FrameIndex UNKN A 0 0
 }

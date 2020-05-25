@@ -23,6 +23,7 @@ version "4.4"
 #include "scripts/door.txt"
 #include "scripts/lightning.txt"
 #include "scripts/turrets.txt"
+#include "scripts/platforms.txt"
 
 #include "scripts/statusbar.txt"
 #include "scripts/handlers.txt"
