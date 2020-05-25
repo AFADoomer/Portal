@@ -33,9 +33,9 @@ float snoise(vec2 v){
 	g.x = a0.x * x0.x + h.x * x0.y;
 	g.yz = a0.yz * x12.xz + h.yz * x12.yw;
 	return 130.0 * dot(m, g);
-}	
+}
 
-vec4 ProcessTexel()
+vec4 Flames()
 {
 	vec2 texCoord = vTexCoord.st;
 
@@ -52,17 +52,59 @@ vec4 ProcessTexel()
 
 	vec4 basicColor = getTexel(texCoord);
 
-	vec2 thicknessNoiseSample = texCoord * vec2(45., 1.) + vec2(timer * 2., 0.);
-	float thicknessNoise = (snoise(thicknessNoiseSample) + 0.5) * 0.5 * 20;
+	vec2 thicknessNoiseSample = texCoord * vec2(1., 1.) + vec2(timer * 1., 0.);
+	float thicknessNoise = snoise(thicknessNoiseSample) * 0.5 * 20;
 	
-	vec2 offsetNoiseSample = texCoord * vec2(150., 1.) + vec2(timer * 4., 0.);
-	float offsetNoise = snoise(offsetNoiseSample) * 0.05 * (1.0 - texCoord.x);
+	vec2 offsetNoiseSample = texCoord * vec2(1., 1.) + vec2(timer * 2., 0.);
+	float offsetNoise = snoise(offsetNoiseSample) * 0.25;
 
-	vec4 blend = vec4(parabola(texCoord.y + offsetNoise, 0.2 + pow(thicknessNoise, 1.)));
+	vec4 blend = vec4(parabola(texCoord.y + offsetNoise, 0.5 + pow(thicknessNoise, 2.)));
 
-	if (texCoord.y > 0.5) { blend = vec4( 255, 255, 255, 1.0); } // Fill the bottom half of the texture
+	if (texCoord.x < 0.25)
+	{
+		blend *= texCoord.x / 0.25;
+	}
+	else if (texCoord.x > 15.75)
+	{
+		blend *= (16.0 - texCoord.x) / 0.25;
+	}
+
+ 	if (texCoord.y > 0.6) { blend = vec4( 255, 255, 255, 1.0); } // Fill the bottom half of the texture
+	else if (texCoord.y > 0.5) { blend += vec4( 255, 255, 255, (texCoord.y - 0.5) / 0.1); }
 
 	blend *= smoothstep(1.0, 0.5, 1.0 - texCoord.y);
 
 	return vec4(basicColor.rgb, clamp(blend.a, 0.0, 1.0));
+}
+
+int imod(int a, int b)
+{
+    return (a - (b * (a/b)));
+}
+
+// Perlin fall modified from https://www.shadertoy.com/view/wllGzB and http://glslsandbox.com/e#64546.0
+vec4 PerlinFall()
+{
+	vec2 texCoord = vTexCoord.st;
+	vec4 basicColor = getTexel(texCoord);
+
+	vec2 R = vec2(1., 1.), P, D, U = texCoord / R.y, V = 15. * U; 
+	V.y += timer;
+	float p = 0.;
+	
+	for (int k=0; k<9; k++)					// neigborhood
+		P = vec2(imod(k,3)-1,k/3-1),			// cur. cell 
+		D = fract(1e4*sin(ceil(V-P)*mat2(R.xyyx)))-.5,	// node = random offset in cell
+		P = fract(V) -.5 + P + D,			// node rel. coords
+		p += smoothstep( 1.3*U.y,0.,length(P) );	// its potential
+
+  	p = sqrt(p);
+	p = (p -.5) / fwidth(p);
+
+	return vec4(basicColor.rgb, clamp(p, 0.0, 1.0));
+}
+
+vec4 ProcessTexel()
+{
+	return Flames();
 }
