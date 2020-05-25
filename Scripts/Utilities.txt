@@ -324,7 +324,7 @@ points[i] -= mo.floorz;
 		mo.SetStateLabel(fizzlestate);
 	}
 
-	static LaserBeam, Actor DrawLaser(Actor origin, LaserBeam beam, Actor hitspot, TraceResults traceresults, Class<Actor> spawnclass = "LaserBeam", Class<Actor> puffclass = "", int damage = 0, double zoffset = 0, bool drawdecal = true, double alpha = 1.0)
+	static LaserBeam, Actor DrawLaser(Actor origin, LaserBeam beam, Actor hitspot, TraceResults traceresults, Class<Actor> spawnclass = "LaserBeam", Class<Actor> puffclass = "", int damage = 0, double zoffset = 0, bool drawdecal = true, double alpha = 1.0, Class<Actor> hitmarkerclass = "LaserHitMarker")
 	{
 		if (!traceresults || !origin) { return beam, hitspot; }
 
@@ -332,7 +332,13 @@ points[i] -= mo.floorz;
 
 		double radiusoffset = traceresults.HitActor ? traceresults.HitActor.radius : 0;
 
-		double dist = ((beamoffset - traceresults.HitPos) - traceresults.HitVector * radiusoffset).length();
+		// Check for hitting water
+		if (traceresults.Crossed3DWaterPos.length()) { traceresults.HitPos = traceresults.Crossed3DWaterPos; }
+		else if (traceresults.CrossedWaterPos.length()) { traceresults.HitPos = traceresults.CrossedWaterPos; }
+
+		Vector3 hitpos = traceresults.HitPos;
+
+		double dist = ((beamoffset - hitpos) - traceresults.HitVector * radiusoffset).length();
 
 		//Laser beam
 		Vector3 beampos = beamoffset + traceresults.HitVector * (dist / 2);
@@ -357,11 +363,11 @@ points[i] -= mo.floorz;
 			beam.alpha = beam.Default.alpha * alpha;
 		}
 
-		if (!hitspot && damage > 0) { hitspot = Spawn("LaserHitMarker", traceresults.HitPos - traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
+		if (hitmarkerclass && !hitspot && damage > 0) { hitspot = Spawn(hitmarkerclass, hitpos - traceresults.HitVector * radiusoffset, ALLOW_REPLACE); }
 		if (hitspot)
 		{
 			hitspot.master = origin;
-			hitspot.SetXYZ(traceresults.HitPos + traceresults.HitVector * radiusoffset);
+			hitspot.SetXYZ(hitpos + traceresults.HitVector * radiusoffset);
 			hitspot.SetDamage(damage);
 
 			Actor flash = Spawn("Flare", hitspot.pos, ALLOW_REPLACE);

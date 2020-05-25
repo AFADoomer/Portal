@@ -384,7 +384,7 @@ Class MovingTrailBeam : Actor
 
 		if (pos.z < floorz) { Destroy(); }
 
-		A_AttachLight("BeamLight", DynamicLight.PointLight, 0x17171a, int(scale.y), 0, DynamicLight.LF_ATTENUATE);
+		A_AttachLight("BeamLight", DynamicLight.PointLight, 0x707080, int(scale.y), 0, DynamicLight.LF_ATTENUATE, (0, 0, 1.0));
 	}
 
 	override void Tick()

@@ -684,3 +684,113 @@ class BridgeEmitter : BridgeSpot
 		Scale 1.2;
 	}
 }
+
+class DripStream : LaserBeam
+{
+	Default
+	{
+		+FORCEYBILLBOARD
+	}
+
+	override void Tick()
+	{
+		if (IsFrozen()) { return; }
+
+		if (playeringame[consoleplayer] && players[consoleplayer].mo) { A_Face(players[consoleplayer].mo, 0, 270, 90); }
+
+		Super.Tick();
+	}
+}
+
+class DripEmitter : LaserSpot
+{
+	Actor splash;
+	Vector3 splashpos;
+
+	Default
+	{
+		//$Category Portal/Objects
+		//$Title Water Stream
+	}
+
+	States
+	{
+		Spawn:
+		Active:
+			UNKN A 1
+			{
+				A_DripStream();
+			}
+			Loop;
+	}
+
+	void A_DripStream()
+	{
+		hittracer.skipspecies = species;
+		hittracer.skipactor = self;
+
+		pitch = -90;
+
+		Vector3 tracedir = (0, 0, -1);
+		hittracer.Trace(pos, CurSector, tracedir, 2048.0, 0);
+
+		beam = Utilities.DrawLaser(self, beam, hitspot, hittracer.Results, "DripStream", "", 0, 0, false, 1.0, "");
+
+		if (!splash)
+		{
+			splash = Spawn("DripSplash", hittracer.Results.HitPos, ALLOW_REPLACE);
+			if (splash) { splash.master = self; }
+		}
+
+		if (splash && hittracer.Results.HitPos != splashpos)
+		{
+			splash.SetOrigin(hittracer.Results.HitPos, true);
+			splashpos = hittracer.Results.HitPos;
+		}
+	}
+
+}
+
+class DripSplash : Actor
+{
+	int interval;
+
+	Default
+	{
+		+NOGRAVITY
+		+NOINTERACTION
+		+NOBLOCKMAP
+		+FORCEXYBILLBOARD
+		+ROLLSPRITE
+		Radius 0;
+		Height 0;
+		RenderStyle "Add";
+		Alpha 0.4;
+		Scale 0.03125;
+	}
+	States
+	{
+		Spawn:
+			SPLA AAAA 1
+			{
+				A_FadeOut(Default.alpha / 4);
+				scale *= 1.1;
+			}
+			SPLA A 0
+			{
+				roll = Random(1, 360);
+				alpha = Default.alpha;
+				scale = Default.scale;
+			}
+			Loop;
+	}
+
+	override void Tick()
+	{
+		if (!master) { Destroy(); }
+
+		A_StartSound("drip/loop", CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.0625, ATTN_STATIC);
+
+		Super.Tick();
+	}
+}
