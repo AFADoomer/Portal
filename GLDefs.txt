@@ -1129,3 +1129,9 @@ Material Texture "Models/waterbeam.png"
 	shader "shaders/scroll.fp"
 	speed 2.0
 }
+
+Material Texture "Models/Arrow1.png"
+{
+	shader "shaders/scroll.fp"
+	speed 0.5
+}

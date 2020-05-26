@@ -19,13 +19,6 @@ cameratexture "PORTAL8B" 1024 1024
 
 cameratexture "PLAYVIEW" 512 512
 
-texture "models/Arrow1.png"
-pic "models/Arrow1.png" tics 4
-pic "models/Arrow2.png" tics 4
-pic "models/Arrow3.png" tics 4
-pic "models/Arrow4.png" tics 4
-
-
 texture "models/Screen2.png"
 pic "models/Screen2.png" tics 4
 pic "models/Screen2b.png" tics 4

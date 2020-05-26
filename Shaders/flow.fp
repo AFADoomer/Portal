@@ -46,6 +46,7 @@ Material ProcessMaterial()
 	Material material;
 
 	// Pull the base color from the 'color' texture
+	// Sample across the texture.  This allows for colors to shift if you want...
 	vec4 color1 = texture(color, flowcoord1);
 	vec4 color2 = texture(color, flowcoord2);
 	material.Base = mix(color1, color2, phase);
