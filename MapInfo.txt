@@ -20,7 +20,7 @@ gameinfo
 	PlayerClasses = "PortalPlayer"
 	StatusbarClass = "PortalStatusBar"
 
-	AddEventHandlers = "OverlayHandler", "ShaderHandler", "SectorDamageHandler"
+	AddEventHandlers = "OverlayHandler", "ShaderHandler", "SectorDamageHandler", "TimeHandler"
 }
 
 clearskills
@@ -185,6 +185,12 @@ DoomEdNums
 	30088 = BigPipeBend
 	30089 = PlatformEndPoint
 	30090 = SlidingDoor
+	30091 = PortalTargetSpot
+	30092 = DripEmitter
+	30093 = OfficeLight
+	30094 = DownLight
+	30095 = Clock
+	30096 = CeilingVent
 	30500 = Turret
 	31000 = FlatText
 	31001 = ConfettiSpawner
@@ -237,4 +243,5 @@ DoomEdNums
 	32044 = WallBox2
 	32045 = WallPipe24
 	32046 = WallBox3
+	32047 = GirderGrid
 }

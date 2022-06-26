@@ -16,3 +16,5 @@ Everything else has been drawn or modeled from scratch; a few models originally 
 Music - Apparent Solution - Brendon Moeller
 
 Smoke sprites - https://opengameart.org/content/smoke-aura via Blade of Agony
+
+Blood texture - https://www.deviantart.com/dabbex30/art/Jam-Texture-575710902

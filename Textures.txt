@@ -2695,6 +2695,20 @@ Texture CARPET2, 128, 128
 	Patch "Patches/Carpet2.png", 0, 0
 }
 
+Texture CARPET3, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet3.png", 0, 0
+}
+
+Texture CARPET4, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet4.png", 0, 0
+}
+
 Texture PORTWAL8, 384, 512
 {
 	XScale 2.0
@@ -2776,4 +2790,25 @@ Graphic Title, 1024, 256
 	XScale 7.5
 	YScale 7.5
 	Patch "Graphics/Title.png", 0, 0
+}
+
+Graphic Portal, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Graphics/Portal.png", 0, 0
+}
+
+Texture Cubicle, 128, 384
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/Cubicle.png", 0, 0
+}
+
+Texture Cubicle2, 128, 384
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/Cubicle2.png", 0, 0
 }

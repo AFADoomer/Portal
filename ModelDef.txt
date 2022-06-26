@@ -262,15 +262,6 @@ Model PortalGun
 	FrameIndex PGUN K 0 14
 	FrameIndex PGUN K 1 14
 
-	AngleOffset 8.0
-	PitchOffset 2.0
-	FrameIndex PGUN F 0 0
-	FrameIndex PGUN F 1 0
-
-	AngleOffset 4.0
-	PitchOffset -2.0
-	FrameIndex PGUN G 0 0
-	FrameIndex PGUN G 1 0
 }
 
 Model DualPortalGun
@@ -295,52 +286,30 @@ Model DualPortalGun
 	FrameIndex PGUN D 1 7
 	FrameIndex PGUN E 0 9
 	FrameIndex PGUN E 1 9
-
-	FrameIndex PGUN I 0 9
-	FrameIndex PGUN I 1 9
-	FrameIndex PGUN J 0 12
-	FrameIndex PGUN J 1 12
-	FrameIndex PGUN K 0 14
-	FrameIndex PGUN K 1 14
-
-	AngleOffset 8.0
-	PitchOffset 2.0
-	FrameIndex PGUN F 0 0
-	FrameIndex PGUN F 1 0
-
-	AngleOffset 4.0
-	PitchOffset -2.0
-	FrameIndex PGUN G 0 0
-	FrameIndex PGUN G 1 0
+	FrameIndex PGUN F 0 9
+	FrameIndex PGUN F 1 9
+	FrameIndex PGUN G 0 12
+	FrameIndex PGUN G 1 12
+	FrameIndex PGUN H 0 14
+	FrameIndex PGUN H 1 14
 
 	SurfaceSkin 0 2 "PortalGun_Tube2.png"
-	FrameIndex PGU2 A 0 0
-	FrameIndex PGU2 A 1 0
-	FrameIndex PGU2 B 0 2
-	FrameIndex PGU2 B 1 2
-	FrameIndex PGU2 C 0 3
-	FrameIndex PGU2 C 1 3
-	FrameIndex PGU2 D 0 7
-	FrameIndex PGU2 D 1 7
-	FrameIndex PGU2 E 0 9
-	FrameIndex PGU2 E 1 9
-
-	FrameIndex PGU2 I 0 9
-	FrameIndex PGU2 I 1 9
-	FrameIndex PGU2 J 0 12
-	FrameIndex PGU2 J 1 12
-	FrameIndex PGU2 K 0 14
-	FrameIndex PGU2 K 1 14
-
-	AngleOffset 8.0
-	PitchOffset 2.0
-	FrameIndex PGU2 F 0 0
-	FrameIndex PGU2 F 1 0
-
-	AngleOffset 4.0
-	PitchOffset -2.0
-	FrameIndex PGU2 G 0 0
-	FrameIndex PGU2 G 1 0
+	FrameIndex PGUN K 0 0
+	FrameIndex PGUN K 1 0
+	FrameIndex PGUN L 0 2
+	FrameIndex PGUN L 1 2
+	FrameIndex PGUN M 0 3
+	FrameIndex PGUN M 1 3
+	FrameIndex PGUN N 0 7
+	FrameIndex PGUN N 1 7
+	FrameIndex PGUN O 0 9
+	FrameIndex PGUN O 1 9
+	FrameIndex PGUN P 0 9
+	FrameIndex PGUN P 1 9
+	FrameIndex PGUN Q 0 12
+	FrameIndex PGUN Q 1 12
+	FrameIndex PGUN R 0 14
+	FrameIndex PGUN R 1 14
 }
 
 Model Chair
@@ -1303,7 +1272,7 @@ Model Tile2x2
 	FrameIndex UNKN A 0 0
 
 	PitchOffset 90
-	Offset -32.0 0.0 0.0
+	Offset 16.0 0.0 0.0
 	Scale 1.2 1.0 1.0
 
 	FrameIndex UNKN B 0 0
@@ -1324,7 +1293,7 @@ Model Tile2x2W
 	FrameIndex UNKN A 0 0
 
 	PitchOffset 90
-	Offset -32.0 0.0 0.0
+	Offset 16.0 0.0 0.0
 	Scale 1.2 1.0 1.0
 
 	FrameIndex UNKN B 0 0
@@ -1340,11 +1309,11 @@ Model Tile4x4
 
 	Scale 1.0 0.5 0.6
 
-	Offset 0.0 0.0 -16.0;
+	Offset 0.0 0.0 -8.0;
 	FrameIndex UNKN A 0 0
 
 	PitchOffset 90
-	Offset -16.0 0.0 0.0
+	Offset 8.0 0.0 0.0
 	Scale 0.6 0.5 1.0
 
 	FrameIndex UNKN B 0 0
@@ -1534,7 +1503,6 @@ Model SkyboxGrid2
 	FrameIndex UNKN A 0 0
 }
 
-
 Model SkyboxGrid2Large
 {
 	USEACTORPITCH
@@ -1542,6 +1510,19 @@ Model SkyboxGrid2Large
 
 	Path "models/"
 	Model 0 "skybox_grid2.md3"
+
+	Scale 14.22 14.22 14.22
+
+	FrameIndex UNKN A 0 0
+}
+
+Model GirderGrid
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "girder_grid.md3"
 
 	Scale 14.22 14.22 14.22
 
@@ -1974,4 +1955,155 @@ Model WallBox3
 
 	Skin 0 "wallbox4.png"
 	FrameIndex UNKN D 0 0
+}
+
+Model OfficeLight
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "olight.md3"
+
+	AngleOffset 90
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+
+	Path "Patches/"
+	Skin 0 "Door5.png"
+
+	FrameIndex UNKN B 0 0
+}
+
+Model OfficeLightBulb
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "olight_light.md3"
+
+	AngleOffset 90
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+
+	Path "Patches/"
+	Skin 0 "Door5.png"
+
+	FrameIndex UNKN B 0 0
+}
+
+Model OfficeLightPanes
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "olight_light.md3"
+
+	AngleOffset 90
+	Offset 0.0 0.0 -1.0
+
+	FrameIndex UNKN A 0 0
+
+	Path "Patches/"
+	Skin 0 "Door5.png"
+
+	FrameIndex UNKN B 0 0
+}
+
+Model DownLight
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "dlight.md3"
+
+	AngleOffset 90
+
+	FrameIndex UNKN A 0 0
+}
+
+Model DownLightBulb
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "dlight_bulb.md3"
+
+	AngleOffset 90
+
+	FrameIndex UNKN A 0 0
+}
+
+Model DownLightPanes
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "dlight_panes.md3"
+
+	AngleOffset 90
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Clock
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "clock.md3"
+
+	FrameIndex UNKN A 0 0	
+}
+
+Model ClockHand_S
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "clock_s.md3"
+
+	FrameIndex UNKN A 0 0	
+}
+
+Model ClockHand_M
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "clock_m.md3"
+
+	FrameIndex UNKN A 0 0	
+}
+
+Model ClockHand_H
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "clock_h.md3"
+
+	FrameIndex UNKN A 0 0	
+}
+
+Model CeilingVent
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "vent.md3"
+
+	FrameIndex UNKN A 0 0	
 }

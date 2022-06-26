@@ -44,8 +44,21 @@ Material Texture "Models/PortalGun_Tube2.png"
 	speed 2.0
 }
 
-HardwareShader Texture "EMANGRIL" { Shader "Shaders/func_brightwarp.fp" Speed 1.0 }
-HardwareShader Texture "KILLGRIL" { Shader "Shaders/func_brightwarp.fp" Speed 32.0 }
+Material Texture "EMANGRIL"
+{
+	shader "Shaders/func_grille.fp"
+	normal "Materials/NormalMaps/grille.png"
+	specular "Materials/Specular/grille.png"
+	speed 1.0
+}
+
+Material Texture "KILLGRIL"
+{
+	shader "Shaders/func_grille.fp"
+	normal "Materials/NormalMaps/grille.png"
+	specular "Materials/Specular/grille.png"
+	Speed 32.0
+}
 
 HardwareShader Texture "PORTAL0A" { Shader "Shaders/portal.fp" Speed 1.0 }
 HardwareShader Texture "PORTAL0B" { Shader "Shaders/portal.fp" Speed 1.0 }
@@ -88,7 +101,6 @@ Material Texture "WATER"
 	texture color "Textures/Blue2.png"
 	texture flowmap "materials/flowmaps/smooth.png"
 	speed 1.0
-
 }
 
 Material Texture "Models/Bridge.png"
@@ -378,30 +390,40 @@ Material Texture "PORT2x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT2x1.png"
+	normal "materials/normalmaps/auto/PORT2x1.png"
+	specular "materials/specular/auto/PORT2x1.png"
 }
 
 Material Texture "PORT2x2"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT2x2.png"
+	normal "materials/normalmaps/auto/PORT2x2.png"
+	specular "materials/specular/auto/PORT2x2.png"
 }
 
 Material Texture "PORT4x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT4x1.png"
+	normal "materials/normalmaps/auto/PORT4x1.png"
+	specular "materials/specular/auto/PORT4x1.png"
 }
 
 Material Texture "PORT4x4"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT4x4.png"
+	normal "materials/normalmaps/auto/PORT4x4.png"
+	specular "materials/specular/auto/PORT4x4.png"
 }
 
 Material Texture "PORTFLR"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORTFLR.png"
+	normal "materials/normalmaps/auto/PORTFLR.png"
+	specular "materials/specular/auto/PORTFLR.png"
 }
 
 Material Texture "WALL1x1"
@@ -409,6 +431,8 @@ Material Texture "WALL1x1"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL1x1S.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL1x1.png"
+	specular "materials/specular/auto/WALL1x1.png"
 }
 
 Material Texture "WALL1x1D"
@@ -416,6 +440,8 @@ Material Texture "WALL1x1D"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL1x1D.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL1x1D.png"
+	specular "materials/specular/auto/WALL1x1D.png"
 }
 
 Material Texture "WALL2x1"
@@ -423,6 +449,8 @@ Material Texture "WALL2x1"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x1S.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL2x1.png"
+	specular "materials/specular/auto/WALL2x1.png"
 }
 
 Material Texture "WALL2x1D"
@@ -430,6 +458,8 @@ Material Texture "WALL2x1D"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x1D.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL2x1D.png"
+	specular "materials/specular/auto/WALL2x1D.png"
 }
 
 Material Texture "WALL2x2"
@@ -437,6 +467,8 @@ Material Texture "WALL2x2"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x2S.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL2x2.png"
+	specular "materials/specular/auto/WALL2x2.png"
 }
 
 Material Texture "WALL2x2D"
@@ -444,6 +476,8 @@ Material Texture "WALL2x2D"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x2D.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL2x2D.png"
+	specular "materials/specular/auto/WALL2x2D.png"
 }
 
 Material Texture "WALL4x4"
@@ -451,6 +485,8 @@ Material Texture "WALL4x4"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL4x4S.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL4x4.png"
+	specular "materials/specular/auto/WALL4x4.png"
 }
 
 Material Texture "WALL4x4D"
@@ -458,6 +494,8 @@ Material Texture "WALL4x4D"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL4x4D.png"
 	specularlevel 0.1
+	normal "materials/normalmaps/auto/WALL4x4D.png"
+	specular "materials/specular/auto/WALL4x4D.png"
 }
 
 Material Texture "WALF1x1"
@@ -599,6 +637,8 @@ Material Texture "CEILING"
 Material Texture "FLOOR"
 {
 	specularlevel 3.0
+	normal "materials/normalmaps/auto/floor.png"
+	specular "materials/specular/auto/floor.png"
 }
 
 Material Texture "GRAYDIRT"
@@ -656,12 +696,16 @@ Material Texture "INSET"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/INSET.png"
+	normal "materials/normalmaps/auto/inset.png"
+	specular "materials/specular/auto/inset.png"
 }
 
 Material Texture "WALLBASE"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT4x4.png"
+	normal "materials/normalmaps/auto/PORT4x4.png"
+	specular "materials/specular/auto/PORT4x4.png"
 }
 
 Material Texture "WALLBAS2"
@@ -677,78 +721,104 @@ Material Texture "LITB1x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL1x1S.png"
+	normal "materials/normalmaps/auto/LITB1x1.png"
+	specular "materials/specular/auto/LITB1x1.png"
 }
 
 Material Texture "LITB2x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x1S.png"
+	normal "materials/normalmaps/auto/LITB2x1.png"
+	specular "materials/specular/auto/LITB2x1.png"
 }
 
 Material Texture "LITB2x2"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x2S.png"
+	normal "materials/normalmaps/auto/LITB2x2.png"
+	specular "materials/specular/auto/LITB2x2.png"
 }
 
 Material Texture "LITBW1x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL1x1S.png"
+	normal "materials/normalmaps/auto/LITBW1x1.png"
+	specular "materials/specular/auto/LITBW1x1.png"
 }
 
 Material Texture "LITBW2x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALL2x1S.png"
+	normal "materials/normalmaps/auto/LITBW2x1.png"
+	specular "materials/specular/auto/LITBW2x1.png"
 }
 
 Material Texture "LITW1x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT1x1.png"
+	normal "materials/normalmaps/auto/LITW1x1.png"
+	specular "materials/specular/auto/LITW1x1.png"
 }
 
 Material Texture "LITW2x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT2x1.png"
+	normal "materials/normalmaps/auto/LITW2x1.png"
+	specular "materials/specular/auto/LITW2x1.png"
 }
 
 Material Texture "LITW2x2"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT2x2.png"
+	normal "materials/normalmaps/auto/LITW2x2.png"
+	specular "materials/specular/auto/LITW2x2.png"
 }
 
 Material Texture "LITWW1x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT1x1.png"
+	normal "materials/normalmaps/auto/LITWW1x1.png"
+	specular "materials/specular/auto/LITWW1x1.png"
 }
 
 Material Texture "LITWW2x1"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/PORT2x1.png"
+	normal "materials/normalmaps/auto/LITWW2x1.png"
+	specular "materials/specular/auto/LITWW2x1.png"
 }
 
 Material Texture "WALLGR"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALLGR.png"
+	normal "materials/normalmaps/auto/WALLGR.png"
+	specular "materials/specular/auto/WALLGR.png"
 }
 
 Material Texture "WALLGR2"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALLGR.png"
+	normal "materials/normalmaps/auto/WALLGR.png"
+	specular "materials/specular/auto/WALLGR.png"
 }
 
 Material Texture "WALLGR3"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/WALLGR.png"
+	normal "materials/normalmaps/auto/WALLGR.png"
+	specular "materials/specular/auto/WALLGR.png"
 }
 
 Material Texture "GIRDER"
@@ -756,6 +826,8 @@ Material Texture "GIRDER"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/Girder.png"
 	specularlevel 0.25
+	normal "materials/normalmaps/auto/girder.png"
+	specular "materials/specular/auto/girder.png"
 }
 
 Material Texture "patches/girder.png"
@@ -804,6 +876,8 @@ Material Texture "FLOORMET"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/FloorMet.png"
 	specularlevel 0.25
+	normal "materials/normalmaps/auto/floormet.png"
+	specular "materials/specular/auto/floormet.png"
 }
 
 Material Texture "GRIDWAL1"
@@ -828,24 +902,32 @@ Material Texture "BTSWALL"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/BTSWALL.png"
+	normal "materials/normalmaps/auto/btswall.png"
+	specular "materials/specular/auto/btswall.png"
 }
 
 Material Texture "BTSWALL2"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/BTSWALL.png"
+	normal "materials/normalmaps/auto/btswall.png"
+	specular "materials/specular/auto/btswall.png"
 }
 
 Material Texture "HOLEWALL"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/BTSWALL.png"
+	normal "materials/normalmaps/auto/holewall.png"
+	specular "materials/specular/auto/holewall.png"
 }
 
 Material Texture "HOLEWALS"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/BTSWALL.png"
+	normal "materials/normalmaps/auto/holewals.png"
+	specular "materials/specular/auto/holewals.png"
 }
 
 Material Texture "HOLEWALM"
@@ -1012,6 +1094,8 @@ Material Texture "Models/Diffuser.png"
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/Diffuser.png"
 	specularlevel 0.25
+	normal "materials/normalmaps/auto/diffuser.png"
+	specular "materials/specular/auto/diffuser.png"
 }
 
 Material Texture "Models/Switch.png"
@@ -1081,6 +1165,8 @@ Material Texture "FloorDm"
 {
 	shader "shaders/displacement.fp"
 	texture displacement "materials/displacement/FloorDm.png"
+	normal "Materials/NormalMaps/Auto/FloorDm.png"
+	specular "Materials/Specular/Auto/FloorDm.png"
 }
 
 Material Texture "FloorDm2"
@@ -1089,7 +1175,6 @@ Material Texture "FloorDm2"
 	texture displacement "materials/displacement/FloorDm.png"
 	normal "Materials/NormalMaps/Auto/FloorDm.png"
 	specular "Materials/Specular/Auto/FloorDm.png"
-
 }
 
 Material Texture "FloorDm3"
@@ -1103,7 +1188,7 @@ Material Texture "FloorDm3"
 Material Texture "CAUTIONS"
 {
 	normal "Materials/NormalMaps/Auto/Floor.png"
-	Specular "Materials/Specular/Auto/Floor.png"
+	specular "Materials/Specular/Auto/Floor.png"
 	specularlevel 1.5
 }
 
@@ -1124,14 +1209,31 @@ Material Texture "MetlWal2"
 Material Texture "Models/waterbeam.png"
 {
 	normal "Materials/NormalMaps/Auto/water_beam_01.png"
-	specular "Materials/Specular/water.png"
-	specularlevel 1.0
+	specular "Materials/Specular/Auto/concdirt.png"
+	specularlevel 2.0
 	shader "shaders/scroll.fp"
-	speed 2.0
+	speed 1.0
 }
 
 Material Texture "Models/Arrow1.png"
 {
 	shader "shaders/scroll.fp"
 	speed 0.5
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	specularlevel 1.0
+}
+
+Material Texture "BLOOD"
+{
+	shader "shaders/vortex.fp"
+	speed 0.5
+	texture displacement "materials/displacement/Wall.png"
+}
+
+Material Texture "Models/Clock.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Clock.png"
+	specularlevel 4.0
 }
