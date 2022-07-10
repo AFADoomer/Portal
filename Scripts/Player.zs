@@ -48,7 +48,6 @@ class PortalPlayer : PlayerPawn
 
 		PortalPlayer.CarryRange 96.0;
 	}
-	
 
 	States
 	{

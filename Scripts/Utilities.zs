@@ -532,6 +532,29 @@ points[i] -= mo.floorz;
 
 		return ret;
 	}
+
+	static Vector3 OffsetRelative(Actor origin, double xoffset = 0, double yoffset = 0, double zoffset = 0)
+	{
+		if (!origin) { return (xoffset, yoffset, zoffset); }
+
+		Vector2 temp;
+		Vector3 offset;
+
+		temp = RotateVector((yoffset, zoffset), origin.roll);
+		offset = (xoffset, temp.x, temp.y);
+
+		temp = RotateVector((offset.x, offset.z), -origin.pitch);
+		offset = (temp.x, offset.y, temp.y);
+
+		temp = RotateVector((offset.x, offset.y), origin.angle);
+		offset = (temp.x, temp.y, offset.z);
+
+		offset.x *= origin.scale.x;
+		offset.y *= origin.scale.x;
+		offset.z *= origin.scale.y;
+
+		return offset;
+	}
 }
 
 class FloorOverlayAdjust : Actor
@@ -578,16 +601,14 @@ class FlatText : PortalActor
 		Radius 0;
 		Height 0;
 		Scale 0.125;
-		+MASKROTATION
 		+NOGRAVITY
 		+NOINTERACTION
 		+FLATSPRITE
 		+BRIGHT
-		Renderstyle 'AddShaded';
-		Alpha 1.0;
-		StencilColor "000000";
-		VisibleAngles -90, 90;
-		VisiblePitch 0, 180;
+		+NOTONAUTOMAP
+		Renderstyle 'AddStencil';
+		Alpha 1.25;
+		StencilColor "FFFFFF";
 		RenderRadius 64;
 	}
 
@@ -854,7 +875,7 @@ class FlatText : PortalActor
 
 		if (!master && !user_text) { Destroy(); }
 
-		if (master) { alpha = master.alpha; }
+		if (master) { alpha = master.alpha * Default.alpha; }
 	}
 
 	static void SpawnString(Actor master, String input, Color clr = 0x000000, double xoffset = 2.0, double yoffset = 0, double zoffset = 0, double scale = 1.0)
@@ -863,9 +884,9 @@ class FlatText : PortalActor
 
 		int digits = input.Length();
 
-		double position = 0;
-		double width = 16 * 0.125 * master.scale.x * scale;
-		double height = 33 * 0.125 * master.scale.y * scale;
+		double width = 16 * 0.125 * scale;
+		double height = 33 * 0.125 * scale;
+		double linestart = yoffset = yoffset + width / 2;
 
 		for (int i = 0; i < digits; i++)
 		{
@@ -890,9 +911,8 @@ class FlatText : PortalActor
 						break;
 					case 110: //\n
 					case 114: //\r
-						zoffset -= height * cos(master.pitch);
-						xoffset -= 0.75 * sin(master.pitch);
-						position = 0;
+						zoffset -= height;
+						yoffset = linestart;
 						break;
 					default:
 						break;
@@ -903,21 +923,21 @@ class FlatText : PortalActor
 			}
 			else
 			{
-				bool sp;
-				Actor mo;
-	
-				[sp, mo] = master.A_SpawnItemEx("FlatText", xoffset * master.scale.x, yoffset * master.scale.x + position, zoffset, flags: SXF_NOCHECKPOSITION);
-				if (sp)
+				Vector3 pos = Utilities.OffsetRelative(master, xoffset, yoffset, zoffset);
+
+				Actor mo = Spawn("FlatText", master.pos + pos);
+				if (mo)
 				{
 					FlatText(mo).value = code;
 					mo.master = master;
 					mo.scale *= master.scale.x * scale;
+					mo.angle = master.angle;
 					mo.pitch = master.pitch - 90;
 					mo.roll = master.roll;
 					mo.SetShade(clr);
 				}
 
-				position -= width;
+				yoffset += width;
 				input.Remove(0, 1);
 			}
 		}

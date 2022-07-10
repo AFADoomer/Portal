@@ -235,7 +235,7 @@ Class LightningBeam : Actor
 						t = Spawn(trail, pos + (RotateVector((StepDistance / 2.0, 0), angle), 0));
 					}
 
-					if (t) { ElectrifySector(t.CurSector, MovingTrailBeam(t).Damage); }
+					if (t) { ElectrifySector(t.CurSector, MovingTrailBeam(t).Damage, t.pos); }
 				}
 
 				t.master = master;
@@ -254,7 +254,7 @@ Class LightningBeam : Actor
 		}
 	}
 
-	void ElectrifySector(Sector cur, int damage = -1)
+	void ElectrifySector(Sector cur, int damage = -1, Vector3 origin = (0, 0, 0))
 	{
 		int floorcount = cur.Get3dFloorCount();
 
@@ -265,10 +265,15 @@ Class LightningBeam : Actor
 			if (f.top.d >= pos.z  && !!(f.flags & F3DFloor.FF_EXISTS | F3DFloor.FF_SWIMMABLE))
 			{
 				SectorDamageHandler.SetDamage(f.model, damage > -1 ? damage : Random(0, 2), "Electric", 1, 35);
+				if (origin.length()) { DrawZaps(f.model, origin); }
 			}
 		}
 
-		if (!floorcount) { ZapSector(cur, damage); }
+		if (!floorcount)
+		{
+			ZapSector(cur, damage);
+			if (origin.length()) { DrawZaps(cur, origin); }
+		}
 	}
 
 	void ZapSector(Sector cur, int damage = -1)
@@ -276,6 +281,41 @@ Class LightningBeam : Actor
 		for (Actor mo = cur.thinglist; mo != null; mo = mo.snext)
 		{
 			if ((mo.pos.z <= floorz || mo.waterlevel > 0) && mo.bShootable) { mo.DamageMobj(self, self, damage > 0 ? damage : Random(0, 2), "Electric"); }
+		}
+	}
+
+	void DrawZaps(Sector sec, Vector3 pos)
+	{
+		if (!sec) { return; }
+
+		Vector2 offset;
+		double range = 768.0;
+		offset.x = FRandom(-range, range);
+		offset.y = FRandom(-range, range);
+
+		pos += (offset, 0);
+
+		if (level.IsPointInLevel(pos))
+		{
+			Sector destsec = level.PointInSector(pos.xy);
+			if (destsec == sec)
+			{
+				Spawn("Zap", pos);
+			}
+			else
+			{
+				int floorcount = destsec.Get3dFloorCount();
+
+				for (int c = 0; c < floorcount; c++)
+				{
+					F3DFloor f = destsec.Get3DFloor(c);
+
+					if (f.model == sec)
+					{
+						Spawn("Zap", pos);
+					}
+				}
+			}
 		}
 	}
 
@@ -320,6 +360,32 @@ Class LightningBeam : Actor
 	}
 }
 
+Class Zap : Actor
+{
+	Default
+	{
+		+FLATSPRITE
+		+NOGRAVITY
+		Scale 0.25;
+		RenderStyle "Add";
+		Alpha 0.125;
+	}
+
+	States
+	{
+		Spawn:
+			PLSE ABCDE 1 Bright;
+			Stop;
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		A_AttachLight("BeamLight", DynamicLight.FlickerLight, 0x707080, 1, 8, DynamicLight.LF_ATTENUATE, (0, 0, 0.1));
+	}
+}
+
 Class LightningBeamArc : LightningBeam
 {
 	Default 
@@ -352,6 +418,7 @@ Class MovingTrailBeam : Actor
 	{
 		Height 1;
 		Radius 0;
+		+BRIGHT
 		+NOINTERACTION
 		RenderStyle "Add";
 		MovingTrailBeam.Damage 0;
@@ -384,7 +451,7 @@ Class MovingTrailBeam : Actor
 
 		if (pos.z < floorz) { Destroy(); }
 
-		A_AttachLight("BeamLight", DynamicLight.PointLight, 0x707080, int(scale.y), 0, DynamicLight.LF_ATTENUATE, (0, 0, 1.0));
+		A_AttachLight("BeamLight", DynamicLight.PointLight, 0xFF707080, int(scale.y), 0, DynamicLight.LF_ATTENUATE | DynamicLight.LF_SPOT, (-scale.y, 0, 1.0), 0, 10, 30, 0);
 	}
 
 	override void Tick()

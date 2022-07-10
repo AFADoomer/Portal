@@ -123,6 +123,8 @@ class PortalSpot : Actor
 	{
 		Super.Tick();
 
+		if (bDormant) { return; }
+
 		if (!ring)
 		{
 			ring = Spawn("PortalRing", pos);
@@ -136,7 +138,7 @@ class PortalSpot : Actor
 			}
 		}
 
-		if (!StaticPortalSpot(self)) { OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY | SF_SEEPASTSHOOTABLELINES) ? 0.5 : 0.0, 1); }
+		if (!StaticPortalSpot(self) && ring) { OverlayHandler.Add(ring, "Portal", 0, ring.fillcolor, !CheckSight(players[consoleplayer].camera, SF_SEEPASTBLOCKEVERYTHING | SF_IGNOREWATERBOUNDARY | SF_IGNOREVISIBILITY | SF_SEEPASTSHOOTABLELINES) ? 0.5 : 0.0, 1); }
 
 		if (int(lineangle) != GetLineAngle()) { DoDestroy(); }
 
@@ -153,66 +155,11 @@ class PortalSpot : Actor
 
 			if (pair.camera)
 			{
-				double camfov = 60;
+				double camfov = 120;
 
-				let aimpoint = players[consoleplayer].camera;
-
-				if (aimpoint)
-				{
-					// Portal_Matrix view = Portal_Matrix.fromEulerAngles(
-					// 	angleTo(aimpoint, true),
-					// 	-PitchTo(aimpoint, self, -(32.0 + (players[consoleplayer].viewheight - players[consoleplayer].mo.viewheight))),
-					// 	deltaangle(roll, aimpoint.roll)
-					// );
-					// Portal_Matrix pairview = view.multiplyMatrix(transform);
-
-					Portal_Matrix view = Portal_Matrix.fromEulerAngles(
-						aimpoint.angleTo(self, true),
-						-PitchTo(self, aimpoint, 32.0 + (players[consoleplayer].viewheight - players[consoleplayer].mo.viewheight)),
-						deltaangle(aimpoint.roll, roll)
-						);
-					Portal_Matrix pairview = transform.multiplyMatrix(view);
-					Vector3 viewoffset = -RotateVector3(forward, -angle, 0, 0) * 180;
-					Portal_Matrix reverse = Portal_Matrix.fromEulerAngles(viewoffset.x, viewoffset.y, viewoffset.z);
-					pairview = reverse.multiplyMatrix(pairview);
-
-					// camfov = camfov + 30 / clamp(Distance2D(aimpoint) / 32, 1, 60);
-
-					// Portal_Matrix view = Portal_Matrix.fromEulerAngles(
-					// 	aimpoint.angleTo(self, true),
-					// 	//  + deltaangle(180 + angle, aimpoint.angle), 
-					// 	// angle + deltaangle(aimpoint.angleTo(self, true), aimpoint.angle),
-					// 	// 180 + angle,
-					// 	-PitchTo(self, aimpoint, 32.0 + (players[consoleplayer].viewheight - players[consoleplayer].mo.viewheight)),
-					// 	aimpoint.roll - roll
-					// 	);
-					// Portal_Matrix newview = transform.multiplyMatrix(view);
-					// Vector3 viewoffset = -RotateVector3(forward, -angle, 0, 0);
-					// Portal_Matrix reverse = Portal_Matrix.fromEulerAngles(viewoffset.x * 180, viewoffset.y * 180, viewoffset.z * 180);
-					// newview = reverse.multiplyMatrix(newview);
-
-					double a, p, r;
-					[a, p, r] = pairview.rotationToEulerAngles();
-
-					// Vector2 offset = RotateVector((1, 0), deltaangle(a, pair.angle));
-					// Vector2 zoffset = RotateVector((1, 0), deltaangle(-p, pair.pitch));
-
-					// camfov = camfov + abs(30 * offset.y);
-
-					pair.camera.angle = a;
-					pair.camera.pitch = -p;
-					// pair.camera.angle = pair.angle - offset.y * 90.0;
-					// pair.camera.pitch = pair.pitch - zoffset.y * 45.0;
-					pair.camera.roll = r;
-
-					// pair.camera.SetOrigin(pair.camerapos + (RotateVector(-offset * 16.0, pair.angle), 0), true);
-				}
-				else
-				{
-					pair.camera.angle = pair.angle;
-					pair.camera.pitch = pair.pitch;
-					pair.camera.roll = pair.roll;
-				}
+				pair.camera.angle = pair.angle;
+				pair.camera.pitch = pair.pitch;
+				pair.camera.roll = pair.roll;
 
 				TexMan.SetCameraToTexture(pair.camera, pair.camtex, camfov);
 			}
@@ -786,6 +733,8 @@ class PortalSpot : Actor
 			sparks.angle = angle;
 			sparks.pitch = pitch;
 		}
+
+		if (ring) { ring.Destroy(); }
 	}
 
 	double PitchTo(Actor mo, Actor source = null, double zoffset = 0.0)
@@ -859,6 +808,18 @@ class StaticPortalSpotBlue : StaticPortalSpot // Assumes an orange static portal
 
 		frame = 0;
 
+		FindPair();
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (!pair && level.time % 5 == 0) { FindPair(); }
+	}
+
+	void FindPair()
+	{
 		ThinkerIterator it = ThinkerIterator.Create("StaticPortalSpot", Thinker.STAT_USER + 1);
 		PortalSpot mo;
 
@@ -874,7 +835,6 @@ class StaticPortalSpotBlue : StaticPortalSpot // Assumes an orange static portal
 
 class PortalRing : Actor
 {
-	Actor light;
 	color pri, alt;
 
 	Property PrimaryColor:pri;
@@ -932,35 +892,15 @@ class PortalRing : Actor
 		if (scale.x < 1.0) { scale.x = min(scale.x + 0.15, 1.0); }
 		if (scale.y < 1.0) { scale.y = min(scale.y + 0.15, 1.0); }
 
-		if (!light)
+		bool attenuate = false;
+		double glowradius = 20.0 * scale.y;
+		if (!PortalSpot(master).bInvisible)
 		{
-			light = Spawn("AlphaLight", pos);
-
-			if (light)
-			{
-				light.master = master;
-				AlphaLight(light).maxradius = 20.0;
-				AlphaLight(light).clr = fillcolor;
-				light.alpha = scale.y;
-			}
+			attenuate = true;
+			glowradius = 40.0 * scale.y;
 		}
-		else
-		{
-			AlphaLight(light).clr = fillcolor;
-			light.alpha = scale.y;
 
-			if (!PortalSpot(master).bInvisible)
-			{
-				DynamicLight(light).bAttenuate = true;
-				AlphaLight(light).maxradius = 40.0;
-			}
-			else
-			{
-				DynamicLight(light).bAttenuate = false;
-				AlphaLight(light).maxradius = 20.0;
-			}
-			
-		}
+		A_AttachLight("Glow", DynamicLight.PointLight, fillcolor, int(glowradius), int(glowradius), attenuate ? DynamicLight.LF_ATTENUATE : 0);
 	}
 }
 

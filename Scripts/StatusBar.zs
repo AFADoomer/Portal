@@ -11,7 +11,7 @@ class PortalStatusBar : BaseStatusBar
 	{
 		Super.Draw(state, TicFrac);
 
-		if (!automapactive)
+		if (!automapactive && screenblocks != 12)
 		{
 			DrawCrosshairHint();
 		}
@@ -56,7 +56,7 @@ class PortalStatusBar : BaseStatusBar
 
 	void DrawCrosshair(String texture, color clr)
 	{
-		double maxwidth = int(screen.GetWidth() * crosshairscale / 6);
+		double maxwidth = int(screen.GetWidth() * crosshairscale / 8);
 
 		TextureID icon = TexMan.CheckForTexture(texture, TexMan.Type_Any);
 

@@ -9,6 +9,7 @@ void SetupMaterial(inout Material material)
 
 	material.Base = getTexel(texCoord);
 	material.Normal = GetBumpedNormal(tbn, texCoord);
+	material.Bright = texture(brighttexture, texCoord);
 }
 
 // Tangent/bitangent/normal space to world space transform matrix

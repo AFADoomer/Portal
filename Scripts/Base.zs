@@ -1,10 +1,40 @@
 class PortalActor : Actor
 {
 	int user_variant;
-	bool user_blockingrails;
 	String stepsound;
+	// AlphaLight light;
+	double glowx, glowy, glowz;
+	color glowcolor, baseglowcolor;
+	double glowradius;
+	int maxglowradius;
+	bool glowspotlight;
+	double glowouterangle, glowpitchoffset, glowintensity;
+	int glowflickertime;
 
 	Property StepSound:stepsound;
+	Property GlowColor:glowcolor;
+	Property GlowOffsetX:glowx;
+	Property GlowOffsetY:glowy;
+	Property GlowOffsetZ:glowz;
+	Property GlowRadius:glowradius;
+	Property GlowSpotLight:glowspotlight;
+	Property GlowOuterAngle:glowouterangle;
+	Property GlowPitchOffset:glowpitchoffset;
+	Property GlowIntensity:glowintensity;
+
+	Default
+	{
+		PortalActor.StepSound "";
+		PortalActor.GlowColor 0x0;
+		PortalActor.GlowOffsetX 0.0;
+		PortalActor.GlowOffsetY 0.0;
+		PortalActor.GlowOffsetZ 0.0;
+		PortalActor.GlowRadius -1;
+		PortalActor.GlowSpotLight False;
+		PortalActor.GlowOuterAngle 70.0;
+		PortalActor.GlowPitchOffset 0.0;
+		PortalActor.GlowIntensity 2.0;
+	}
 
 	States
 	{
@@ -33,33 +63,100 @@ class PortalActor : Actor
 
 		frame = user_variant;
 
+		if (glowcolor != 0x0)
+		{
+			if (glowradius == 0) { glowradius = radius; }
+			maxglowradius = int(glowradius);
+			baseglowcolor = glowcolor;
+
+			if (!bDormant) { SetGlow("Glow", glowcolor, glowradius, 2.0, glowx, glowy, glowz, glowouterangle); }
+		}
+
 		Super.PostBeginPlay();
 	}
 
-	void OffsetRelative(Actor mo, double xoffset = 0, double yoffset = 0, double zoffset = 0)
+	override void Tick()
+	{
+		Super.Tick();
+
+		if (IsFrozen())
+		{
+			if (glowflickertime) { glowflickertime++; }
+			return;
+		}
+
+		if (glowflickertime)
+		{
+			if (level.time < glowflickertime)
+			{
+				glowradius = (glowflickertime - level.time > 35) ? 0 : Random(maxglowradius / 4, maxglowradius);
+			}
+			else
+			{
+				glowradius = maxglowradius;
+				glowflickertime = 0;
+			}
+
+			SetGlow("Glow", glowcolor, glowradius, 2.0, glowx, glowy, glowz, glowouterangle, glowpitchoffset);
+		}
+	}
+
+	virtual void SetGlow(String glowname, color glowcolor = 0xa8a8c0, double glowradius = 0.0, double glowintensity = 1.0, double glowx = 0, double glowy = 0, double glowz = 0, double glowouterangle = 0, double glowpitchoffset = 0.0, int glowflags = DynamicLight.LF_ATTENUATE)
+	{
+		if (glowradius == 0) { glowradius = radius; }
+		if (glowouterangle > 0) { glowflags |= DynamicLight.LF_SPOT; }
+
+		glowradius *= scale.x;
+
+		color clr;
+
+		if (glowintensity == 1.0) { clr = glowcolor; }
+		else
+		{
+			int r = int(glowcolor.r * glowintensity);
+			int g = int(glowcolor.g * glowintensity);
+			int b = int(glowcolor.b * glowintensity);
+
+			clr = color(r, g, b);
+		}
+
+		A_AttachLight(glowname, DynamicLight.PointLight, clr, int(glowradius), int(glowradius), glowflags, (glowx * scale.x, glowy * scale.x, glowz * scale.y), 0, 1, glowouterangle, pitch + glowpitchoffset);
+	}
+
+	void OffsetRelative(Actor mo, double xoffset = 0, double yoffset = 0, double zoffset = 0, bool moving = true)
 	{
 		if (!mo) { return; }
 
-		Vector2 temp;
-		Vector3 offset;
+		Vector3 offset = Utilities.OffsetRelative(self, xoffset, yoffset, zoffset);
 
-		temp = RotateVector((yoffset, zoffset), roll);
-		offset = (xoffset, temp.x, temp.y);
-
-		temp = RotateVector((offset.x, offset.z), -pitch);
-		offset = (temp.x, offset.y, temp.y);
-
-		temp = RotateVector((offset.x, offset.y), angle);
-		offset = (temp.x, temp.y, offset.z);
-
-		offset.x *= scale.x;
-		offset.y *= scale.x;
-		offset.z *= scale.y;
-
-		mo.SetOrigin(pos + offset, true);
+		mo.SetOrigin(pos + offset, moving);
 	}
 
 	virtual void SpawnBlocks() {}
+
+	override void OnDestroy()
+	{
+		A_RemoveLight("Glow");
+	}
+
+	override void Activate(Actor activator)
+	{
+		bDormant = false;
+
+		if (glowcolor != 0x0 && level.time > 35)
+		{
+			glowflickertime = level.time + Random(15, 45);
+		}
+
+		Super.Activate(activator);
+	}
+
+	override void Deactivate(Actor activator)
+	{
+		bDormant = true;
+
+		Super.Deactivate(activator);
+	}
 }
 
 class CarryActor : PortalActor

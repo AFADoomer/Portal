@@ -34,6 +34,7 @@ class BlockBase : SwitchableDecoration
 		RenderStyle "Add";
 		Alpha 0.95;
 	}
+	
 	States
 	{
 		Spawn:
@@ -295,6 +296,13 @@ class BlockManager : Thinker
 }
 
 class Block8x8 : BlockBase { Default { Radius 4; Height 8; } }
+class Block4x1 : BlockBase { Default { Radius 2; Height 1; } }
+class Block6x1 : BlockBase { Default { Radius 3; Height 1; } }
+class Block8x1 : BlockBase { Default { Radius 4; Height 1; } }
+class Block12x1 : BlockBase { Default { Radius 6; Height 1; } }
+class Block14x1 : BlockBase { Default { Radius 7; Height 1; } }
+class Block16x1 : BlockBase { Default { Radius 8; Height 1; } }
+class Block24x1 : BlockBase { Default { Radius 12; Height 1; } }
 class Block32x1 : BlockBase { Default { Radius 16; Height 1; } }
 class Block36x1 : BlockBase { Default { Radius 18; Height 1; } }
 class Block42x42 : BlockBase { Default { Radius 21; Height 42; } }
@@ -312,7 +320,7 @@ class RailBlock : BlockBase
 	{
 		Super.PostBeginPlay();
 
-		if (master && master is "PortalActor" && PortalActor(master).user_blockingrails)
+		if (master && master is "WalkwaySegment" && WalkwaySegment(master).user_blockingrails)
 		{
 			A_SetSize(Radius, 26);
 		}

@@ -287,7 +287,7 @@ class SlidingDoor : Actor
 		+DONTTHRUST
 		Height 64;
 		Radius 20;
-		SlidingDoor.ActivationRadius 32;
+		SlidingDoor.ActivationRadius 64;
 		SlidingDoor.OpenSound "elevator/door/open";
 		SlidingDoor.CloseSound "elevator/door/close";
 		SlidingDoor.HoldTime 140;
@@ -438,7 +438,7 @@ class SlidingDoor : Actor
 
 	void GetActivators(double range = 64, double doorheight = 96)
 	{
-		BlockThingsIterator it = BlockThingsIterator.Create(self, 1);
+		BlockThingsIterator it = BlockThingsIterator.Create(self, range);
 
 		while (it.Next())
 		{

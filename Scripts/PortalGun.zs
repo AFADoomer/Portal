@@ -27,21 +27,33 @@ class PortalGun : Weapon
 	States
 	{
 		Ready:
-			PGUN A 0 { if (invoker.shottype) { return ResolveState("Ready.Alt"); } return ResolveState(null); }
+			PGUN A 0 {
+				invoker.crosshair = 99; // Hide the engine crosshair
+				if (invoker.shottype) { return ResolveState("Ready.Alt"); }
+				return ResolveState(null);
+			}
 			PGUN A 1 A_PortalWeaponReady;
 			Loop;
 		Ready.Alt:
 			PGUN K 1 A_PortalWeaponReady;
 			Loop;
 		Deselect:
-			PGUN A 0 { if (invoker.shottype) { return ResolveState("Deselect.Alt"); } return ResolveState(null); }
+			PGUN A 0 {
+				invoker.crosshair = 0; // Restore the engine crosshair
+				if (invoker.shottype) { return ResolveState("Deselect.Alt"); }
+				return ResolveState(null);
+			}
 			PGUN A 1 A_Lower;
 			Loop;
 		Deselect.Alt:
 			PGUN K 1 A_Lower;
 			Loop;
 		Select:
-			PGUN A 0 { if (invoker.shottype) { return ResolveState("Select.Alt"); } return ResolveState(null); }
+			PGUN A 0 {
+				invoker.crosshair = 99; // Hide the engine crosshair
+				if (invoker.shottype) { return ResolveState("Select.Alt"); } 
+				return ResolveState(null);
+			}
 			PGUN A 1 A_Raise;
 			Loop;
 		Select.Alt:

@@ -56,7 +56,7 @@ Model PortalSpot
 	Model 0 "portal.md3"
 	Path "/"
 
-	Skin 0 "PORTAL1A" // Throws an error for unsupported format in GZDB, but works in the game...
+	Skin 0 "PORTAL1A"
 	FrameIndex POR1 A 0 0
 
 	Skin 0 "PORTAL1B" 
@@ -363,13 +363,113 @@ Model Monitor
 	FrameIndex UNKN E 0 0
 }
 
+Model MonitorStand
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	ZOffset 14.0
+
+	Path "Models/"
+	Model 0 "monitor.md3"
+	Model 1 "monitorstand.md3"
+
+	FrameIndex UNKN A 0 0
+	FrameIndex UNKN A 1 0
+
+	SurfaceSkin 0 0 "Screen2.png"
+
+	FrameIndex UNKN B 0 0
+	FrameIndex UNKN B 1 0
+
+	SurfaceSkin 0 0 "Screen3.png"
+
+	FrameIndex UNKN C 0 0
+	FrameIndex UNKN C 1 0
+
+	SurfaceSkin 0 0 "Screen4.png"
+
+	FrameIndex UNKN D 0 0
+	FrameIndex UNKN D 1 0
+
+	SurfaceSkin 0 0 "ScreenC.png"
+
+	FrameIndex UNKN J 0 0
+	FrameIndex UNKN J 1 0
+
+	SurfaceSkin 0 0 "ScreenE.png"
+
+	FrameIndex UNKN K 0 0
+	FrameIndex UNKN K 1 0
+
+	SurfaceSkin 0 0 "Screen5.png"
+
+	FrameIndex UNKN E 0 0
+	FrameIndex UNKN E 1 0
+}
+
+Model MonitorOverlay
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "monitoroverlay.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
 Model Desk
 {
 	USEACTORPITCH
 	USEACTORROLL
 
 	Path "Models/"
-	Model 0 "table.md3"
+	Model 0 "desk.md3"
+
+	SurfaceSkin 0 0 "matte.png"
+	SurfaceSkin 0 1 "matte3.png"
+
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "matte3.png"
+	SurfaceSkin 0 1 "matte.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Desk2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "desk2.md3"
+
+	SurfaceSkin 0 0 "matte.png"
+	SurfaceSkin 0 1 "matte3.png"
+
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "matte3.png"
+	SurfaceSkin 0 1 "matte.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Desk3
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "desk3.md3"
+
+	SurfaceSkin 0 0 "matte.png"
+	SurfaceSkin 0 1 "matte3.png"
+
+	FrameIndex UNKN B 0 0
+
 	SurfaceSkin 0 0 "matte3.png"
 	SurfaceSkin 0 1 "matte.png"
 
@@ -770,6 +870,47 @@ Model PipeBend
 	FrameIndex UNKN A 0 0
 }
 
+Model PipeBendSingle
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Scale 1.0 1.0 1.2
+
+	Path "Models/"
+	Model 0 "pipebendsingle.md3"
+
+	SurfaceSkin 0 0 "wallpipe4.png"
+	FrameIndex UNKN C 0 0
+
+	SurfaceSkin 0 0 "wallpipe3.png"
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "wallpipe2.png"
+	FrameIndex UNKN A 0 0
+}
+
+Model PipeBendOffset
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Scale 1.0 1.0 1.2
+
+	Path "Models/"
+	Model 0 "pipebendoffset.md3"
+
+	SurfaceSkin 0 0 "wallpipe4.png"
+	FrameIndex UNKN C 0 0
+
+	SurfaceSkin 0 0 "wallpipe3.png"
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "wallpipe2.png"
+	FrameIndex UNKN A 0 0
+}
+
+
 Model LaserEmitter
 {
 	USEACTORPITCH
@@ -1167,11 +1308,10 @@ Model SwingingDoor
 	Path "Models/"
 	Model 0 "door.md3"
 
+	Skin 0 "Door4.png"
 	FrameIndex UNKN A 0 0
 
-	Path "Patches/"
 	Skin 0 "Door4_O.png"
-
 	FrameIndex UNKN B 0 0
 }
 
@@ -1180,7 +1320,6 @@ Model SwingingDoorWhite
 	Path "Models/"
 	Model 0 "door.md3"
 
-	Path "Patches/"
 	Skin 0 "Door5.png"
 	FrameIndex UNKN A 0 0
 
@@ -1443,6 +1582,21 @@ Model BigPipeBend
 	FrameIndex UNKN C 0 0
 }
 
+Model BigPipeJoint
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "bigpipejoint.md3"
+
+	AngleOffset 90.0
+	Scale 1.0 1.0 1.2
+	Offset -4.0 0.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
 Model SlidingDoor
 {
 	Path "Models/"
@@ -1542,7 +1696,7 @@ Model DebrisWall
 	Path "patches/"
 	Skin 0 "gridwal1.png"
 
-	FrameIndex DEBR A 0 0
+	FrameIndex UNKN A 0 0
 }
 
 Model DebrisWall2
@@ -1558,7 +1712,7 @@ Model DebrisWall2
 	Path "patches/"
 	Skin 0 "holewals.png"
 
-	FrameIndex DEBR B 0 0
+	FrameIndex UNKN A 0 0
 }
 
 Model DebrisWall3
@@ -1574,7 +1728,7 @@ Model DebrisWall3
 	Path "patches/"
 	Skin 0 "gridwal2.png"
 
-	FrameIndex DEBR C 0 0
+	FrameIndex UNKN A 0 0
 }
 
 Model DebrisWall4
@@ -1590,7 +1744,7 @@ Model DebrisWall4
 	Path "patches/"
 	Skin 0 "holewalm.png"
 
-	FrameIndex DEBR D 0 0
+	FrameIndex UNKN A 0 0
 }
 
 Model DebrisWall5
@@ -1606,7 +1760,39 @@ Model DebrisWall5
 	Path "patches/"
 	Skin 0 "holewalt.png"
 
-	FrameIndex DEBR E 0 0
+	FrameIndex UNKN A 0 0
+}
+
+Model DebrisWall6
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "plane.md3"
+
+	Scale 1.0 1.0 1.2
+
+	Path "patches/"
+	Skin 0 "gridwal3.png"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model DebrisWall7
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "plane.md3"
+
+	Scale 1.0 1.0 1.2
+
+	Path "patches/"
+	Skin 0 "holewall.png"
+
+	FrameIndex UNKN A 0 0
 }
 
 Model SupportArm
@@ -1762,26 +1948,36 @@ Model WalkwaySegmentIntersection
 	FrameIndex UNKN A 0 0
 }
 
-Model WallPanel1
+Model WallPanel
 {
 	USEACTORPITCH
 	USEACTORROLL
 
 	Path "Models/"
-	Model 0 "wallpan1.md3"
-
+	Model 0 "wallpan.md3"
 	FrameIndex UNKN A 0 0
-}
 
-Model WallPanel2
-{
-	USEACTORPITCH
-	USEACTORROLL
+	Path "/"
+	SurfaceSkin 0 0 "COMPTAL8"
+	FrameIndex UNKN B 0 0
 
-	Path "Models/"
-	Model 0 "wallpan2.md3"
+	SurfaceSkin 0 0 "COMP21"
+	FrameIndex UNKN C 0 0
 
-	FrameIndex UNKN A 0 0
+	SurfaceSkin 0 0 "COMP22"
+	FrameIndex UNKN D 0 0
+
+	SurfaceSkin 0 0 "COMP24"
+	FrameIndex UNKN E 0 0
+
+	SurfaceSkin 0 0 "COMP26"
+	FrameIndex UNKN F 0 0
+
+	SurfaceSkin 0 0 "COMP27"
+	FrameIndex UNKN G 0 0
+
+	SurfaceSkin 0 0 "COMP28"
+	FrameIndex UNKN H 0 0
 }
 
 Model BlockBase
@@ -1793,12 +1989,32 @@ Model BlockBase
 }
 
 Model Block8x8 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block4x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block6x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block8x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block12x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block14x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block16x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+Model Block24x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model Block32x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model Block36x1 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model Block42x42 { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model RailBlock { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model Step { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
 Model DoorBlock { Path "Models/" Model 0 "1x1.md3" FrameIndex UNKN A 0 0 }
+
+Model Frame16
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "frame16.md3"
+
+	Scale 1.0 1.0 1.2
+
+	FrameIndex UNKN A 0 0
+}
 
 Model Frame32
 {
@@ -1970,9 +2186,7 @@ Model OfficeLight
 
 	FrameIndex UNKN A 0 0
 
-	Path "Patches/"
 	Skin 0 "Door5.png"
-
 	FrameIndex UNKN B 0 0
 }
 
@@ -1983,16 +2197,12 @@ Model OfficeLightBulb
 
 	Path "Models/"
 	Model 0 "olight_light.md3"
+	Skin 0 "FlourTub.png"
 
 	AngleOffset 90
 	Offset 0.0 0.0 -1.0
 
 	FrameIndex UNKN A 0 0
-
-	Path "Patches/"
-	Skin 0 "Door5.png"
-
-	FrameIndex UNKN B 0 0
 }
 
 Model OfficeLightPanes
@@ -2001,17 +2211,71 @@ Model OfficeLightPanes
 	USEACTORROLL
 
 	Path "Models/"
-	Model 0 "olight_light.md3"
+	Model 0 "olight_panes.md3"
 
 	AngleOffset 90
 	Offset 0.0 0.0 -1.0
 
 	FrameIndex UNKN A 0 0
+}
 
-	Path "Patches/"
-	Skin 0 "Door5.png"
+Model BTSLight
+{
+	USEACTORPITCH
+	USEACTORROLL
 
-	FrameIndex UNKN B 0 0
+	Path "Models/"
+	Model 0 "olight.md3"
+	Skin 0 "SlidingDoor.png"
+
+	PitchOffset -90
+	Offset 4.0 0.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model BTSLightBulb
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "olight_light.md3"
+	Skin 0 "FlourTub.png"
+
+	PitchOffset -90
+	Offset 4.0 0.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model BTSLightPanes
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "olight_panes.md3"
+
+	PitchOffset -90
+	Offset 4.0 0.0 0.0
+
+	FrameIndex UNKN A 0 0
+}
+
+Model BTSLightShield
+{
+	USEACTORPITCH
+	USEACTORROLL
+	DONTCULLBACKFACES
+
+	Path "Models/"
+	Model 0 "olight_shield.md3"
+
+	PitchOffset -90
+	Offset 4.0 0.0 0.0
+
+	FrameIndex UNKN A 0 0
 }
 
 Model DownLight
@@ -2106,4 +2370,126 @@ Model CeilingVent
 	Model 0 "vent.md3"
 
 	FrameIndex UNKN A 0 0	
+}
+
+Model ComputerUnit
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "computer.md3"
+
+	FrameIndex UNKN A 0 0
+
+	Path "/"
+	SurfaceSkin 0 1 "COMPTAL8"
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 1 "COMP21"
+	FrameIndex UNKN C 0 0
+
+	SurfaceSkin 0 1 "COMP24"
+	FrameIndex UNKN D 0 0
+
+	SurfaceSkin 0 1 "COMP27"
+	FrameIndex UNKN E 0 0
+
+	SurfaceSkin 0 1 "COMP28"
+	FrameIndex UNKN F 0 0
+}
+
+Model ComputerUnit2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "computer2.md3"
+
+	FrameIndex UNKN A 0 0
+
+	Path "/"
+	SurfaceSkin 0 1 "COMPTAL8"
+	SurfaceSkin 0 2 "COMPTAL7"
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 1 "COMPTAL4"
+	SurfaceSkin 0 2 "COMPTAL3"
+	FrameIndex UNKN C 0 0
+}
+
+Model PC
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "pc.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PCKeyboard
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "keyboard.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model PCMouse
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "mouse.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Fan
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "fancenter.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model FanBlade
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "fanblade.md3"
+
+	FrameIndex UNKN A 0 0
+}
+
+Model Support
+{
+	USEACTORPITCH
+	USEACTORROLL
+	DONTCULLBACKFACES
+
+	Path "Models/"
+	Model 0 "support.md3"
+
+	FrameIndex UNKN A 0 0
+
+	Path "/"
+
+	SurfaceSkin 0 0 "SUPPORT2"
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "SUPPORT3"
+	FrameIndex UNKN C 0 0
 }

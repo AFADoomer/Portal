@@ -48,10 +48,8 @@ class Chair : CarryActor
 class Monitor : PortalActor
 {
 	int delay;
-	AlphaLight light;
-	String user_text;
-	int user_screen;
-
+	String user_text, current;
+	
 	Default
 	{
 		//$Category Portal/Decorations
@@ -59,63 +57,131 @@ class Monitor : PortalActor
 		+NOGRAVITY
 		+DONTTHRUST
 		Height 8;
-		Radius 12;
+		Radius 4;
 		Mass 25;
-	}
-
-	override void PostBeginPlay()
-	{
-		light = AlphaLight(Spawn("AttenuatedAlphaLight", pos + RotateVector((4, 0), angle)));
-		if (light)
-		{
-			light.master = self;
-			light.bAttenuate = true;
-			light.maxradius = 48.0;
-			light.clr = color("64 33 32");
-			light.alpha = (bStandstill && user_text == "") ? 0.0 : 1.0;
-			light.pitch = pitch;
-			light.angle = angle;
-			AttenuatedAlphaLight(light).user_lightlevel = 1.0;
-		}
-
-		if (!bStandStill && user_text != "") { FlatText.SpawnString(self, user_text, 0xFF4000, 6.75 * cos(pitch), 10.5, 25 * sin(pitch), 0.2); }
-
-		Super.PostBeginPlay();
+		PortalActor.GlowOffsetX 4.0;
+		PortalActor.GlowColor 0x874644;
+		PortalActor.GlowRadius 16.0;
+		PortalActor.GlowSpotLight True;
+		PortalActor.GlowOuterAngle 160;
 	}
 
 	override void Tick()
 	{
 		Super.Tick();
 
-		if (IsFrozen() || bDormant) { return; }
+		if (IsFrozen()) { return; }
 
-		if (user_text != "" || user_screen)
+		if (bDormant)
 		{
-			if (light) { light.alpha = 1.0; }
-			frame = user_screen ? user_screen : 4;
+			if (frame != 3)
+			{
+				frame = 3;
+				A_RemoveLight("Glow");
+			}
+
+			return;
 		}
-		else if (bStandstill)
+
+		if (user_text != current || user_variant)
 		{
-			frame = 3;
-			if (light) { light.alpha = 0.0; }
+			SetMessage(user_text);
+
+			SetGlow("Glow", glowcolor, glowradius * current.length() / 480, 1.0, glowx, glowy, glowz, glowouterangle, glowpitchoffset);
+			frame = (user_variant && !user_text.length()) ? user_variant : 4;
 		}
-		else
+
+		if (!current.length() && !user_variant)
 		{
 			if (!delay)
 			{
-				frame = Random(0, 2);
-				delay = Random(40, 140);
-			}
+				frame = Random(0, 1);
+				SetGlow("Glow", glowcolor, FRandom(glowradius, glowradius + 2), 1.0, glowx, glowy, glowz, glowouterangle, glowpitchoffset);
 
-			if (light) { light.maxradius = 16 + 2 * frame; light.alpha = 1.0; }
+				delay = 35 * Random(3, 5);
+			}
 
 			delay = max(delay - 1, 0);
 		}
 	}
 
-	override void OnDestroy()
+	virtual void SetMessage(String message, color clr = 0xFF4203, double textscale = 0.2)
 	{
-		if (light) { light.Destroy(); }
+		A_RemoveChildren(true, RMVF_EVERYTHING, "FlatText");
+
+		current = message;
+
+		message.Replace("\\n", String.Format("%c", 0x0A));
+		message.Replace("\\r", String.Format("%c", 0x0D));
+
+		if (!message.length()) { return; }
+
+		int maxlines = int(2.666 / textscale);
+		int maxwidth = int(80 / textscale);
+
+		BrokenLines lines = SmallFont.BreakLines(message, maxwidth);
+		String text;
+
+		if (lines.Count())
+		{
+			for (int l = 0; l < min(maxlines, lines.Count()); l++)
+			{
+				text = text .. lines.StringAt(l) .. "\\n";
+			}
+		}
+
+		FlatText.SpawnString(self, text, clr, 5.35, -11.25, 5.5, textscale);
+	}
+
+	// override void SpawnBlocks()
+	// {
+	// 	Actor overlay = Spawn("MonitorOverlay", pos + (0, 0, glowz));
+	// 	if (overlay)
+	// 	{
+	// 		overlay.master = self;
+	// 		overlay.angle = angle;
+	// 		overlay.pitch = pitch;
+	// 		overlay.roll = roll;
+	// 		overlay.scale = scale;
+	// 	}
+	// }
+}
+
+class MonitorStand : Monitor
+{
+	Default
+	{
+		//$Title Monitor (with stand)
+		PortalActor.GlowOffsetZ 14.0;
+	}
+}
+
+class MonitorOverlay : BlockBase
+{
+	Default
+	{
+		+NOINTERACTION
+		-INVISIBLE
+		-SOLID
+		RenderStyle "Translucent";
+		Alpha 0.99999;
+	}
+
+	override void PostBeginPlay()
+	{
+		Actor.PostBeginPlay();
+	}
+
+	override void Tick()
+	{
+		if (master && !master.bNoInteraction && !bDormant)
+		{
+			Rotate();
+		}
+
+		alpha = clamp(curSector.lightlevel / 256.0, 0.0, 0.999);
+
+		Actor.Tick();
 	}
 }
 
@@ -131,26 +197,96 @@ class Desk : PortalActor
 
 	override void SpawnBlocks()
 	{
-		A_SpawnItemEx("Block36x1", 10.0, -10.5, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("Block36x1", 10.0, 10.5, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 0.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 0.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 0.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 0.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 0.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 0.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 10.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 10.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 10.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 10.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 10.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 10.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 20.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 20.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 20.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 20.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 20.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
-		A_SpawnItemEx("BlockBase", 20.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("Block24x1", 11.0, -12.0, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("Block24x1", 11.0, 12.0, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 1.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 1.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 1.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 1.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 1.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 1.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 11.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 11.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 11.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 11.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 11.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 11.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 21.0, -22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 21.0, -22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 21.0, -22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 21.0, 22.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 21.0, 22.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 21.0, 22.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class Desk2 : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Desk Corner
+		Height 25;
+		Radius 1;
+		Mass 150;
+	}
+
+	override void SpawnBlocks()
+	{
+		A_SpawnItemEx("Block24x1", 12.0, 2.0, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("Block24x1", -2.0, -12.0, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("Block14x1", -7.0, 7.0, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("Block6x1", 14.0, -14.0, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx("BlockBase", -12.0, 12.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, 12.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, 12.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx("BlockBase", -2.0, 12.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -2.0, 12.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -2.0, 12.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 8.0, 12.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 8.0, 12.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 8.0, 12.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 18.0, 12.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 18.0, 12.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 18.0, 12.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+
+		A_SpawnItemEx("BlockBase", -12.0, 2.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, 2.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, 2.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, -8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, -8.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, -8.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, -18.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, -18.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -12.0, -18.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+	}
+}
+
+class Desk3 : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Desk (Short Side)
+		Height 25;
+		Radius 1;
+		Mass 150;
+	}
+
+	override void SpawnBlocks()
+	{
+		A_SpawnItemEx("Block24x1", -2.0, 0.0, 24.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -10.0, 8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -10.0, 8.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -10.0, 8.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -2.0, 8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -2.0, 8.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", -2.0, 8.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 6.0, 8.0, 0.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 6.0, 8.0, 8.0, 0, 0, 0, 0, SXF_SETMASTER);
+		A_SpawnItemEx("BlockBase", 6.0, 8.0, 16.0, 0, 0, 0, 0, SXF_SETMASTER);
 	}
 }
 
@@ -227,6 +363,22 @@ class PipeBend : Pipe
 	Default
 	{
 		//$Title Pipe Bend (90 degrees, triple)
+	}
+}
+
+class PipeBendSingle : Pipe
+{
+	Default
+	{
+		//$Title Pipe Bend (90 degrees, single)
+	}
+}
+
+class PipeBendOffset : Pipe
+{
+	Default
+	{
+		//$Title Pipe Bend (Offset)
 	}
 }
 
@@ -803,15 +955,11 @@ class Launcher : PortalActor
 
 class LightFixture : PortalActor
 {
-	AlphaLight light;
 	Class<Actor> paneclass;
 	Actor panes;
 	double user_lightlevel, user_flicker, user_radius;
-	double OuterAngle;
-	bool active;
 
 	Property PaneClass:paneclass;
-	Property LightOuterAngle:outerangle;
 
 	Default
 	{
@@ -820,8 +968,9 @@ class LightFixture : PortalActor
 		+NOGRAVITY
 		+NOINTERACTION
 		Height 2;
+		PortalActor.GlowOffsetZ 1.0;
+		PortalActor.GlowPitchOffset -90.0;
 		LightFixture.PaneClass "LightFixturePanes";
-		LightFixture.LightOuterAngle 70;
 	}
 
 	override void PostBeginPlay()
@@ -830,12 +979,15 @@ class LightFixture : PortalActor
 
 		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
 
+		glowradius = user_radius ? user_radius : (pos.z - floorz) * 0.75;
+		glowcolor = fillcolor;
+
 		InitializeLight();
 
 		panes = Spawn(paneclass, pos);
 		if (panes)
 		{
-			panes.master = light;
+			panes.master = self;
 			panes.roll = roll;
 			panes.pitch = pitch;
 			panes.angle = angle;
@@ -850,32 +1002,41 @@ class LightFixture : PortalActor
 	{
 		If (IsFrozen()) { return; }
 
-		if (active)
+		if (!bDormant)
 		{
-			if (user_flicker && level.time % Random(1, int(max(1, 15 - user_flicker))) == 0) { alpha = FRandom(0, user_lightlevel * 1.25); }
+			glowcolor = fillcolor;
+			double intensity = user_lightlevel;
 
-			if (light)
+			if (glowflickertime == level.time + 15)
 			{
-				light.alpha = (bStandstill || bDormant) ? 0.0 : user_flicker ? alpha * user_lightlevel : user_lightlevel;
-				light.clr = fillcolor;
+				A_StartSound("lights/flicker", CHAN_AUTO, CHANF_NOSTOP, FRandom(0.0625, 0.125), ATTN_NORM, FRandom(0.8, 1.2));
 			}
+
+			if (user_flicker && (level.time % Random(1, int(max(1, 35 - user_flicker))) == 0))
+			{
+				intensity = FRandom(0, user_lightlevel * 1.25);
+			}
+
+			SetGlow("Glow", glowcolor, glowradius, intensity, glowx, glowy, glowz, glowouterangle, glowpitchoffset);
 
 			if (panes)
 			{
 				let c = fillcolor;
 
-				int r = int(max(c.r * alpha * 1.15, 8));
-				int g = int(max(c.g * alpha * 1.15, 8));
-				int b = int(max(c.b * alpha * 1.15, 8));
+				int r = int(max(c.r * alpha * 0.85 * intensity, 8));
+				int g = int(max(c.g * alpha * 0.85 * intensity, 8));
+				int b = int(max(c.b * alpha * 0.85 * intensity, 8));
 
 				c = color(r, g, b);
+
+				if (glowradius < maxglowradius) { panes.alpha = panes.Default.alpha * glowradius / maxglowradius; }
 
 				panes.SetShade(C);
 			}
 		}
 		else
 		{
-			if (light) { light.alpha = 0.0; }
+			A_RemoveLight("Glow");
 		}
 
 		Super.Tick();
@@ -883,49 +1044,33 @@ class LightFixture : PortalActor
 
 	override void OnDestroy()
 	{
-		if (light) { light.Destroy(); }
+		A_RemoveLight("Glow");
 		if (panes) { panes.Destroy(); }
 	}
 
 	virtual void InitializeLight()
 	{
-		if (!light) { light = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (RotateVector((1 * sin(-pitch), 0), angle), 1 * cos(-pitch)))); }
-
-		if (light)
-		{
-			light.master = self;
-			light.angle = angle;
-			light.pitch = pitch - 90;
-			light.maxradius = user_radius ? user_radius : ceilingz - floorz * 0.75;
-			light.clr = fillcolor;
-			light.alpha = bStandstill ? 0.0 : user_lightlevel;
-			light.scale.y = 1 / user_lightlevel;
-			AttenuatedAlphaLight(light).SpotOuterAngle = outerangle;
-		}
-
 		if (SpawnFlags & MTF_DORMANT) { Deactivate(null); }
 		else { Activate(null); }
 	}
 
 	override void Activate(Actor activator)
 	{
-		active = true;
-		bDormant = false;
 		Super.Activate(activator);
+
+		if (panes) { panes.Activate(activator); }
 	}
 
 	override void Deactivate(Actor activator)
 	{
-		active = false;
-		bDormant = true;
 		Super.Deactivate(activator);
+
+		if (panes) { panes.Deactivate(activator); }
 	}
 }
 
 class LightFixtureObservation : LightFixture
 {
-	AlphaLight light2;
-
 	Default
 	{
 		//$Title Light Fixture (Observation Area)
@@ -944,35 +1089,21 @@ class LightFixtureObservation : LightFixture
 
 		If (IsFrozen()) { return; }
 
-		if (active)
+		if (!bDormant)
 		{
-			if (light2)
-			{
-				light2.alpha = (bStandstill || (SpawnFlags & MTF_DORMANT)) ? 0.0 : user_flicker ? alpha * user_lightlevel : user_lightlevel;
-				light2.clr = fillcolor;
-			}
+			SetGlow("ChamberLighting", fillcolor, 384.0, alpha * user_lightlevel * 2.5, glowx, glowy, glowz + 48.0, glowouterangle, glowpitchoffset - 90);
+		}
+		else
+		{
+			A_RemoveLight("ChamberLighting");
 		}
 	}
 
-	override void InitializeLight()
+	override void OnDestroy()
 	{
-		Super.InitializeLight();
+		A_RemoveLight("ChamberLighting");
 
-		if (!light2) { light2 = AlphaLight(Spawn("AttenuatedAlphaLight", pos - (0, 0, 48.0))); }
-
-		if (light2)
-		{
-			light2.master = self;
-			light2.angle = angle;
-			light2.pitch = 0;
-			light2.maxradius = 384.0;
-			light2.clr = fillcolor;
-			light2.alpha = bStandStill ? 0.0 : user_lightlevel;
-			light2.scale.y = 1 / user_lightlevel;
-			AttenuatedAlphaLight(light2).SpotOuterAngle = outerangle;
-		}
-
-		active = true;
+		Super.OnDestroy();
 	}
 }
 
@@ -1019,7 +1150,8 @@ class LightFixturePanes : PortalActor
 	{
 		if (master)
 		{
-			bBright = (master.alpha > 0 && !master.bStandStill && (!LightFixture(master) || LightFixture(master).active));
+			bBright = (master.alpha > 0 && !master.bStandStill && (!LightFixture(master) || !LightFixture(master).bDormant));
+			bDormant = master.bDormant;
 		}
 
 		Super.Tick();
@@ -1030,19 +1162,15 @@ class LightFixtureBulb : PortalActor
 {
 	Default
 	{
-		+BRIGHT
 		+NOINTERACTION
 		+NOGRAVITY
-		Renderstyle "AddStencil";
-		Alpha 0.6;
+		Alpha 1.0;
 	}
 
 	override void Tick()
 	{
 		if (master)
 		{
-			bBright = master.bBright;
-
 			let c = master.fillcolor;
 
 			int r = max(c.r, 8);
@@ -1149,7 +1277,7 @@ class TowerSegment : Ladder
 	}
 }
 
-class DebrisWall : Actor
+class DebrisWall : PortalActor
 {
 	Default
 	{
@@ -1162,13 +1290,6 @@ class DebrisWall : Actor
 		Height 0;
 		RenderRadius 128.0;
 	}
-
-	States
-	{
-		Spawn:
-			DEBR A -1;
-			Stop;
-	}
 }
 
 class DebrisWall2 : DebrisWall
@@ -1176,13 +1297,6 @@ class DebrisWall2 : DebrisWall
 	Default
 	{
 		//$Title Wall Debris (4 holes - Rust)
-	}
-
-	States
-	{
-		Spawn:
-			DEBR B -1;
-			Stop;
 	}
 }
 
@@ -1192,13 +1306,6 @@ class DebrisWall3 : DebrisWall
 	{
 		//$Title Wall Debris (X - Rust)
 	}
-
-	States
-	{
-		Spawn:
-			DEBR C -1;
-			Stop;
-	}
 }
 
 class DebrisWall4 : DebrisWall
@@ -1206,13 +1313,6 @@ class DebrisWall4 : DebrisWall
 	Default
 	{
 		//$Title Wall Debris (1 hole - Clean)
-	}
-
-	States
-	{
-		Spawn:
-			DEBR D -1;
-			Stop;
 	}
 }
 
@@ -1222,12 +1322,21 @@ class DebrisWall5 : DebrisWall
 	{
 		//$Title Wall Debris (4 holes - Clean)
 	}
+}
 
-	States
+class DebrisWall6 : DebrisWall
+{
+	Default
 	{
-		Spawn:
-			DEBR E -1;
-			Stop;
+		//$Title Wall Debris (X - Rust with grate)
+	}
+}
+
+class DebrisWall7 : DebrisWall
+{
+	Default
+	{
+		//$Title Wall Debris (1 hole - Rust)
 	}
 }
 
@@ -1310,7 +1419,7 @@ class IndustrialLight : LightFixture
 	{
 		//$Title Industrial Light
 		LightFixture.PaneClass "IndustrialLightPanes";
-		LightFixture.LightOuterAngle 160;
+		PortalActor.GlowOuterAngle 160;
 	}
 }
 
@@ -1326,6 +1435,7 @@ class IndustrialLightBulb : LightFixtureBulb
 {
 	Default
 	{
+		RenderStyle "AddStencil";
 		Alpha 0.95;
 	}
 }
@@ -1336,7 +1446,7 @@ class OfficeLight : LightFixture
 	{
 		//$Title Office Light
 		LightFixture.PaneClass "OfficeLightPanes";
-		LightFixture.LightOuterAngle 120;
+		PortalActor.GlowOuterAngle 120;
 	}
 }
 
@@ -1350,13 +1460,67 @@ class OfficeLightPanes : LightFixturePanes
 
 class OfficeLightBulb : LightFixtureBulb {}
 
+class BTSLight : OfficeLight
+{
+	Actor shield;
+
+	Default
+	{
+		//$Title Behind the Scenes Light
+		LightFixture.PaneClass "BTSLightPanes";
+		PortalActor.GlowOuterAngle 160;
+		PortalActor.GlowPitchOffset 0.0;
+	}
+
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		
+		shield = Spawn("BTSLightShield", pos);
+		if (shield)
+		{
+			shield.angle = angle;
+			shield.pitch = pitch;
+			shield.roll = roll;
+		}
+	}
+
+	override void OnDestroy()
+	{
+		Super.OnDestroy();
+
+		if (shield) { shield.Destroy(); }
+	}
+}
+
+class BTSLightPanes : OfficeLightPanes
+{
+	Default
+	{
+		LightFixturePanes.BulbClass "BTSLightBulb";
+	}
+}
+
+class BTSLightBulb : OfficeLightBulb {}
+
+class BTSLightShield : PortalActor
+{
+	Default
+	{
+		+NOGRAVITY
+		+NOINTERACTION
+		RenderStyle "Translucent";
+		Alpha 0.99999;
+	}
+}
+
 class DownLight : LightFixture
 {
 	Default
 	{
 		//$Title Angled Light (Downlight)
 		LightFixture.PaneClass "DownLightPanes";
-		LightFixture.LightOuterAngle 90;
+		PortalActor.GlowOuterAngle 90;
 	}
 }
 
@@ -1368,7 +1532,13 @@ class DownLightPanes : LightFixturePanes
 	}
 }
 
-class DownLightBulb : LightFixtureBulb {}
+class DownLightBulb : LightFixtureBulb
+{
+	Default
+	{
+		RenderStyle "AddStencil";
+	}
+}
 
 class Stairway : PortalActor // Base class, not spawned directly
 {
@@ -1746,6 +1916,20 @@ class BigPipeBend : PortalActor
 	}
 }
 
+class BigPipeJoint : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Industrial Pipe (Joint)
+		+NOGRAVITY
+		+NOINTERACTION
+		Height 0;
+		Radius 0;
+		RenderRadius 256.0;
+	}
+}
+
 class SkyboxGrid : PortalActor
 {
 	Default
@@ -1828,6 +2012,10 @@ class SupportArmGroup : SupportArm
 
 class WalkwaySegment : PortalActor
 {
+	bool user_blockingrails;
+
+	Property BlockingRails:user_blockingrails;
+
 	Default
 	{
 		//$Category Portal/Decorations
@@ -1844,13 +2032,7 @@ class WalkwaySegment : PortalActor
 		Radius 28;
 		RenderRadius 256.0;
 		PortalActor.StepSound "footsteps/grate";
-	}
-
-	override void PostBeginPlay()
-	{
-//		user_blockingrails = true;
-
-		Super.PostBeginPlay();
+		//WalkwaySegment.BlockingRails True;
 	}
 
 	override void SpawnBlocks()
@@ -2083,26 +2265,47 @@ class WalkwaySegmentIntersection : WalkwaySegment
 	}
 }
 
-class WallPanel1 : PortalActor
+class WallPanel : PortalActor
 {
 	Default
 	{
 		//$Category Portal/Decorations
-		//$Title Wall Panel (Corridor) 1
+		//$Title Wall Panel (Corridor)
 		+SOLID
 		+NOGRAVITY
 		+MOVEWITHSECTOR
 		Height 56;
 		Radius 8;
 		RenderRadius 256.0;
+		PortalActor.GlowColor 0x161414;
+		PortalActor.GlowOffsetZ 48.0;
+		PortalActor.GlowRadius 48.0;
+		PortalActor.GlowSpotLight True;
+		PortalActor.GlowOuterAngle 60;
 	}
-}
 
-class WallPanel2 : WallPanel1
-{
-	Default
+	override void PostBeginPlay()
 	{
-		//$Title Wall Panel (Corridor) 2
+		switch (user_variant)
+		{
+			case 0:
+			case 6:
+				glowcolor = 0x52484E;
+				break;
+			case 5:
+				break;
+			case 4:
+				glowcolor = 0x221a02;
+				break;
+			case 7:
+				glowcolor = 0x0021C02;
+				break;
+			case 8:
+				glowcolor = 0x06ff02;
+				break;
+		}
+
+		Super.PostBeginPlay();
 	}
 }
 
@@ -2133,6 +2336,15 @@ class Frame112 : Frame32
 	Default
 	{
 		//$Title Window Frame (112 wide)
+	}
+}
+
+class Frame16 : Frame32
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Window Frame (16 wide)
 	}
 }
 
@@ -2304,7 +2516,7 @@ class ClockHand_H : ClockHand_S {}
 
 class CeilingVent : PortalActor
 {
-		Default
+	Default
 	{
 		//$Category Portal/Decorations
 		//$Title Vent (Ceiling)
@@ -2313,5 +2525,203 @@ class CeilingVent : PortalActor
 		Height 0;
 		Radius 0;
 		RenderRadius 64.0;
+	}
+}
+
+class ComputerUnit : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Computer (Medium)
+		+SOLID
+		Height 54;
+		Radius 12;
+		PortalActor.GlowColor 0x161414;
+		PortalActor.GlowOffsetZ 48.0;
+		PortalActor.GlowRadius 48.0;
+		PortalActor.GlowSpotLight True;
+		PortalActor.GlowOuterAngle 45;
+	}
+
+	override void PostBeginPlay()
+	{
+		switch (user_variant)
+		{
+			case 0:
+				glowcolor = 0x52484E;
+				break;
+			case 3:
+				glowcolor = 0x2C1802;
+				break;
+			case 4:
+				glowcolor = 0x0021C02;
+				break;
+			case 5:
+				glowcolor = 0x06ff02;
+				break;
+		}
+
+		Super.PostBeginPlay();
+	}
+}
+
+class ComputerUnit2 : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Computer (Large)
+		+SOLID
+		Height 66;
+		Radius 16;
+		PortalActor.GlowOffsetZ 54.0;
+		PortalActor.GlowRadius 64.0;
+		PortalActor.GlowSpotLight True;
+		PortalActor.GlowOuterAngle 45;
+	}
+
+	override void PostBeginPlay()
+	{
+		switch (user_variant)
+		{
+			case 0:
+				glowcolor = 0x874644;
+				SetGlow("LowerGlow", 0x52484E, 32.0, 1.0, glowx, glowy, 27.0, glowouterangle, glowpitchoffset);
+				break;
+			case 1:
+				glowz = 60.0;
+				glowradius = 32.0;
+				glowcolor = 0x52484E;
+				SetGlow("LowerGlow", glowcolor, 48.0, 1.0, glowx, glowy, 18.0, glowouterangle, glowpitchoffset);
+				break;
+			case 2:
+				glowcolor = 0x874644;
+				break;
+		}
+
+		Super.PostBeginPlay();
+	}
+
+	override void Deactivate(Actor activator)
+	{
+		A_RemoveLight("LowerGlow");
+
+		Super.Deactivate(activator);
+	}
+}
+
+class PC : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Computer (PC)
+		+SOLID
+		+NOGRAVITY
+		Height 20;
+		Radius 8;
+	}
+}
+
+class PCMouse : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Computer Mouse
+		+SOLID
+		+NOGRAVITY
+		Height 2;
+		Radius 4;
+	}
+}
+
+class PCKeyboard : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Computer Keyboard
+		+SOLID
+		+NOGRAVITY
+		Height 2;
+		Radius 8;
+	}
+}
+
+class Fan : PortalActor
+{
+	Array<Actor> blades;
+	double user_speed;
+
+	Property FanSpeed:user_speed;
+
+	Default
+	{
+		//$Category Portal/Decorations
+		+NOGRAVITY
+		Height 8;
+		Radius 32;
+		Fan.FanSpeed 3.0;
+	}
+
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+
+		for (int a = 0; a < 360; a += 45)
+		{
+			Actor mo = Spawn("FanBlade", pos);
+			if (mo)
+			{
+				mo.angle = angle;
+				mo.pitch = pitch;
+				mo.roll = a;
+				mo.scale = scale;
+				blades.Push(mo);
+			}
+		}
+	}
+
+	override void Tick()
+	{
+		if (IsFrozen()) { return; }
+
+		if (!bDormant && user_speed > 0)
+		{
+			for (int b = 0; b < blades.Size(); b++)
+			{
+				blades[b].roll += user_speed;
+			}
+		}
+
+		Super.Tick();
+	}
+}
+
+class FanBlade : PortalActor
+{
+	Default
+	{
+		+DORMANT
+		+NOINTERACTION
+		+NOGRAVITY
+		-SOLID
+		Height 1;
+		Radius 2;
+	}
+}
+
+class Support : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Wire Support Beam
+		+SOLID
+		+NOGRAVITY
+		Height 14;
+		Radius 9;
 	}
 }

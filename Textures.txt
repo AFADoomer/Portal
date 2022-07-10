@@ -114,6 +114,7 @@ Texture CWALLS, 384, 512
 	Patch "Materials/Specular/CWALL.png", 0, 256
 }
 
+
 Texture CINDERN, 384, 512
 {
 	XScale 2.0
@@ -169,6 +170,13 @@ Texture GRAYDIR2, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/GRAYDIR2.png", 0, 0
+}
+
+Texture METFLR1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/METFLR1.png", 0, 0
 }
 
 Texture DUCT, 128, 128
@@ -1173,13 +1181,6 @@ Texture DOOR2, 128, 128
 	Patch "Patches/DOOR2.png", 0, 0
 }
 
-Texture DOOR4, 160, 128
-{
-	XScale 2.0
-	YScale 2.0
-	Patch "Patches/DOOR4.png", 0, 0
-}
-
 Texture LIFT, 160, 160
 {
 	XScale 2.0
@@ -1220,6 +1221,34 @@ Texture INSET2, 16, 16
 	XScale 4.0
 	YScale 4.0
 	Patch "Patches/INSET.png", 0, 0 { Rotate 90 }
+}
+
+Texture INSET2D, 16, 16
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Materials/Displacement/INSET.png", 0, 0 { Rotate 90 }
+}
+
+Texture INSET2B, 16, 16
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Materials/Brightmaps/INSET.png", 0, 0 { Rotate 90 }
+}
+
+Texture INSET2N, 16, 16
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Materials/NormalMaps/auto/INSET.png", 0, 0 { Rotate 90 }
+}
+
+Texture INSET2S, 16, 16
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Materials/Specular/auto/INSET.png", 0, 0 { Rotate 90 }
 }
 
 Texture PIPE, 512, 1024
@@ -2329,6 +2358,126 @@ Texture COMPTAL8, 128, 128
 	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
 }
 
+Texture COMP21, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", 0, 0
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP21B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", 0, 0
+}
+
+Texture COMP22, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", -128, 0
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP22B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", -128, 0
+}
+
+Texture COMP23, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", -192, 0
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP23B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", -192, 0
+}
+
+Texture COMP24, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", -384, 0
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP24B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", -384, 0
+}
+
+Texture COMP25, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", 0, -128
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP25B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", 0, -128
+}
+
+Texture COMP26, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", -128, -128
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP26B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", -128, -128
+}
+
+Texture COMP27, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", -256, -128
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP27B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", -256, -128
+}
+
+Texture COMP28, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/COMP2.png", -384, -128
+	Patch "Patches/BORD1x1.png", 0, 0 { Style Overlay }
+}
+
+Texture COMP28B, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/Brightmaps/Auto/COMP2.png", -384, -128
+}
+
 Texture TANK, 512, 512
 {
 	XScale 2.0
@@ -2406,27 +2555,10 @@ Texture GRIDWAL3, 256, 256
 	Patch "Patches/GridWal3.png", 0, 0
 }
 
-Sprite DEBRC0, 256, 256
-{
-	XScale 4.0
-	YScale 4.0
-	Offset 128, 128
-	Patch "Patches/GridWal2.png", 0, 0
-}
-
-
 Texture HOLEWALL, 256, 256
 {
 	XScale 4.0
 	YScale 4.0
-	Patch "Patches/HoleWalL.png", 0, 0
-}
-
-Sprite DEBRA0, 256, 256
-{
-	XScale 4.0
-	YScale 4.0
-	Offset 128, 128
 	Patch "Patches/HoleWalL.png", 0, 0
 }
 
@@ -2437,26 +2569,10 @@ Texture HOLEWALS, 256, 256
 	Patch "Patches/HoleWalS.png", 0, 0
 }
 
-Sprite DEBRB0, 256, 256
-{
-	XScale 4.0
-	YScale 4.0
-	Offset 128, 128
-	Patch "Patches/HoleWalS.png", 0, 0
-}
-
 Texture HOLEWALM, 256, 256
 {
 	XScale 4.0
 	YScale 4.0
-	Patch "Patches/HoleWalM.png", 0, 0
-}
-
-Sprite DEBRD0, 256, 256
-{
-	XScale 4.0
-	YScale 4.0
-	Offset 128, 128
 	Patch "Patches/HoleWalM.png", 0, 0
 }
 
@@ -2466,15 +2582,6 @@ Texture HOLEWALT, 256, 256
 	YScale 4.0
 	Patch "Patches/HoleWalT.png", 0, 0
 }
-
-Sprite DEBRE0, 256, 256
-{
-	XScale 4.0
-	YScale 4.0
-	Offset 128, 128
-	Patch "Patches/HoleWalT.png", 0, 0
-}
-
 
 Texture BTSWALL, 256, 256
 {
@@ -2657,12 +2764,52 @@ Texture PORTWALH, 384, 512
 {
 	XScale 2.0
 	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 232
 	Patch "Patches/CWalBase.png", 0, 0
-	Patch "Patches/CWalBase.png", 0, 256
+	Patch "Patches/CWalBase.png", 0, 488 { FlipY }
 	Patch "Patches/ConcreteLighten.png", 0, 0 { Style Overlay }
 	Patch "Patches/ConcreteLighten.png", 0, 256 { Style Overlay }
 	Patch "Patches/WallTrim4.png", 0, 200 { Style Overlay }
 	Patch "Patches/WallTrim.png", 0, 200 { Style Overlay }
+}
+
+Texture PORTWALI, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 0
+	Patch "Patches/CWalBase.png", 0, 256
+	Patch "Patches/ConcreteLighten.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteLighten.png", 0, 256 { Style Overlay }
+	Patch "Patches/WallTrim.png", 0, 200 { Style Overlay }
+}
+
+Texture PORTWALJ, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/CWalBase.png", 0, 232
+	Patch "Patches/CWalBase.png", 0, 0
+	Patch "Patches/CWalBase.png", 0, 488 { FlipY }
+	Patch "Patches/ConcreteLighten.png", 0, 0 { Style Overlay }
+	Patch "Patches/ConcreteLighten.png", 0, 256 { Style Overlay }
+
+	Patch "Patches/WallTrim4.png", 0, 0
+	{
+		Style Overlay
+		FlipY
+	}
+	Patch "Patches/WallTrim4.png", 0, 64 { Style Overlay }
+	Patch "Patches/WallTrim4.png", 0, 128
+	{
+		Style Overlay
+		FlipY
+	}
+	Patch "Patches/WallTrim4.png", 0, 192 { Style Overlay }
+	Patch "Patches/WallTrim.png", 0, 200 { Style Overlay }
+
+	Patch "Patches/WallTrim4.png", 0, 432 { Style Overlay }
+	Patch "Patches/WallTrim.png", 0, 448 { Style Overlay }
 }
 
 Texture CWALL2N, 384, 512
@@ -2707,6 +2854,76 @@ Texture CARPET4, 128, 128
 	XScale 2.0
 	YScale 2.0
 	Patch "Patches/Carpet4.png", 0, 0
+}
+
+Texture CARPET5, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet4.png", -64, -64
+	Patch "Patches/Carpet4.png", 64, 64
+	Patch "Patches/Carpet.png", 64, -64
+	Patch "Patches/Carpet.png", -64, 64
+}
+
+Texture CARPET6, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet4.png", -64, -64
+	Patch "Patches/Carpet4.png", 64, 64
+	Patch "Patches/Carpet2.png", 64, -64
+	Patch "Patches/Carpet2.png", -64, 64
+}
+
+Texture CARPET7, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet.png", -64, -64
+	Patch "Patches/Carpet.png", 64, 64
+	Patch "Patches/Carpet2.png", 64, -64
+	Patch "Patches/Carpet2.png", -64, 64
+}
+
+Texture CARPETA, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet4.png", 0, 0
+	Patch "Patches/Carpet4.png", 128, 128
+	Patch "Patches/Carpet.png", 128, 0
+	Patch "Patches/Carpet.png", 0, 128
+}
+
+Texture CARPETB, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet4.png", 0, 0
+	Patch "Patches/Carpet4.png", 128, 128
+	Patch "Patches/Carpet2.png", 128, 0
+	Patch "Patches/Carpet2.png", 0, 128
+}
+
+Texture CARPETC, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet.png", 0, 0
+	Patch "Patches/Carpet.png", 128, 128
+	Patch "Patches/Carpet2.png", 128, 0
+	Patch "Patches/Carpet2.png", 0, 128
+}
+
+Texture CARPETD, 256, 256
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/Carpet4.png", 0, 0
+	Patch "Patches/Carpet4.png", 128, 128
+	Patch "Patches/Carpet3.png", 128, 0
+	Patch "Patches/Carpet3.png", 0, 128
 }
 
 Texture PORTWAL8, 384, 512
@@ -2771,6 +2988,14 @@ Texture CWALLS2, 384, 512
 	Patch "Materials/Specular/CinderBlock.png", 0, 256
 }
 
+Texture CWALLN3, 384, 512
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Materials/NormalMaps/ConcBase.png", 0, 0
+	Patch "Materials/NormalMaps/ConcBase.png", 0, 256
+}
+
 Texture METLWALL, 256, 256
 {
 	XScale 2.0
@@ -2811,4 +3036,38 @@ Texture Cubicle2, 128, 384
 	XScale 4.0
 	YScale 4.0
 	Patch "Patches/Cubicle2.png", 0, 0
+}
+
+Texture Cubicle3, 128, 384
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/Cubicle3.png", 0, 0
+}
+
+Texture SUPPORT, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GridWal1.png", 0, -128 { Blend 212, 212, 212, 0.7 }
+	Patch "Patches/GridWal1.png", 0, 128 { Blend 212, 212, 212, 0.7 }
+	Patch "Patches/GridWal1.png", 0, 0 { Blend 212, 212, 212, 0.7 }
+}
+
+Texture SUPPORT2, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GridWal1.png", 0, -128 { Blend 13, 38, 41, 0.7 }
+	Patch "Patches/GridWal1.png", 0, 128 { Blend 13, 38, 41, 0.7 }
+	Patch "Patches/GridWal1.png", 0, 0 { Blend 13, 38, 41, 0.7 }
+}
+
+Texture SUPPORT3, 256, 256
+{
+	XScale 4.0
+	YScale 4.0
+	Patch "Patches/GridWal2.png", 0, -128
+	Patch "Patches/GridWal2.png", 0, 128
+	Patch "Patches/GridWal2.png", 0, 0
 }

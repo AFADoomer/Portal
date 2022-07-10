@@ -24,7 +24,7 @@ Material Texture "Models/PortalGun_Tube.png"
 {
 	normal "Materials/NormalMaps/Auto/Glass2.png"
 	specular "Materials/Specular/Auto/Glass2.png"
-	brightmap "Materials/BrightMaps/Fullbright.png"
+	brightmap "Materials/Brightmaps/Fullbright.png"
 	Texture displacement "Textures/Shader/Old Water.png"
 	specularlevel 0
 	shader "shaders/waves.fp"
@@ -36,7 +36,7 @@ Material Texture "Models/PortalGun_Tube2.png"
 {
 	normal "Materials/NormalMaps/Auto/Glass2.png"
 	specular "Materials/Specular/Auto/Glass2.png"
-	brightmap "Materials/BrightMaps/Fullbright.png"
+	brightmap "Materials/Brightmaps/Fullbright.png"
 	Texture displacement "Textures/Shader/Old Water.png"
 	specularlevel 0
 	shader "shaders/waves.fp"
@@ -143,7 +143,7 @@ Material Texture "PIPE"
 {
 	normal "Materials/NormalMaps/Auto/ConcDirt.png"
 	specular "Materials/Specular/Auto/ConcDirt.png"
-	specularlevel 7.5;
+	specularlevel 2.0;
 }
 
 Material Texture "GLASS"
@@ -217,24 +217,23 @@ Material Texture "Models/screen.png"
 {
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Auto/GLASS2.png"
-	brightmap "Materials/Brightmaps/FullBright.png"
+	brightmap "Materials/Brightmaps/Fullbright.png"
 }
 
-Material Texture "Models/screen2.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2b.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2c.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2d.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2e.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2f.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2g.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2h.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2i.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen2j.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/Screen2.png"
+{
+	shader "shaders/scroll.fp"
+	speed 1.0
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	brightmap "Materials/Brightmaps/Fullbright.png"
+	specularlevel 1.0
+}
 
-Material Texture "Models/screen3.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
-Material Texture "Models/screen5.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screen3.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/Fullbright.png" }
+Material Texture "Models/screen5.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/Fullbright.png" }
 
-Material Texture "Models/screene.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/FullBright.png" }
+Material Texture "Models/screene.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/Fullbright.png" }
 
 Material Texture "Models/buttonshell.png"
 {
@@ -329,6 +328,70 @@ Material Texture "COMPTAL8"
 	normal "Materials/NormalMaps/Auto/WALL1x1.png"
 	specular "Materials/Specular/Auto/WALL1x1.png"
 	brightmap "COMPT8B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP21"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP21B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP22"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP22B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP23"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP23B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP24"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP24B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP25"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP25B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP26"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP26B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP27"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP27B"
+	specularlevel 0.1
+}
+
+Material Texture "COMP28"
+{
+	normal "Materials/NormalMaps/Auto/WALL2x2.png"
+	specular "Materials/Specular/Auto/WALL2x2.png"
+	brightmap "COMP28B"
 	specularlevel 0.1
 }
 
@@ -626,6 +689,27 @@ Material Texture "PORTWALG"
 	specularlevel 0.1
 }
 
+Material Texture "PORTWALH"
+{
+	normal "CWALLN3"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWALI"
+{
+	normal "CWALLN3"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.1
+}
+
+Material Texture "PORTWALJ"
+{
+	normal "CWALLN3"
+	specular "Materials/Specular/Wall.png"
+	specularlevel 0.1
+}
+
 Material Texture "CEILING"
 {
 	shader "shaders/displacement.fp"
@@ -698,6 +782,16 @@ Material Texture "INSET"
 	texture displacement "materials/displacement/INSET.png"
 	normal "materials/normalmaps/auto/inset.png"
 	specular "materials/specular/auto/inset.png"
+	brightmap "materials/brightmaps/inset.png"
+}
+
+Material Texture "INSET2"
+{
+	shader "shaders/displacement.fp"
+	texture displacement "INSET2D"
+	normal "INSET2N"
+	specular "INSET2S"
+	brightmap "INSET2B"
 }
 
 Material Texture "WALLBASE"
@@ -1029,28 +1123,28 @@ Material Texture "Models/Diffuser.png"
 	specularlevel 2.0
 }
 
-Material Texture "Patches/Door4.png"
+Material Texture "Models/Door4.png"
 {
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Auto/Floor.png"
 	specularlevel 0.25
 }
 
-Material Texture "Patches/Door4_O.png"
+Material Texture "Models/Door4_O.png"
 {
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Auto/Floor.png"
 	specularlevel 0.25
 }
 
-Material Texture "Patches/Door5.png"
+Material Texture "Models/Door5.png"
 {
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Auto/Floor.png"
 	specularlevel 0.25
 }
 
-Material Texture "Patches/Door5_O.png"
+Material Texture "Models/Door5_O.png"
 {
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Auto/Floor.png"
@@ -1235,5 +1329,128 @@ Material Texture "Models/Clock.png"
 {
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Clock.png"
-	specularlevel 4.0
+	specularlevel 1.0
 }
+
+Material Texture "Cubicle"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Cubicle.png"
+	specularlevel 1.0
+}
+
+Material Texture "Cubicle2"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Cubicle2.png"
+	specularlevel 1.0
+}
+
+Material Texture "Cubicle3"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Cubicle2.png"
+	specularlevel 1.0
+}
+
+Material Texture "Models/Matte.png"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 1.0
+}
+
+Material Texture "Models/Matte3.png"
+{
+	normal "Materials/NormalMaps/Wall.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 1.0
+}
+
+Material Texture "Models/Computer.png"
+{
+	normal "Materials/NormalMaps/Computer.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 1.0
+}
+
+Material Texture "Patches/CompTall.png"
+{
+	brightmap "Materials/BrightMaps/Auto/CompTall.png"
+}
+
+Material Texture "Models/PC.png"
+{
+	normal "Materials/NormalMaps/PC.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 1.0
+}
+
+Material Texture "Models/Keyboard.png"
+{
+	normal "Materials/NormalMaps/Keyboard.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 1.0
+}
+
+Material Texture "Models/Screen.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 10.0	
+}
+
+Material Texture "Models/Screen3.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 10.0	
+}
+
+Material Texture "Models/Screen4.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 10.0	
+}
+
+Material Texture "Models/Screen5.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 10.0	
+}
+
+Material Texture "Models/ScreenC.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 10.0	
+}
+
+Material Texture "Models/ScreenE.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 10.0	
+}
+
+Material Texture "Models/PortalSpawner.png"
+{
+	normal "Materials/NormalMaps/PortalSpawner.png"
+	specular "Materials/Specular/Matte.png"
+	specularlevel 10.0	
+}
+
+HardwareShader Texture PortalA0 { Shader "shaders/bicubic.fp" }
+HardwareShader Texture PortalA1 { Shader "shaders/bicubic.fp" }
+HardwareShader Texture PortalB0 { Shader "shaders/bicubic.fp" }
+HardwareShader Texture PortalB1 { Shader "shaders/bicubic.fp" }
+
+Material Texture "METFLR1"
+{
+	normal "Materials/NormalMaps/Auto/Floor.png"
+	specular "Patches/METFLR1.png"
+	specularlevel 5.0;
+}
+

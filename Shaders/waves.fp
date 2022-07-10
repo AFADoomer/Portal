@@ -41,32 +41,27 @@ vec2 GetWarpOffset(vec2 texCoord)
 	return offset;
 }
 
-Material ProcessMaterial()
+void SetupMaterial(inout Material material)
 {
 	mat3 tbn = GetTBN();
 	vec2 texCoord = ParallaxMap(tbn);
-//	vec2 texCoord = vTexCoord.st;
-	vec2 rippleoffset = GetRippleOffset(texCoord);
+    vec2 rippleoffset = GetRippleOffset(texCoord);
 	vec2 warpoffset = GetWarpOffset(texCoord);
 
-	Material material;
 	material.Base = getTexel(texCoord + rippleoffset) * 0.85 + texture(background, vTexCoord.st + warpoffset) * 0.08;
 	material.Normal = GetBumpedNormal(tbn, texCoord + rippleoffset);
-//	material.Normal = ApplyNormalMap(texCoord + rippleoffset);
+    material.Bright = texture(brighttexture, texCoord);
+
 #if defined(SPECULAR)
-	material.Specular = (texture(speculartexture, texCoord + rippleoffset).rgb + texture(background, vTexCoord.st + warpoffset).rgb) / 2;
+   	material.Specular = (texture(speculartexture, texCoord + rippleoffset).rgb + texture(background, vTexCoord.st + warpoffset).rgb) / 2;
 	material.Glossiness = uSpecularMaterial.x;
 	material.SpecularLevel = uSpecularMaterial.y;
 #endif
 #if defined(PBR)
-	material.Metallic = texture(metallictexture, texCoord).r;
+    material.Metallic = texture(metallictexture, texCoord).r;
 	material.Roughness = texture(roughnesstexture, texCoord).r;
 	material.AO = texture(aotexture, texCoord).r;
 #endif
-#if defined(BRIGHTMAP)
-	material.Bright = texture(brighttexture, texCoord);
-#endif
-	return material;
 }
 
 // Tangent/bitangent/normal space to world space transform matrix
@@ -127,7 +122,7 @@ vec2 ParallaxMap(mat3 tbn)
 #elif defined(RELIEF_PARALLAX)
 vec2 ParallaxMap(mat3 tbn)
 {
-    const float parallaxScale = 0.4;
+    const float parallaxScale = -0.4;
     const float minLayers = 12.0;
     const float maxLayers = 16.0;
 

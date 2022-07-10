@@ -273,19 +273,22 @@ class SectorDamageHandler : EventHandler
 	{
 		for (int i = 0; i < SectorDamageItems.Size(); i++)
 		{
-			if (SectorDamageItems[i] && level.time > SectorDamageItems[i].end)
+			if (SectorDamageItems[i])
 			{
-				SectorDamageItems[i].sec.damageamount = SectorDamageItems[i].olddamageamount;
-				SectorDamageItems[i].sec.damageinterval = SectorDamageItems[i].olddamageinterval;
-				SectorDamageItems[i].sec.damagetype = SectorDamageItems[i].olddamagetype;
+				if (level.time > SectorDamageItems[i].end)
+				{
+					SectorDamageItems[i].sec.damageamount = SectorDamageItems[i].olddamageamount;
+					SectorDamageItems[i].sec.damageinterval = SectorDamageItems[i].olddamageinterval;
+					SectorDamageItems[i].sec.damagetype = SectorDamageItems[i].olddamagetype;
 
-				SectorDamageItems.Delete(i);
-			}
-			else
-			{
-				SectorDamageItems[i].sec.damageamount = SectorDamageItems[i].damageamount;
-				SectorDamageItems[i].sec.damageinterval = SectorDamageItems[i].damageinterval;
-				SectorDamageItems[i].sec.damagetype = SectorDamageItems[i].damagetype;
+					SectorDamageItems.Delete(i);
+				}
+				else
+				{
+					SectorDamageItems[i].sec.damageamount = SectorDamageItems[i].damageamount;
+					SectorDamageItems[i].sec.damageinterval = SectorDamageItems[i].damageinterval;
+					SectorDamageItems[i].sec.damagetype = SectorDamageItems[i].damagetype;
+				}
 			}
 		}
 	}

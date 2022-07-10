@@ -191,6 +191,21 @@ DoomEdNums
 	30094 = DownLight
 	30095 = Clock
 	30096 = CeilingVent
+	30097 = ComputerUnit
+	30098 = ComputerUnit2
+	30099 = PC
+	30100 = MonitorStand
+	30101 = PCKeyboard
+	30102 = PCMouse
+	30103 = DebrisWall6
+	30104 = PipeBendSingle
+	30105 = PipeBendOffset
+	30106 = BigPipeJoint
+	30107 = Support
+	30108 = Debriswall7
+	30109 = Desk2
+	30110 = Desk3
+	30111 = BTSLight
 	30500 = Turret
 	31000 = FlatText
 	31001 = ConfettiSpawner
@@ -223,8 +238,8 @@ DoomEdNums
 	32024 = WalkwaySegmentCorner
 	32025 = WalkwaySegmentTee
 	32026 = WalkwaySegmentIntersection
-	32027 = WallPanel1
-	32028 = WallPanel2
+	32027 = WallPanel
+	32028 = Fan
 	32029 = SkyboxGrid2
 	32030 = Stairway32
 	32031 = SkyboxGridLarge
@@ -244,4 +259,5 @@ DoomEdNums
 	32045 = WallPipe24
 	32046 = WallBox3
 	32047 = GirderGrid
+	32048 = Frame16
 }
