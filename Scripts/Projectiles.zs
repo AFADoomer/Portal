@@ -173,6 +173,10 @@ class Flare : Actor
 
 class LaserBeam : Actor
 {
+	color lasercolor;
+
+	Property LaserColor:lasercolor;
+
 	Default
 	{
 		+NOGRAVITY
@@ -184,6 +188,7 @@ class LaserBeam : Actor
 		Height 0;
 		RenderStyle "Add";
 		RenderRadius 2048.0;
+		LaserBeam.LaserColor 0xFF0000; // Does not affect graphic!  Used for Laser Cube glows.
 	}
 
 	States
@@ -193,7 +198,6 @@ class LaserBeam : Actor
 			UNKN A -1;
 			Stop;
 	}
-
 
 	override void Tick()
 	{
@@ -208,6 +212,7 @@ class LaserBeamBlue : LaserBeam
 	Default
 	{
 		Scale 2.0;
+		LaserBeam.LaserColor 0x0007FF;
 	}
 }
 
@@ -258,15 +263,7 @@ class LaserSpot : Actor
 	{
 		Spawn:
 		Inactive:
-			UNKN A 1
-			{
-				A_StopSound(CHAN_6);
-
-				if (beam) { beam.Destroy(); }
-				if (hitspot) { hitspot.Destroy(); }
-				if (flare) { flare.Destroy(); }
-				if (flare2) { flare2.Destroy(); }
-			}
+			UNKN A 1;
 			Wait;
 		Active:
 			UNKN A 1 A_FireLaser();
@@ -277,11 +274,16 @@ class LaserSpot : Actor
 	{
 		hittracer = new("LaserFindHitPointTracer");
 
+		if (SpawnFlags & MTF_DORMANT) { Deactivate(self); }
+		else { Activate(self); }
+
 		Super.PostBeginPlay();
 	}
 
 	override void Tick()
 	{
+		if (IsFrozen() || bDormant) { return; }
+
 		Super.Tick();
 
 		if (master)
@@ -293,7 +295,7 @@ class LaserSpot : Actor
 
 	void A_FireLaser(int damage = 3, sound snd = "")
 	{
-		if (snd != "")
+		if (snd != "" && level.time > 5)
 		{
 			A_StartSound(snd, CHAN_6, CHANF_NOSTOP | CHANF_LOOP, 0.0625, ATTN_STATIC);
 		}
@@ -339,6 +341,28 @@ class LaserSpot : Actor
 
 		Vector3 tracedir = (cos(angle) * cos(pitch), sin(angle) * cos(pitch), -sin(pitch));
 		thistracer.Trace(origin.pos + (0, 0, zoffset), origin.CurSector, tracedir, dist, 0);
+	}
+
+	override void Activate(Actor activator)
+	{
+		bDormant = false;
+		SetStateLabel("Active");
+		Super.Activate(activator);
+	}
+
+	override void Deactivate(Actor activator)
+	{
+		bDormant = true;
+		SetStateLabel("Inactive");
+
+		A_StopSound(CHAN_6);
+
+		if (beam) { beam.Destroy(); }
+		if (hitspot) { hitspot.Destroy(); }
+		if (flare) { flare.Destroy(); }
+		if (flare2) { flare2.Destroy(); }
+
+		Super.Deactivate(activator);
 	}
 }
 

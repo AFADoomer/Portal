@@ -92,6 +92,7 @@ defaultmap
 
 map MAP01 "Dooming with Portals" {}
 map MAP02 "Portal Gun Test Map" {}
+map MAP03 "guys my chamber got ported to some kind of Doom mod" {}
 map TESTMAP "Test Map" {}
 
 DoomEdNums
@@ -206,6 +207,13 @@ DoomEdNums
 	30109 = Desk2
 	30110 = Desk3
 	30111 = BTSLight
+	30112 = Monitor2
+	30113 = SupportArmBase
+	30114 = SupportArmLower
+	30115 = SupportArmUpper
+	30116 = SupportArmAttachment
+	30117 = Grid1x3
+	30118 = Tower
 	30500 = Turret
 	31000 = FlatText
 	31001 = ConfettiSpawner

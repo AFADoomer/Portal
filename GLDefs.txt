@@ -183,6 +183,13 @@ Material Texture "GLASS2"
 	specularlevel 1.0
 }
 
+Material Texture "patches/GLASS2.png"
+{
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/GLASS2.png"
+	specularlevel 2.0
+}
+
 Material Texture "GLASS3"
 {
 	normal "Materials/NormalMaps/Auto/GLASS3.png"
@@ -212,28 +219,6 @@ Material Texture "PILLAR"
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Auto/GLASS2.png"
 }
-
-Material Texture "Models/screen.png"
-{
-	normal "Materials/NormalMaps/Auto/GLASS2.png"
-	specular "Materials/Specular/Auto/GLASS2.png"
-	brightmap "Materials/Brightmaps/Fullbright.png"
-}
-
-Material Texture "Models/Screen2.png"
-{
-	shader "shaders/scroll.fp"
-	speed 1.0
-	normal "Materials/NormalMaps/Auto/GLASS2.png"
-	specular "Materials/Specular/Auto/GLASS2.png"
-	brightmap "Materials/Brightmaps/Fullbright.png"
-	specularlevel 1.0
-}
-
-Material Texture "Models/screen3.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/Fullbright.png" }
-Material Texture "Models/screen5.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/Fullbright.png" }
-
-Material Texture "Models/screene.png" { normal "Materials/NormalMaps/Auto/GLASS2.png" specular "Materials/Specular/Auto/GLASS2.png" brightmap "Materials/Brightmaps/Fullbright.png" }
 
 Material Texture "Models/buttonshell.png"
 {
@@ -1398,6 +1383,16 @@ Material Texture "Models/Screen.png"
 	normal "Materials/NormalMaps/Auto/GLASS2.png"
 	specular "Materials/Specular/Matte.png"
 	specularlevel 10.0	
+}
+
+Material Texture "Models/Screen2.png"
+{
+	shader "shaders/scroll.fp"
+	speed 1.0
+	normal "Materials/NormalMaps/Auto/GLASS2.png"
+	specular "Materials/Specular/Auto/Matte.png"
+	brightmap "Materials/Brightmaps/Fullbright.png"
+	specularlevel 1.0
 }
 
 Material Texture "Models/Screen3.png"

@@ -1,9 +1,25 @@
 // Simple vertical scroll shader by AFADoomer
 //  with additional handling for the annoying seam line between the bottom and top of every texture processed by GZDoom...
 
-vec4 Process(vec4 color)
+vec4 Scroll(vec2 texCoord);
+
+void SetupMaterial(inout Material material)
 {
 	vec2 texCoord = vTexCoord.st;
+
+	material.Base = Scroll(texCoord);
+	material.Normal = ApplyNormalMap(texCoord);
+	material.Bright = texture(brighttexture, texCoord);
+
+#if defined(SPECULAR)
+   	material.Specular = texture(speculartexture, texCoord).rgb;
+	material.Glossiness = uSpecularMaterial.x;
+	material.SpecularLevel = uSpecularMaterial.y;
+#endif
+}
+
+vec4 Scroll(vec2 texCoord)
+{
 	vec2 texSize = textureSize(tex, 0);
 	vec2 texelSize = 1.0 / texSize;
 

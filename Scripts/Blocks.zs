@@ -90,8 +90,11 @@ class BlockBase : SwitchableDecoration
 		{
 			Rotate();
 
-			if (!bNoBlockMap && master.master && master.master is "PlayerPawn") { A_ChangeLinkFlags(1); }
-			else if (bNoBlockMap) { A_ChangeLinkFlags(0); }
+			if (!(master is "LaserCube"))
+			{
+				if (!bNoBlockMap && master.master && master.master is "PlayerPawn") { A_ChangeLinkFlags(1); }
+				else if (bNoBlockMap) { A_ChangeLinkFlags(0); }
+			}
 		}
 
 		if (debug && debug.GetBool())

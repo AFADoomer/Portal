@@ -33,20 +33,35 @@ class Cube : CarryActor
 
 class LaserCube : Cube
 {
-	Actor lasersource, interior;
+	Actor lasersource, interior, logos, glow, flare;
 	bool laserhit;
+	color lasercolor;
+
+	Property LaserColor:lasercolor;
 
 	Default
 	{
 		//$Title Laser Cube
+		LaserCube.LaserColor 0xFF0000;
 	}
 
 	override void PostBeginPlay()
 	{
 		while (!interior) { interior = Spawn("LaserCubeInterior", pos); }
-		while (!lasersource) { lasersource = Spawn("LaserSpot", pos); }
-
 		interior.master = self;
+
+		while (!glow) { glow = Spawn("LaserCubeInterior", pos); }
+		glow.master = self;
+		glow.A_SetRenderStyle(glow.Default.alpha, STYLE_AddStencil);
+
+		while (!logos) { logos = Spawn("LaserCubeLogos", pos); }
+		logos.master = self;
+
+		while (!flare) { flare = Spawn("Flare", pos); }
+		flare.master = self;
+		
+		while (!lasersource) { lasersource = Spawn("LaserSpot", pos); }
+		lasersource.Deactivate(self);
 
 		Super.PostBeginPlay();
 	}
@@ -56,21 +71,31 @@ class LaserCube : Cube
 		if (lasersource)
 		{
 			lasersource.master = self;
-//			lasersource.SetOrigin(pos + (radius * 1.4 * cos(angle), radius * 1.4 * sin(angle), height * 0.5), true);
-			lasersource.SetOrigin(pos + (0, 0, height / 2), false);
+			lasersource.SetOrigin(pos, false);
 			lasersource.angle = angle;
 
 			if (laserhit)
 			{
-				lasersource.SetStateLabel("Active");
-				A_AttachLight("LaserLight", DynamicLight.PointLight, 0xDD0000, int(radius), int(radius), DynamicLight.LF_ATTENUATE, (0, 0, height / 2));
-				if (interior.alpha < 0.7) { interior.alpha = min(0.7, interior.alpha + 0.05); }
+				Spawn("LaserHit", pos);
+				lasersource.Activate(self);
+
+				A_AttachLight("LaserLight", DynamicLight.PointLight, lasercolor, int(radius), int(radius), DynamicLight.LF_ATTENUATE);
+				if (interior.alpha < interior.Default.alpha) { interior.alpha = min(interior.Default.alpha, interior.alpha + 0.05); }
+				glow.alpha = max(0.0, interior.alpha - interior.Default.alpha / 2);
+				glow.SetShade(lasercolor);
+
+				flare.alpha = 0.7 + FRandom(-0.2, 0.2);
+				flare.scale.x = flare.Default.scale.x * FRandom(0.2, 0.8) * scale.x;
+				flare.scale.y = flare.Default.scale.y * FRandom(0.2, 0.8) * scale.y;
+				flare.SetXYZ(pos);
 			}
 			else
 			{
-				lasersource.SetStateLabel("Inactive");
+				lasersource.Deactivate(self);
 				A_RemoveLight("LaserLight");
-				if (interior.alpha > 0.35) { interior.alpha = max(0.35, interior.alpha - 0.05); }
+				if (interior.alpha > interior.Default.alpha / 3) { interior.alpha = max(interior.Default.alpha / 3, interior.alpha - 0.05); }
+				glow.alpha = max(0.0, interior.alpha - interior.Default.alpha / 2);
+				flare.alpha = 0.0;
 			}
 		}
 
@@ -83,6 +108,8 @@ class LaserCube : Cube
 	{
 		if (inflictor is "LaserBeam" && source != self)
 		{
+			lasercolor = LaserBeam(inflictor).lasercolor;
+			if (!lasercolor) { lasercolor = Default.lasercolor; }
 			laserhit = true;
 		}
 
@@ -96,20 +123,27 @@ class LaserCubeInterior : Actor
 	{
 		+NOINTERACTION
 		+NOBLOCKMAP
-		Renderstyle "Translucent";
+		Renderstyle "Add";
 		Alpha 0.7;
 		Species "Laser";
 	}
 
 	override void Tick()
 	{
-		if (LaserCube(master))
+		if (master)
 		{
 			angle = master.angle;
 			pitch = master.pitch;
 			roll = master.roll;
-			SetXYZ(master.pos - (0, 0, LaserCube(master).zoffset));
-			return;
+
+			if (LaserCube(master))
+			{
+				SetOrigin(master.pos - (0, 0, LaserCube(master).zoffset) * scale.y, true);
+			}
+			else
+			{
+				SetOrigin(master.pos, true);
+			}
 		}
 		else { Destroy(); }
 
@@ -123,3 +157,5 @@ class LaserCubeInterior : Actor
 			Stop;
 	}
 }
+
+class LaserCubeLogos : LaserCubeInterior {}

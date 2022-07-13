@@ -30,7 +30,7 @@ class PortalPlayer : PlayerPawn
 		MaxStepHeight 20;
 		Player.JumpZ 3.5;
 		Player.ViewBob 0.3;
-		Player.UseRange 0.0;
+		Player.UseRange 96.0;
 
 		Player.DisplayName "Test Subject";
 		Player.CrouchSprite "PLYC";
@@ -698,6 +698,8 @@ class PortalPlayer : PlayerPawn
 				}
 		}
 
+		bool inportal = bTeleport || CurrentPortal;
+
 		if (player.usedown)
 		{
 			if (!useheld)
@@ -733,7 +735,7 @@ class PortalPlayer : PlayerPawn
 						}
 					}
 				}
-				else
+				else if (!inportal)
 				{
 					DropCarried();
 				}
@@ -749,30 +751,33 @@ class PortalPlayer : PlayerPawn
 		{
 			player.cmd.buttons |= BT_USE;
 
-			DragTarget.bNoInteraction = (CurrentPortal && DragTarget.Distance3D(CurrentPortal) < 32.0);
-
 			Vector3 oldpos = DragTarget.pos;
 
-			double range = max(carryrange - 32.0, (radius + DragTarget.radius) * 1.5);
+			DragTarget.bNoInteraction = inportal;
+			DragTarget.A_ChangeLinkFlags(0);
 
-			Vector3 tracedir = (cos(angle) * cos(max(pitch, -20)), sin(angle) * cos(max(pitch, -20)), -sin(max(pitch, -20)));
-			carrytracer.skipactor = self;
-			carrytracer.Trace(pos + (0, 0, player.viewheight), CurSector, tracedir, range, 0 );
-
-			double floorheight = max(DragTarget.curSector.NextLowestFloorAt(DragTarget.pos.x, DragTarget.pos.y, DragTarget.pos.z), DragTarget.floorz);
-
+			double range = max(carryrange - 32.0, radius + DragTarget.radius * 1.5);
 			Vector3 dragtargetpos = pos + RotateVector((cos(max(pitch, -20)) * range - DragTarget.Radius * 1.4, 0), angle) + (0, 0, player.viewheight - sin(pitch) * range - DragTarget.Radius * 1.4);
 
 			let carrytarget = CarryActor(DragTarget);
-			if (carrytarget)
-			{
-				floorheight += carrytarget.zoffset;
-				dragtargetpos.z += carrytarget.zoffset;
-			}
+			if (carrytarget) { dragtargetpos.z += carrytarget.zoffset; }
 
-			if (bNoClip) { DragTarget.SetOrigin(dragtargetpos, true); }
+			if (bNoClip || DragTarget.bNoInteraction)
+			{
+				DragTarget.angle = angle;
+				DragTarget.vel = vel;
+
+				DragTarget.SetOrigin(dragtargetpos, true);
+			}
 			else
 			{
+				double floorheight = max(DragTarget.curSector.NextLowestFloorAt(DragTarget.pos.x, DragTarget.pos.y, DragTarget.pos.z), DragTarget.floorz);
+				if (carrytarget) { floorheight += carrytarget.zoffset; }
+
+				Vector3 tracedir = (cos(angle) * cos(max(pitch, -20)), sin(angle) * cos(max(pitch, -20)), -sin(max(pitch, -20)));
+				carrytracer.skipactor = self;
+				carrytracer.Trace(pos + (0, 0, player.viewheight), CurSector, tracedir, range, 0 );
+
 				if (DragTarget.BlockingLine) { carryblocked = CheckCarryBlockingLine(DragTarget.BlockingLine); }
 
 				if (carrytracer.Results.HitType == TRACE_HitWall)
@@ -825,15 +830,15 @@ class PortalPlayer : PlayerPawn
 				{
 					DragTarget.SetOrigin(dragtargetpos, !bTeleport);
 				}
-			}
 
-			DragTarget.angle = angle;
-			DragTarget.vel = vel;
+				DragTarget.angle = angle;
+				DragTarget.vel = vel;
 
-			if (!bTeleport)
-			{
-				dragvel = (DragTarget.pos - oldpos + (player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90), player.cmd.pitch)) / (5 * DragTarget.Mass);
-				if (!bNoClip && Distance3D(DragTarget) > (range + (!!carrytarget ? carrytarget.zoffset : 0)) * 1.75) { DropCarried(); }
+				if (!bTeleport)
+				{
+					dragvel = (DragTarget.pos - oldpos + (player.cmd.yaw * cos(angle + 90), player.cmd.yaw * sin(angle + 90), player.cmd.pitch)) / (5 * DragTarget.Mass);
+					if (!bNoClip && Distance3D(DragTarget) > (range + (!!carrytarget ? carrytarget.zoffset : 0)) * 1.75) { DropCarried(); }
+				}
 			}
 		}
 

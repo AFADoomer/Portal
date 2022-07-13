@@ -1,11 +1,11 @@
 class PortalSpot : Actor
 {
 	PortalSpot pair;
-	Actor camera, ring;
+	Actor ring;
 	Array<Actor> Activators;
 	Array<Actor> BeamSources;
 	String camtex;
-	Vector3 shotpos, snappos, finalpos, camerapos;
+	Vector3 shotpos, snappos, finalpos;
 	bool open, forcelocation;
 	double spawnfloor, spawnceiling, slopeangle, spawnangle, movedist, lineangle;
 	PortalFindHitPointTracer hittracer;
@@ -83,15 +83,6 @@ class PortalSpot : Actor
 			VisibleEndAngle = 180;
 		}
 
-		camerapos = pos + RotateVector3((0.5, 0.0, players[consoleplayer].viewheight - 32.0), angle, pitch, roll);
-		camera = Spawn("PortalCamera", camerapos);
-		if (camera)
-		{
-			camera.master = self;
-			camera.angle = angle;
-			camera.pitch = pitch;
-		}
-
 		SpawnPoint = pos;
 		spawnfloor = floorz;
 		spawnceiling = ceilingz;
@@ -153,16 +144,7 @@ class PortalSpot : Actor
 
 			transform = pair.worldtransform.multiplyMatrix(Portal_Matrix.matrixInverseTR(worldtransform));
 
-			if (pair.camera)
-			{
-				double camfov = 120;
-
-				pair.camera.angle = pair.angle;
-				pair.camera.pitch = pair.pitch;
-				pair.camera.roll = pair.roll;
-
-				TexMan.SetCameraToTexture(pair.camera, pair.camtex, camfov);
-			}
+			TexMan.SetCameraToTexture(pair, pair.camtex, 120);
 
 			if ((level.time + offset) % 10 == 0) { CheckOtherActivators(); }
 
@@ -196,7 +178,7 @@ class PortalSpot : Actor
 						DoMove(Activators[i].Alternative, false);
 					}
 				}
-				else if (Activators[i] && !Activators[i].bNoInteraction && !Activators[i].bNoClip)
+				else if (Activators[i] && !Activators[i].bNoInteraction)// && !Activators[i].bNoClip)
 				{
 					double dist = Distance2D(Activators[i]);
 					double disty = PlaneDist(Activators[i], y:true);
@@ -215,21 +197,45 @@ class PortalSpot : Actor
 
 					double mintest = max(Activators[i].vel.length() + Activators[i].Default.Radius * 1.4, movedist);
 
-					if (Activators[i] is "PortalPlayer" && Activators[i].player && Activators[i].player.camera)
+					if (
+							Activators[i] is "PortalPlayer" && 
+							Activators[i].player
+					)
 					{
-						if (Distance2D(Activators[i]) < 32.0) { PortalPlayer(Activators[i]).CurrentPortal = self; }
+						if (PortalPlayer(Activators[i]).DragTarget)
+						{
+							let carryactor = PortalPlayer(Activators[i]).DragTarget;
+
+							double range = Activators[i].Radius + clamp(cos(deltaangle(Activators[i].angle, Activators[i].AngleTo(self))), 0.0, 1.0) * (PortalPlayer(Activators[i]).carryrange + PortalPlayer(Activators[i]).DragTarget.radius - Activators[i].Radius);
+
+							if (Distance3D(Activators[i]) <= range)
+							{
+								PortalPlayer(Activators[i]).CurrentPortal = self;
+							}
+						}
+
+						if (PortalPlayer(Activators[i]).CurrentPortal != self && Distance3D(Activators[i]) <= Activators[i].Radius)
+						{
+							PortalPlayer(Activators[i]).CurrentPortal = self;
+						}
 					}
-
+					
 					bool inportalbounds = 
-							(!pitch && pos.z - 40.0 <= Activators[i].pos.z && pos.z + 40.0 >= Activators[i].pos.z + Activators[i].height && disty <= 14.0) ||
-							(pitch != 0 && Distance3D(Activators[i]) <= movedist + (2 * movedist) * sin(abs(pitch)));
+						(!pitch && pos.z - 40.0 <= Activators[i].pos.z && pos.z + 40.0 >= Activators[i].pos.z + Activators[i].height && disty <= 14.0) ||
+						(pitch != 0 && Distance3D(Activators[i]) <= movedist + (2 * movedist) * sin(abs(pitch)));
 
-					if (inportalbounds) { Activators[i].A_SetSize(clamp(dist - 8, 1, Activators[i].Default.Radius), -1, true); }
-					else { Activators[i].A_SetSize(Activators[i].Default.Radius, Activators[i].Default.Height, true); }
+					if (inportalbounds)
+					{
+						Activators[i].A_SetSize(clamp(dist - 8, 1, Activators[i].Default.Radius), -1, true);
+					}
+					else
+					{
+						Activators[i].A_SetSize(Activators[i].Default.Radius, Activators[i].Default.Height, true);
+					}
 
 					if (inportalbounds && dist <= mintest)
 					{
-						if (!(Activators[i].master is "PlayerPawn") && (Activators[i].vel.length() > 0 || pitch != 0 || Activators[i].master is "PlayerPawn"))
+						if (!(Activators[i].master is "PlayerPawn") && (Activators[i].vel.length() > 0 || pitch != 0))
 						{
 							A_StartSound(frame ? "portal/enter2" : "portal/enter1", CHAN_AUTO);
 
@@ -702,7 +708,10 @@ class PortalSpot : Actor
 				Activators.Find(mo) == Activators.Size()
 			)
 			{
-				if (noplayers && !(mo is "HitMarker")) { continue; }
+				if (!(mo is "HitMarker"))
+				{
+					if (noplayers || mo.bNoInteraction || mo.bNoClip) { continue; }
+				}
 
 				Activators.Push(mo);
 			}
@@ -717,7 +726,10 @@ class PortalSpot : Actor
 
 		while (mo = Actor(it.Next(true)))
 		{
-			if (Distance3D(mo) <= 32.0) { return mo; }
+			if (
+				Distance3D(mo) <= 32.0 &&
+				absangle(mo.angle, angle) < 90
+			) { return mo; }
 		}
 
 		return null;

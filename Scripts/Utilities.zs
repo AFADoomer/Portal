@@ -171,9 +171,10 @@ int oldpoints[4];
 		{
 //			if (points[i] > mo.pos.z + maxstep) { points[i] = 0; } // Ignore the point if you can't climb that high
 //			else if (points[i] < mo.pos.z - maxdrop) { points[i] = 0; } // Ignore the point if it's a dropoff
-//			else { 
-points[i] -= mo.floorz;
-// }
+//			else
+//			{ 
+				points[i] -= mo.floorz;
+//			}
 
 			if (points[i] != center) { count++; }
 		}
@@ -533,20 +534,20 @@ points[i] -= mo.floorz;
 		return ret;
 	}
 
-	static Vector3 OffsetRelative(Actor origin, double xoffset = 0, double yoffset = 0, double zoffset = 0)
+	static Vector3 OffsetRelative(Actor origin, double xoffset = 0, double yoffset = 0, double zoffset = 0, double angleoffset = 0, double pitchoffset = 0, double rolloffset = 0)
 	{
 		if (!origin) { return (xoffset, yoffset, zoffset); }
 
 		Vector2 temp;
 		Vector3 offset;
 
-		temp = RotateVector((yoffset, zoffset), origin.roll);
+		temp = RotateVector((yoffset, zoffset), origin.roll + rolloffset);
 		offset = (xoffset, temp.x, temp.y);
 
-		temp = RotateVector((offset.x, offset.z), -origin.pitch);
+		temp = RotateVector((offset.x, offset.z), -origin.pitch - pitchoffset);
 		offset = (temp.x, offset.y, temp.y);
 
-		temp = RotateVector((offset.x, offset.y), origin.angle);
+		temp = RotateVector((offset.x, offset.y), origin.angle + angleoffset);
 		offset = (temp.x, temp.y, offset.z);
 
 		offset.x *= origin.scale.x;
@@ -554,6 +555,68 @@ points[i] -= mo.floorz;
 		offset.z *= origin.scale.y;
 
 		return offset;
+	}
+
+	static String FindFontColor(String c)
+	{
+		int index;
+		
+		if (c == "*") { index = msg3color; }
+		else if (c == "!") { index = msg4color; }
+		else { index = c.ByteAt(0); }
+
+		if (index > 0x5A) { index -= 0x20; }
+		index = (index - 0x41) % 26;
+
+		switch (index)
+		{
+			case 0: return "Brick";
+			case 1: return "Tan";
+			case 2: return "Gray";
+			case 3: return "Green";
+			case 4: return "Brown";
+			case 5: return "Gold";
+			case 6: return "Red";
+			case 7: return "Blue";
+			case 8: return "Orange";
+			case 9: return "White";
+			case 10: return "Yellow";
+			case 11: return "Untranslated";
+			case 12: return "Black";
+			case 13: return "Light Blue";
+			case 14: return "Cream";
+			case 15: return "Olive";
+			case 16: return "Dark Green";
+			case 17: return "Dark Red";
+			case 18: return "Dark Brown";
+			case 19: return "Purple";
+			case 20: return "Dark Gray";
+			case 21: return "Cyan";
+			case 22: return "Ice";
+			case 23: return "Fire";
+			case 24: return "Sapphire";
+			case 25: return "Teal";
+		}
+
+		return "Untranslated";
+	}
+
+	static int HexStringToInt(String input)
+	{
+		int len = input.length();
+		int output = 0;
+
+		input = input.MakeUpper();
+
+		for (int i = 0; i < len; i++)
+		{
+			int c = input.ByteAt(len - 1 - i);
+
+			if (c >= 0x30 && c <= 0x39) { output += (c - 0x30) * int(0x10 ** i); }
+			else if (c >= 0x41 && c <= 0x46) { output += (c - 0x37) * int(0x10 ** i); }
+		}
+
+		return output;
 	}
 }
 
@@ -607,7 +670,7 @@ class FlatText : PortalActor
 		+BRIGHT
 		+NOTONAUTOMAP
 		Renderstyle 'AddStencil';
-		Alpha 1.25;
+		Alpha 1.0;
 		StencilColor "FFFFFF";
 		RenderRadius 64;
 	}
@@ -878,7 +941,7 @@ class FlatText : PortalActor
 		if (master) { alpha = master.alpha * Default.alpha; }
 	}
 
-	static void SpawnString(Actor master, String input, Color clr = 0x000000, double xoffset = 2.0, double yoffset = 0, double zoffset = 0, double scale = 1.0)
+	static void SpawnString(Actor master, String input, Color clr = 0x000000, double xoffset = 2.0, double yoffset = 0, double zoffset = 0, double scale = 1.0, double rolloffset = 0.0)
 	{
 		if (!master) { return; }
 
@@ -886,35 +949,103 @@ class FlatText : PortalActor
 
 		double width = 16 * 0.125 * scale;
 		double height = 33 * 0.125 * scale;
+
 		double linestart = yoffset = yoffset + width / 2;
+
+		color defaultcolor = clr;
+		double scalemod = 1.0;
 
 		for (int i = 0; i < digits; i++)
 		{
 			int code = input.ByteAt(0);
 
-			if (code == 92)
+			if (code == 0x5C)
 			{
-				int next = input.ByteAt(1);
-
-				switch(next)
+				switch(input.ByteAt(1))
 				{
-					case 67: //c
-					case 99: //C
-						digits--;
-						input.Remove(0, 1);
+					case 0x43: // \C
+					case 0x63: // \c
+						String textcolor = "";
+
+						if (input.Mid(2, 1) == "[")
+						{
+							digits++;
+							int place = 2;
+
+							while (++place < input.Length() - 1 && !(input.Mid(place, 1) == "]")) 
+							{
+								textcolor = textcolor .. input.Mid(place, 1);
+								digits--;
+							}
+
+							if (input.Mid(place, 1) == "]")
+							{
+								clr = textcolor;
+								digits--;
+							}
+
+							input.Remove(0, textcolor.length() + 2);
+						}
+						else
+						{
+							textcolor = input.Mid(2, 1);
+
+							if (textcolor == "-")
+							{
+								clr = defaultcolor;
+								scalemod = 1.0;
+							}
+							else if (textcolor == "+")
+							{
+								clr = defaultcolor;
+								scalemod = 1.15;
+							}
+							else
+							{
+								clr = Utilities.FindFontColor(textcolor);
+							}
+
+							digits -= 2;
+							input.Remove(0, 1);
+						}
 						break;
-					case 80: //p
-					case 112: //P
+					// case 0x47: // \G
+					// case 0x67: // \g
+					// 	break;
+					case 0x50: // \P
+					case 0x70: // \p
 						String nm = CVar.GetCVar("name", players[consoleplayer]).GetString();
 						digits += nm.Length();
 						input = input.left(2) .. nm .. input.mid(2);
 						break;
-					case 110: //\n
-					case 114: //\r
+					case 0x6E: // \n
+					case 0x72: // \r
 						zoffset -= height;
 						yoffset = linestart;
 						break;
+					case 0x58:
+					case 0x78:
+						digits -= 2;
+						input = input.left(2) .. String.Format("%c", Utilities.HexStringToInt(input.mid(2, 2))) .. input.mid(4);
+						break;
 					default:
+						Vector3 pos = Utilities.OffsetRelative(master, xoffset, yoffset, zoffset + height * (scalemod - 1.0) / 2, rolloffset:rolloffset);
+
+						Actor mo = Spawn("FlatText", master.pos + pos);
+						if (mo)
+						{
+							FlatText(mo).value = code;
+							mo.master = master;
+							mo.scale *= master.scale.x * scale * scalemod;
+							mo.angle = master.angle;
+							mo.pitch = master.pitch - 90;
+							mo.roll = master.roll + rolloffset;
+							mo.SetShade(clr);
+						}
+
+						yoffset += width;
+
+						input.Remove(0, 1);
 						break;
 				}
 
@@ -923,21 +1054,22 @@ class FlatText : PortalActor
 			}
 			else
 			{
-				Vector3 pos = Utilities.OffsetRelative(master, xoffset, yoffset, zoffset);
+				Vector3 pos = Utilities.OffsetRelative(master, xoffset, yoffset, zoffset + height * (scalemod - 1.0) / 2, rolloffset:rolloffset);
 
 				Actor mo = Spawn("FlatText", master.pos + pos);
 				if (mo)
 				{
 					FlatText(mo).value = code;
 					mo.master = master;
-					mo.scale *= master.scale.x * scale;
+					mo.scale *= master.scale.x * scale * scalemod;
 					mo.angle = master.angle;
 					mo.pitch = master.pitch - 90;
-					mo.roll = master.roll;
+					mo.roll = master.roll + rolloffset;
 					mo.SetShade(clr);
 				}
 
 				yoffset += width;
+
 				input.Remove(0, 1);
 			}
 		}

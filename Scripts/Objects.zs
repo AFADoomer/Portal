@@ -105,7 +105,7 @@ class Monitor : PortalActor
 		}
 	}
 
-	virtual void SetMessage(String message, color clr = 0xFF4203, double textscale = 0.2)
+	void SendMessage(String message, color clr, double textscale, int maxlines, int maxwidth, double xoffset, double yoffset, double zoffset, double rolloffset = 0.0)
 	{
 		A_RemoveChildren(true, RMVF_EVERYTHING, "FlatText");
 
@@ -115,9 +115,6 @@ class Monitor : PortalActor
 		message.Replace("\\r", String.Format("%c", 0x0D));
 
 		if (!message.length()) { return; }
-
-		int maxlines = int(2.666 / textscale);
-		int maxwidth = int(80 / textscale);
 
 		BrokenLines lines = SmallFont.BreakLines(message, maxwidth);
 		String text;
@@ -130,7 +127,15 @@ class Monitor : PortalActor
 			}
 		}
 
-		FlatText.SpawnString(self, text, clr, 5.35, -11.25, 5.5, textscale);
+		FlatText.SpawnString(self, text, clr, xoffset, yoffset, zoffset, textscale, rolloffset);
+	}
+
+	virtual void SetMessage(String message, color clr = 0xFF4203, double textscale = 0.2)
+	{
+		int maxlines = int(2.666 / textscale);
+		int maxwidth = int(80 / textscale);
+
+		SendMessage(message, clr, textscale, maxlines, maxwidth, 5.35, -11.25, 5.5);
 	}
 
 	// override void SpawnBlocks()
@@ -182,6 +187,41 @@ class MonitorOverlay : BlockBase
 		alpha = clamp(curSector.lightlevel / 256.0, 0.0, 0.999);
 
 		Actor.Tick();
+	}
+}
+
+class Monitor2 : Monitor
+{
+	Default
+	{
+		//$Title Monitor (Large, 64x32)
+		Height 1;
+		Radius 1;
+		XScale 2.2;
+		YScale 2.3;
+	}
+
+	override void SetMessage(String message, color clr, double textscale)
+	{
+		int maxlines = int(3.2 / textscale);
+		int maxwidth = int(95 / textscale);
+
+		double yoffset = -13.5;
+		double zoffset = 6.5;
+		double rolloffset = 0.0;
+
+		double modroll = roll % 180;
+		if (modroll > 45 && modroll < 153)
+		{
+			maxlines *= 2;
+			maxwidth /= 2;
+
+			yoffset = -6.5;
+			zoffset = 13.5;
+			rolloffset = 90;
+		}
+
+		SendMessage(message, clr, textscale, maxlines, maxwidth, 0.95, yoffset, zoffset, rolloffset);
 	}
 }
 
@@ -801,6 +841,15 @@ class GridComplete : Grid
 	}
 }
 
+class Grid1x3 : Grid
+{
+	Default
+	{
+		//$Title Grid (Complete edge, 1x3)
+		Radius 14;
+	}
+}
+
 class Skybox : PortalActor
 {
 	Default
@@ -960,6 +1009,7 @@ class LightFixture : PortalActor
 	double user_lightlevel, user_flicker, user_radius;
 
 	Property PaneClass:paneclass;
+	Property LightLevel:user_lightlevel;
 
 	Default
 	{
@@ -968,18 +1018,16 @@ class LightFixture : PortalActor
 		+NOGRAVITY
 		+NOINTERACTION
 		Height 2;
-		PortalActor.GlowOffsetZ 1.0;
+		StencilColor "a8a8c0";
+		PortalActor.GlowOffsetZ -4.0;
 		PortalActor.GlowPitchOffset -90.0;
 		LightFixture.PaneClass "LightFixturePanes";
+		LightFixture.LightLevel 1.5;
 	}
 
 	override void PostBeginPlay()
 	{
-		if (!user_lightlevel) { user_lightlevel = 1.5; }
-
-		if (fillcolor == -0x9000000) { SetShade(0xa8a8c0); }
-
-		glowradius = user_radius ? user_radius : (pos.z - floorz) * 0.75;
+		glowradius = user_radius ? user_radius : (pos.z - floorz);
 		glowcolor = fillcolor;
 
 		InitializeLight();
@@ -1000,10 +1048,27 @@ class LightFixture : PortalActor
 
 	override void Tick()
 	{
-		If (IsFrozen()) { return; }
+		if (IsFrozen())
+		{
+			if (glowflickertime) { glowflickertime++; }
+			return;
+		}
 
 		if (!bDormant)
 		{
+			if (glowflickertime)
+			{
+				if (level.time < glowflickertime)
+				{
+					glowradius = (glowflickertime - level.time > 35) ? 0 : Random(maxglowradius / 4, maxglowradius);
+				}
+				else
+				{
+					glowradius = maxglowradius;
+					glowflickertime = 0;
+				}
+			}
+
 			glowcolor = fillcolor;
 			double intensity = user_lightlevel;
 
@@ -1039,7 +1104,7 @@ class LightFixture : PortalActor
 			A_RemoveLight("Glow");
 		}
 
-		Super.Tick();
+		Actor.Tick();
 	}
 
 	override void OnDestroy()
@@ -1074,13 +1139,7 @@ class LightFixtureObservation : LightFixture
 	Default
 	{
 		//$Title Light Fixture (Observation Area)
-	}
-
-	override void PostBeginPlay()
-	{
-		if (!user_lightlevel) { user_lightlevel = 2.0; }
-
-		Super.PostBeginPlay();
+		LightFixture.LightLevel 2.0;
 	}
 
 	override void Tick()
@@ -1267,13 +1326,25 @@ class TowerSegment : Ladder
 {
 	Default
 	{
-		//$Title Tower Segment
+		//$Title Tower Segment (climbable)
 		+SOLID
 		-NOINTERACTION
 		Height 42;
 		Radius 12;
 		LadderBase.ClimbRadius 24;
 		LadderBase.Friction 0.5; // Slow to climb these
+	}
+}
+
+class Tower : PortalActor
+{
+	Default
+	{
+		//$Title Tower (256-high, non-climbable)
+		+NOGRAVITY
+		+SOLID
+		Height 256;
+		Radius 16;
 	}
 }
 
@@ -1790,6 +1861,7 @@ class Tile2x2 : CarryActor
 		{
 			bSolid = true;
 			bNoInteraction = false;
+			A_ChangeLinkFlags(0);
 			moved = true;
 			pitch = 0;
 			pushfactor = 100.0 / mass;
@@ -1807,6 +1879,7 @@ class Tile2x2 : CarryActor
 
 		bDormant = false;
 		bNoInteraction = false;
+		A_ChangeLinkFlags(0);
 		bNoGravity = false;
 
 		Super.Activate(activator);
@@ -2007,6 +2080,45 @@ class SupportArmGroup : SupportArm
 	Default
 	{
 		//$Title Support Arm (Panel Back, 2x3 group)
+	}
+}
+
+class SupportArmBase : PortalActor
+{
+	Default
+	{
+		//$Category Portal/Decorations
+		//$Title Support Arm Component (Base)
+		+MOVEWITHSECTOR
+		+NOGRAVITY
+		+SOLID
+		Height 4;
+		Radius 4;
+		RenderRadius 256.0;
+	}
+}
+
+class SupportArmLower : SupportArmBase
+{
+	Default
+	{
+		//$Title Support Arm Component (Lower)
+	}
+}
+
+class SupportArmUpper : SupportArmBase
+{
+	Default
+	{
+		//$Title Support Arm Component (Upper)
+	}
+}
+
+class SupportArmAttachment : SupportArmBase
+{
+	Default
+	{
+		//$Title Support Arm Component (Attachment)
 	}
 }
 

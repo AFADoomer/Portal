@@ -387,9 +387,8 @@ class LaserTrigger : Actor
 		hittracer = new("PortalFindHitPointTracer");
 		A_SetSize(Radius + 8 * abs(sin(pitch)));
 
-		if (!user_sound) { user_sound = Random(0, 1); }
-
-		A_StartSound("laser/song" .. user_sound, 8, CHANF_NOSTOP | CHANF_LOOP, 0.5, ATTN_NORM, 0.75); // Start on spawn so they stay in sync
+		if (!user_sound) { user_sound = Random(1, 2); }
+		if (user_sound > 0) { A_StartSound("laser/song" .. user_sound - 1, 8, CHANF_NOSTOP | CHANF_LOOP, 0.00001, ATTN_NORM, 0.75); } // Start on spawn so they stay in sync
 
 		Super.PostBeginPlay();
 	}
@@ -402,11 +401,11 @@ class LaserTrigger : Actor
 
 		if (timeout == 0)
 		{
-			Level.ExecuteSpecial(special, null, null, false, args[0], args[1], args[2], args[3], args[4]);
+			Level.ExecuteSpecial(special, self, null, false, args[0], args[1], args[2], args[3], args[4]);
 			frame = 0;
 			bBright = false;
 			timeout = -1;
-			A_StartSound("laser/target/off", CHAN_AUTO, 0, 0.5);
+			if (level.time > 5) { A_StartSound("laser/target/off", CHAN_AUTO, 0, 0.5); }
 			A_StopSound(CHAN_7);
 			A_SoundVolume(8, 0.0);
 		}
@@ -416,12 +415,12 @@ class LaserTrigger : Actor
 	{
 		if (inflictor is "LaserBeam" && timeout < 0)
 		{
-			Level.ExecuteSpecial(special, null, null, false, args[0], args[1], !args[2], args[3], args[4]);
+			Level.ExecuteSpecial(special, self, null, false, args[0], args[1], !args[2], args[3], args[4]);
 			frame = 1;
 			bBright = true;
 			A_StartSound("laser/target/on", CHAN_AUTO, 0, 0.25);
 			A_StartSound("laser/target/loop", CHAN_7, CHANF_LOOP, 0.25);
-			A_SoundVolume(8, 0.75);
+			A_SoundVolume(8, 0.25);
 		}
 
 		timeout = 5;

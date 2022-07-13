@@ -890,6 +890,13 @@ Texture WATERLIN, 512, 256
 	Patch "Patches/WaterLin.png", 0, 64 { Style Overlay }
 }
 
+Texture PORT1x1, 128, 128
+{
+	XScale 2.0
+	YScale 2.0
+	Patch "Patches/PORT1x1.png", 0, 0
+}
+
 Texture PORT2x1, 128, 128
 {
 	XScale 2.0
@@ -1109,31 +1116,31 @@ Texture LIWWW2x1, 128, 128
 	Patch "Patches/LITWW2x1.png", 0, 0 { Rotate 90 }
 }
 
-Texture GLASS, 256, 256
+Texture GLASS, 512, 512
 {
-	XScale 4.0
-	YScale 4.0
+	XScale 8.0
+	YScale 8.0
 	Patch "Patches/GLASS.png", 0, 0
 }
 
-Texture GLASSTRA, 256, 256
+Texture GLASSTRA, 512, 512
 {
-	XScale 4.0
-	YScale 4.0
+	XScale 8.0
+	YScale 8.0
 	Patch "Patches/GLASSTRA.png", 0, 0
 }
 
-Texture GLASSB, 256, 256
+Texture GLASSB, 512, 512
 {
-	XScale 4.0
-	YScale 4.0
+	XScale 8.0
+	YScale 8.0
 	Patch "Patches/GLASSB.png", 0, 0
 }
 
-Texture GLASSTRB, 256, 256
+Texture GLASSTRB, 512, 512
 {
-	XScale 4.0
-	YScale 4.0
+	XScale 8.0
+	YScale 8.0
 	Patch "Patches/GLASSTRB.png", 0, 0
 }
 

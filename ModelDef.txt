@@ -18,12 +18,12 @@ Model LaserCube
 {
 	USEACTORPITCH
 	USEACTORROLL
+	DONTCULLBACKFACES
 
 	Path "Models/"
-	Model 0 "cube.md3"
-	Skin 0 "LaserCube4.png"
+	Model 0 "lasercube.md3"
 
-	Scale 0.45 0.45 0.45
+	Scale 0.43 0.43 0.43
 
 	FrameIndex UNKN A 0 0
 
@@ -38,10 +38,24 @@ Model LaserCubeInterior
 	DONTCULLBACKFACES
 
 	Path "Models/"
-	Model 0 "cube.md3"
-	Skin 0 "LaserCube3.png"
+	Model 0 "lasercube_inner.md3"
 
-	Scale 0.45 0.45 0.45
+	Scale 0.43 0.43 0.43
+
+	Offset 0.0 0.0 11.0;
+	FrameIndex UNKN A 0 0
+}
+
+Model LaserCubeLogos
+{
+	USEACTORPITCH
+	USEACTORROLL
+	DONTCULLBACKFACES
+
+	Path "Models/"
+	Model 0 "lasercube_logos.md3"
+
+	Scale 0.43 0.43 0.43
 
 	Offset 0.0 0.0 11.0;
 	FrameIndex UNKN A 0 0
@@ -419,6 +433,42 @@ Model MonitorOverlay
 	FrameIndex UNKN A 0 0
 }
 
+Model Monitor2
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "monitor2.md3"
+	SurfaceSkin 0 2 "Matte.png"
+
+	FrameIndex UNKN A 0 0
+
+	SurfaceSkin 0 0 "Screen2.png"
+
+	FrameIndex UNKN B 0 0
+
+	SurfaceSkin 0 0 "Screen3.png"
+
+	FrameIndex UNKN C 0 0
+
+	SurfaceSkin 0 0 "Screen4.png"
+
+	FrameIndex UNKN D 0 0
+
+	SurfaceSkin 0 0 "ScreenC.png"
+
+	FrameIndex UNKN J 0 0
+
+	SurfaceSkin 0 0 "ScreenE.png"
+
+	FrameIndex UNKN K 0 0
+
+	SurfaceSkin 0 0 "Screen5.png"
+
+	FrameIndex UNKN E 0 0
+}
+
 Model Desk
 {
 	USEACTORPITCH
@@ -593,6 +643,20 @@ Model GridComplete
 
 	Path "Models/"
 	Model 0 "grid2.md3"
+
+	FrameIndex UNKN A 0 0
+
+	Skin 0 "grid2.png"
+	FrameIndex UNKN B 0 0
+}
+
+Model Grid1x3
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "grid3.md3"
 
 	FrameIndex UNKN A 0 0
 
@@ -1515,9 +1579,17 @@ Model TowerSegment
 
 	Path "Models/"
 	Model 0 "tower.md3"
-	Skin 0 "GRAYDIR2"
 
-	Scale 1.0 1.0 0.869
+	FrameIndex UNKN A 0 0
+}
+
+Model Tower
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "Models/"
+	Model 0 "towertall.md3"
 
 	FrameIndex UNKN A 0 0
 }
@@ -1836,6 +1908,58 @@ Model SupportArmGroup
 	FrameIndex UNKN A 0 0
 	FrameIndex UNKN A 1 0
 	FrameIndex UNKN A 2 0
+}
+
+Model SupportArmBase
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "arm_base.md3"
+
+	Scale 1.1 1.1 1.1
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SupportArmUpper
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "arm_upper.md3"
+
+	Scale 1.1 1.1 1.1
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SupportArmLower
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "arm_lower.md3"
+
+	Scale 1.1 1.1 1.1
+
+	FrameIndex UNKN A 0 0
+}
+
+Model SupportArmAttachment
+{
+	USEACTORPITCH
+	USEACTORROLL
+
+	Path "models/"
+	Model 0 "arm_attachment.md3"
+
+	Scale 1.1 1.1 1.1
+
+	FrameIndex UNKN A 0 0
 }
 
 Model WalkwaySegment

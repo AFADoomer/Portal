@@ -25,8 +25,8 @@ Material ProcessMaterial()
 	material.Specular = texture(speculartexture, texCoord).rgb;
 	material.Glossiness = uSpecularMaterial.x;
 	material.SpecularLevel = uSpecularMaterial.y;
-#if defined(BRIGHTMAP)
+
 	material.Bright = texture(brighttexture, texCoord);
-#endif
+
 	return material;
 }
